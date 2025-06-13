@@ -118,6 +118,10 @@ lean_exe ComplexDirectTest where
   root := `Test.ComplexDirectTest
   supportInterpreter := true
 
+lean_exe ComplexCorrectnessLevel2 where
+  root := `Test.ComplexCorrectnessLevel2
+  supportInterpreter := true
+
 lean_exe Level3Benchmarks where
   root := `Test.BenchmarksLevel3
 
