@@ -34,7 +34,16 @@ to optimized BLAS libraries. Complex conjugation is handled appropriately
 for operations like dot products. -/
 instance : LevelOneData ComplexFloat64Array Float ComplexFloat where
   size x := x.size
-  get x i := ComplexFloat.zero  -- Placeholder, would extract ComplexFloat from position i
+  get x i := 
+    -- Extract ComplexFloat from ByteArray at position i
+    -- Each complex number is 16 bytes (8 for real, 8 for imaginary)
+    if h : i < x.size then
+      let offset := i * 16
+      -- For now, return zero as we need proper byte decoding
+      -- TODO: Implement proper float extraction from bytes
+      ComplexFloat.zero
+    else
+      ComplexFloat.zero
   
   -- Use conjugate dot product (zdotc) as the default dot product for complex numbers
   dot N X offX incX Y offY incY := zdotc N.toUSize X offX.toUSize incX.toUSize Y offY.toUSize incY.toUSize
