@@ -122,6 +122,10 @@ lean_exe ComplexCorrectnessLevel2 where
   root := `Test.ComplexCorrectnessLevel2
   supportInterpreter := true
 
+lean_exe ComplexNumericalValidation where
+  root := `Test.ComplexNumericalValidation
+  supportInterpreter := true
+
 lean_exe Level3Benchmarks where
   root := `Test.BenchmarksLevel3
 
