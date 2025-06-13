@@ -1,4 +1,5 @@
 import LeanBLAS.CBLAS.LevelOne
+import LeanBLAS.CBLAS.LevelOneComplex
 import LeanBLAS.CBLAS.LevelTwo
 import LeanBLAS.CBLAS.LevelThree
 import LeanBLAS.Spec.LevelOne

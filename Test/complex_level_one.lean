@@ -1,4 +1,5 @@
 import LeanBLAS
+import LeanBLAS.CBLAS.LevelOneComplex
 
 open BLAS CBLAS
 

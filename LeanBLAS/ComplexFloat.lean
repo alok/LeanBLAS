@@ -166,6 +166,13 @@ def ComplexFloatArray.mkEmpty : ComplexFloatArray := ⟨FloatArray.empty⟩
 def ComplexFloatArray.push (a : ComplexFloatArray) (c : ComplexFloat) : ComplexFloatArray :=
   ⟨(a.data.push c.x).push c.y⟩
 
+def ComplexFloatArray.ofArray (xs : Array ComplexFloat) : ComplexFloatArray := Id.run do
+  let mut data := FloatArray.empty
+  for x in xs do
+    data := data.push x.x
+    data := data.push x.y
+  return ⟨data⟩
+
 
 instance : ToString ComplexFloatArray where
   toString a := Id.run do

@@ -89,4 +89,4 @@ opaque ComplexFloat64Array.toComplexFloatArray (a : ComplexFloat64Array) : Compl
 
 /-- Convenient syntax for creating ComplexFloat64Arrays from literals.
     Example: `#c64[⟨1.0, 2.0⟩, ⟨3.0, 4.0⟩]` creates a ComplexFloat64Array with two complex numbers. -/
-macro "#c64[" xs:term,* "]" : term => `((ComplexFloatArray.mk #[$xs,*]).toComplexFloat64Array)
+macro "#c64[" xs:term,* "]" : term => `((ComplexFloatArray.ofArray #[$xs,*]).toComplexFloat64Array)

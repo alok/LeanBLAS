@@ -100,7 +100,10 @@ LEAN_EXPORT lean_obj_res leanblas_cblas_zswap(const size_t N, lean_obj_arg X, co
   ensure_exclusive_byte_array(&Y);
   cblas_zswap((int)N, (void *)(lean_float_array_cptr(X) + 2*offX), (int)incX,
                       (void *)(lean_float_array_cptr(Y) + 2*offY), (int)incY);
-  return lean_alloc_ctor2(0, 2, 0, X, Y);
+  lean_obj_res result = lean_alloc_ctor(0, 2, 0);
+  lean_ctor_set(result, 0, X);
+  lean_ctor_set(result, 1, Y);
+  return result;
 }
 
 LEAN_EXPORT lean_obj_res leanblas_cblas_zcopy(const size_t N, const b_lean_obj_arg X, const size_t offX, const size_t incX,
