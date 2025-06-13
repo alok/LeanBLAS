@@ -164,6 +164,10 @@ lean_exe ComplexLevel2Comprehensive where
   root := `Test.ComplexLevel2Comprehensive
   supportInterpreter := true
 
+lean_exe ComplexExamples where
+  root := `examples.ComplexExamples
+  supportInterpreter := true
+
 
 -- ----------------------------------------------------------------------------------------------------
 -- -- Download and build OpenBLAS ---------------------------------------------------------------------
