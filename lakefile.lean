@@ -106,6 +106,18 @@ lean_exe ComplexBLASTest where
   root := `test.ComplexBLASTest
   supportInterpreter := true
 
+lean_exe ComplexCorrectnessLevel1 where
+  root := `Test.ComplexCorrectnessLevel1
+  supportInterpreter := true
+
+lean_exe ComplexCorrectnessLevel1Simple where
+  root := `Test.ComplexCorrectnessLevel1Simple
+  supportInterpreter := true
+
+lean_exe ComplexDirectTest where
+  root := `Test.ComplexDirectTest
+  supportInterpreter := true
+
 lean_exe Level3Benchmarks where
   root := `Test.BenchmarksLevel3
 
