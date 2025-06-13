@@ -37,4 +37,26 @@ def main : IO Unit := do
   IO.println s!"  Index of max imaginary part in [1+5i, 3+2i, 2+4i]: {maxImIdx}"
   IO.println s!"  Expected: 0 (element 1+5i has max imaginary part)"
   
+  -- Test element-wise operations
+  IO.println "\nTesting element-wise operations:"
+  
+  -- Test mul
+  let x3 := #c64[⟨2.0, 3.0⟩, ⟨1.0, -1.0⟩]
+  let y3 := #c64[⟨1.0, 2.0⟩, ⟨3.0, 4.0⟩]
+  let mulResult := LevelOneDataExt.mul (Array := ComplexFloat64Array) (R := Float) (K := ComplexFloat) 2 x3 0 1 y3 0 1
+  IO.println s!"  Element-wise mul: [2+3i, 1-i] * [1+2i, 3+4i]"
+  IO.println s!"  Expected: [(2+3i)*(1+2i), (1-i)*(3+4i)] = [-4+7i, 7+i]"
+  
+  -- Test sqrt
+  let x4 := #c64[⟨4.0, 0.0⟩, ⟨-1.0, 0.0⟩]
+  let sqrtResult := LevelOneDataExt.sqrt (Array := ComplexFloat64Array) (R := Float) (K := ComplexFloat) 2 x4 0 1
+  IO.println s!"  Element-wise sqrt: sqrt([4+0i, -1+0i])"
+  IO.println s!"  Expected: [2+0i, 0+i]"
+  
+  -- Test abs
+  let x5 := #c64[⟨3.0, 4.0⟩, ⟨-5.0, 12.0⟩]
+  let absResult := LevelOneDataExt.abs (Array := ComplexFloat64Array) (R := Float) (K := ComplexFloat) 2 x5 0 1
+  IO.println s!"  Element-wise abs: |[3+4i, -5+12i]|"
+  IO.println s!"  Expected: [5+0i, 13+0i]"
+  
   IO.println "\nAll extended operations tests completed!"

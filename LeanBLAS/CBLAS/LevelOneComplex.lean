@@ -182,14 +182,162 @@ instance : LevelOneDataExt ComplexFloat64Array Float ComplexFloat where
         else minIdx
     findMinIm 0 0 (1.0 / 0.0)
     
-  mul N X offX incX Y offY incY := sorry  -- TODO: element-wise multiplication
-  div N X offX incX Y offY incY := sorry  -- TODO: element-wise division
-  inv N X offX incX := sorry  -- TODO: element-wise reciprocal
-  abs N X offX incX := sorry  -- TODO: element-wise absolute value
-  sqrt N X offX incX := sorry  -- TODO: element-wise square root
-  exp N X offX incX := sorry  -- TODO: element-wise exponential
-  log N X offX incX := sorry  -- TODO: element-wise logarithm
-  sin N X offX incX := sorry  -- TODO: element-wise sine
-  cos N X offX incX := sorry  -- TODO: element-wise cosine
+  mul N X offX incX Y offY incY := 
+    -- Element-wise multiplication: Z[i] = X[i] * Y[i]
+    let xArr := X.toComplexFloatArray
+    let yArr := Y.toComplexFloatArray
+    let floatData := Array.replicate (N * 2) 0.0
+    let result := FloatArray.mk (floatData.mapIdx fun idx _ =>
+      let i := idx / 2
+      let isReal := idx % 2 = 0
+      if i < N then
+        let xi := offX + i * incX
+        let yi := offY + i * incY
+        if xi < xArr.size && yi < yArr.size then
+          let x := xArr.get! xi
+          let y := yArr.get! yi
+          let prod := x * y
+          if isReal then prod.x else prod.y
+        else 0.0
+      else 0.0)
+    ComplexFloatArray.toComplexFloat64Array { data := result }
+    
+  div N X offX incX Y offY incY := 
+    -- Element-wise division: Z[i] = X[i] / Y[i]
+    let xArr := X.toComplexFloatArray
+    let yArr := Y.toComplexFloatArray
+    let floatData := Array.replicate (N * 2) 0.0
+    let result := FloatArray.mk (floatData.mapIdx fun idx _ =>
+      let i := idx / 2
+      let isReal := idx % 2 = 0
+      if i < N then
+        let xi := offX + i * incX
+        let yi := offY + i * incY
+        if xi < xArr.size && yi < yArr.size then
+          let x := xArr.get! xi
+          let y := yArr.get! yi
+          let quot := x / y
+          if isReal then quot.x else quot.y
+        else 0.0
+      else 0.0)
+    ComplexFloatArray.toComplexFloat64Array { data := result }
+    
+  inv N X offX incX := 
+    -- Element-wise reciprocal: Z[i] = 1 / X[i]
+    let xArr := X.toComplexFloatArray
+    let floatData := Array.replicate (N * 2) 0.0
+    let result := FloatArray.mk (floatData.mapIdx fun idx _ =>
+      let i := idx / 2
+      let isReal := idx % 2 = 0
+      if i < N then
+        let xi := offX + i * incX
+        if xi < xArr.size then
+          let x := xArr.get! xi
+          let inv := ComplexFloat.one / x
+          if isReal then inv.x else inv.y
+        else 0.0
+      else 0.0)
+    ComplexFloatArray.toComplexFloat64Array { data := result }
+    
+  abs N X offX incX := 
+    -- Element-wise absolute value: Z[i] = |X[i]| (returns real array in complex format)
+    let xArr := X.toComplexFloatArray
+    let floatData := Array.replicate (N * 2) 0.0
+    let result := FloatArray.mk (floatData.mapIdx fun idx _ =>
+      let i := idx / 2
+      let isReal := idx % 2 = 0
+      if i < N then
+        let xi := offX + i * incX
+        if xi < xArr.size then
+          let x := xArr.get! xi
+          if isReal then ComplexFloat.abs x else 0.0  -- Store magnitude in real part
+        else 0.0
+      else 0.0)
+    ComplexFloatArray.toComplexFloat64Array { data := result }
+    
+  sqrt N X offX incX := 
+    -- Element-wise square root: Z[i] = sqrt(X[i])
+    let xArr := X.toComplexFloatArray
+    let floatData := Array.replicate (N * 2) 0.0
+    let result := FloatArray.mk (floatData.mapIdx fun idx _ =>
+      let i := idx / 2
+      let isReal := idx % 2 = 0
+      if i < N then
+        let xi := offX + i * incX
+        if xi < xArr.size then
+          let x := xArr.get! xi
+          let sqrt := ComplexFloat.sqrt x
+          if isReal then sqrt.x else sqrt.y
+        else 0.0
+      else 0.0)
+    ComplexFloatArray.toComplexFloat64Array { data := result }
+    
+  exp N X offX incX := 
+    -- Element-wise exponential: Z[i] = exp(X[i])
+    let xArr := X.toComplexFloatArray
+    let floatData := Array.replicate (N * 2) 0.0
+    let result := FloatArray.mk (floatData.mapIdx fun idx _ =>
+      let i := idx / 2
+      let isReal := idx % 2 = 0
+      if i < N then
+        let xi := offX + i * incX
+        if xi < xArr.size then
+          let x := xArr.get! xi
+          let exp := ComplexFloat.exp x
+          if isReal then exp.x else exp.y
+        else 0.0
+      else 0.0)
+    ComplexFloatArray.toComplexFloat64Array { data := result }
+    
+  log N X offX incX := 
+    -- Element-wise logarithm: Z[i] = log(X[i])
+    let xArr := X.toComplexFloatArray
+    let floatData := Array.replicate (N * 2) 0.0
+    let result := FloatArray.mk (floatData.mapIdx fun idx _ =>
+      let i := idx / 2
+      let isReal := idx % 2 = 0
+      if i < N then
+        let xi := offX + i * incX
+        if xi < xArr.size then
+          let x := xArr.get! xi
+          let log := ComplexFloat.log x
+          if isReal then log.x else log.y
+        else 0.0
+      else 0.0)
+    ComplexFloatArray.toComplexFloat64Array { data := result }
+    
+  sin N X offX incX := 
+    -- Element-wise sine: Z[i] = sin(X[i])
+    let xArr := X.toComplexFloatArray
+    let floatData := Array.replicate (N * 2) 0.0
+    let result := FloatArray.mk (floatData.mapIdx fun idx _ =>
+      let i := idx / 2
+      let isReal := idx % 2 = 0
+      if i < N then
+        let xi := offX + i * incX
+        if xi < xArr.size then
+          let x := xArr.get! xi
+          let sin := ComplexFloat.sin x
+          if isReal then sin.x else sin.y
+        else 0.0
+      else 0.0)
+    ComplexFloatArray.toComplexFloat64Array { data := result }
+    
+  cos N X offX incX := 
+    -- Element-wise cosine: Z[i] = cos(X[i])
+    let xArr := X.toComplexFloatArray
+    let floatData := Array.replicate (N * 2) 0.0
+    let result := FloatArray.mk (floatData.mapIdx fun idx _ =>
+      let i := idx / 2
+      let isReal := idx % 2 = 0
+      if i < N then
+        let xi := offX + i * incX
+        if xi < xArr.size then
+          let x := xArr.get! xi
+          let cos := ComplexFloat.cos x
+          if isReal then cos.x else cos.y
+        else 0.0
+      else 0.0)
+    ComplexFloatArray.toComplexFloat64Array { data := result }
 
 end BLAS.CBLAS
