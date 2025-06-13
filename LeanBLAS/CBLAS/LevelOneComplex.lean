@@ -25,6 +25,8 @@ namespace BLAS.CBLAS
 
 open Sorry
 
+set_option linter.unusedVariables false
+
 /-- CBLAS implementation of Level 1 BLAS operations for ComplexFloat64Array.
 
 This instance provides efficient complex vector operations through FFI calls
@@ -54,7 +56,7 @@ instance : LevelOneData ComplexFloat64Array Float ComplexFloat where
   -- Givens rotations for complex numbers
   -- These would need proper implementation
   rotg a b := (1.0, ComplexFloat.zero, ComplexFloat.zero, ComplexFloat.zero)  -- Placeholder
-  rotmg d1 d2 b1 b2 := (0.0, 0.0, 0.0, 0.0, 0.0)  -- Placeholder
+  rotmg d1 d2 b1 b2 := (0.0, 0.0, 0.0, 0.0, ComplexFloat.zero)  -- Placeholder
   rot N X offX incX Y offY incY c s := (X, Y)  -- Identity placeholder
   
   -- Scaling operations
