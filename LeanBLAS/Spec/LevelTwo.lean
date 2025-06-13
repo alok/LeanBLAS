@@ -484,8 +484,12 @@ theorem gemv_linear_alpha (order : Order) (transA : Transpose) (M N : Nat)
   let Y1 := LevelTwoData.gemv order transA M N alpha1 A offA lda X offX incX beta Y offY incY
   let Y2 := LevelTwoData.gemv order transA M N alpha2 A offA lda X offX incX beta Y offY incY
   let Y12 := LevelTwoData.gemv order transA M N (alpha1 + alpha2) A offA lda X offX incX beta Y offY incY
-  gemv_spec order transA M N (alpha1 + alpha2) A offA lda X offX incX beta Y offY incY Y12 :=
-sorry
+  gemv_spec order transA M N (alpha1 + alpha2) A offA lda X offX incX beta Y offY incY Y12 := by
+  -- The proof follows from the distributive property of multiplication over addition
+  -- For each element i: Y12[i] = (alpha1 + alpha2) * (A * X)[i] + beta * Y[i]
+  --                            = alpha1 * (A * X)[i] + alpha2 * (A * X)[i] + beta * Y[i]
+  -- This property should hold by the linearity of the underlying field operations
+  sorry  -- TODO: Complete formal proof using field properties
 
 ----------------------------------------------------------------------------------------------------
 -- TRMV Specifications
@@ -588,8 +592,13 @@ theorem gemv_identity_is_copy (order : Order) (N : Nat) (X Y : Array) (offX incX
   (A : Array) (offA : Nat) (lda : Nat)
   (h_identity : ∀ i j, i < N → j < N → getMatrix order A offA lda i j = if i = j then (1 : K) else (0 : K)) :
   let Y' := LevelTwoData.gemv order Transpose.NoTrans N N (1 : K) A offA lda X offX incX (0 : K) Y offY incY
-  ∀ i < N, getVector Y' offY incY i = getVector X offX incX i :=
-sorry
+  ∀ i < N, getVector Y' offY incY i = getVector X offX incX i := by
+  intro i hi
+  -- By GEMV spec: Y'[i] = 1 * Σⱼ A[i,j] * X[j] + 0 * Y[i]
+  --                    = Σⱼ A[i,j] * X[j]
+  -- Since A is identity: A[i,j] = 1 if i=j, 0 otherwise
+  -- So: Y'[i] = X[i]
+  sorry  -- TODO: Complete using properties of identity matrix and summation
 
 /-- HER is equivalent to GER for real scalars -/
 theorem her_equals_ger_for_real (order : Order) (uplo : UpLo) (N : Nat) (alpha : K)

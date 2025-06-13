@@ -102,6 +102,10 @@ lean_exe ComplexExtTest where
   root := `Test.ComplexExtTest
   supportInterpreter := true
 
+lean_exe ComplexValidation where
+  root := `Test.ComplexValidation
+  supportInterpreter := true
+
 lean_exe ComplexLevelTwo where
   root := `test.ComplexLevelTwo
   supportInterpreter := true
