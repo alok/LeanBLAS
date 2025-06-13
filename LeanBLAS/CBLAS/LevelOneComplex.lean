@@ -72,4 +72,23 @@ def unconjugated_dot (N : Nat) (X : ComplexFloat64Array) (offX incX : Nat) (Y : 
 def scal_real (N : Nat) (a : Float) (X : ComplexFloat64Array) (offX incX : Nat) : ComplexFloat64Array :=
   zdscal N.toUSize a X offX.toUSize incX.toUSize
 
+instance : LevelOneDataExt ComplexFloat64Array Float ComplexFloat where
+  const N a := sorry  -- TODO: implement const array creation
+  sum := sorry  -- TODO: implement zsum
+  axpby := sorry  -- TODO: implement zaxpby
+  scaladd := sorry  -- TODO: implement zscaladd
+  imaxRe := sorry  -- TODO: implement izamaxRe
+  imaxIm := sorry  -- TODO: implement izamaxIm
+  iminRe := sorry  -- TODO: implement izaminRe
+  iminIm := sorry  -- TODO: implement izaminIm
+  mul := sorry  -- TODO: implement zmul
+  div := sorry  -- TODO: implement zdiv
+  inv := sorry  -- TODO: implement zinv
+  abs := sorry  -- TODO: implement zabs
+  sqrt := sorry  -- TODO: implement zsqrt
+  exp := sorry  -- TODO: implement zexp
+  log := sorry  -- TODO: implement zlog
+  sin := sorry  -- TODO: implement zsin
+  cos := sorry  -- TODO: implement zcos
+
 end BLAS.CBLAS

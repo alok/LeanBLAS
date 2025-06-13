@@ -7,7 +7,9 @@ Authors: The LeanBLAS Development Team
 import LeanBLAS.Spec.LevelOne
 import LeanBLAS.Spec.LevelTwo
 import LeanBLAS.CBLAS.LevelOne
+import LeanBLAS.CBLAS.LevelOneComplex
 import LeanBLAS.CBLAS.LevelTwo
+import LeanBLAS.CBLAS.LevelTwoComplex
 
 -- Enable missing documentation linter for this file
 set_option linter.missingDocs true
@@ -53,6 +55,14 @@ This provides BLAS operations for arrays of double-precision floating point numb
 which is the most common use case in scientific computing.
 -/
 instance : BLAS Float64Array Float Float where
+
+/-- Default BLAS instance for 64-bit complex floating point arrays.
+
+This provides BLAS operations for arrays of double-precision complex floating point numbers,
+commonly used in signal processing, quantum mechanics, and other applications requiring
+complex arithmetic.
+-/
+instance : BLAS ComplexFloat64Array Float ComplexFloat where
 
 
 /-- 
