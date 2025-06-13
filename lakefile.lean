@@ -114,6 +114,10 @@ lean_exe ComplexEdgeCases where
   root := `Test.ComplexEdgeCases
   supportInterpreter := true
 
+lean_exe ComplexPerformance where
+  root := `Test.ComplexPerformance
+  supportInterpreter := true
+
 lean_exe ComplexLevelTwo where
   root := `test.ComplexLevelTwo
   supportInterpreter := true
