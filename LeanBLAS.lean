@@ -7,4 +7,5 @@ import LeanBLAS.Spec.LevelTwo
 import LeanBLAS.Spec.LevelThree
 import LeanBLAS.ComplexFloat
 import LeanBLAS.BLAS
+import LeanBLAS.ComplexArray
 

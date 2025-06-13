@@ -118,6 +118,10 @@ lean_exe ComplexPerformance where
   root := `Test.ComplexPerformance
   supportInterpreter := true
 
+lean_exe ComplexArrayTest where
+  root := `Test.ComplexArrayTest
+  supportInterpreter := true
+
 lean_exe ComplexLevelTwo where
   root := `test.ComplexLevelTwo
   supportInterpreter := true
