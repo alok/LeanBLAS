@@ -118,9 +118,9 @@ LEAN_EXPORT lean_obj_res leanblas_complex_float_array_to_byte_array(lean_obj_arg
   lean_set_st_header((lean_object*)o, LeanScalarArray, 1);
   
   // Debug output
-  printf("DEBUG: Created ComplexFloat64Array\n");
-  printf("  ByteArray size: %zu\n", lean_sarray_size(r));
-  printf("  Expected complex count: %zu\n", lean_sarray_size(r) / 16);
+  // printf("DEBUG: Created ComplexFloat64Array\n");
+  // printf("  ByteArray size: %zu\n", lean_sarray_size(r));
+  // printf("  Expected complex count: %zu\n", lean_sarray_size(r) / 16);
   
   // For single-field structures, Lean may expect just the field
   // So we return the ByteArray directly

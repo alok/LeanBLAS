@@ -14,6 +14,17 @@ CBLAS_DIAG leanblas_cblas_diag(const uint8_t diag);
 // Helper function to get pointer to complex data from ComplexFloat64Array
 static inline double* lean_complex_float64_array_cptr(b_lean_obj_arg arr) {
     // ComplexFloat64Array is a structure with a ByteArray at field 0
-    lean_object* byte_array = lean_ctor_get(arr, 0);
-    return (double*)lean_sarray_cptr(byte_array);
+    // But Lean may optimize single-field structures and pass the ByteArray directly
+    
+    if (lean_is_sarray(arr)) {
+        // We received the ByteArray directly (single-field structure optimization)
+        return (double*)lean_sarray_cptr(arr);
+    } else if (lean_is_ctor(arr)) {
+        // We received the ComplexFloat64Array structure
+        lean_object* byte_array = lean_ctor_get(arr, 0);
+        return (double*)lean_sarray_cptr(byte_array);
+    } else {
+        // This shouldn't happen
+        return NULL;
+    }
 }

@@ -168,26 +168,6 @@ lean_exe ComplexExamples where
   root := `examples.ComplexExamples
   supportInterpreter := true
 
-lean_exe TestComplexFFI2 where
-  root := `test_complex_ffi2
-  supportInterpreter := true
-
-lean_exe TestComplexFFIWorking where
-  root := `test_complex_ffi_working
-  supportInterpreter := true
-
-lean_exe TestDebugStructure where
-  root := `test_debug_structure
-  supportInterpreter := true
-
-lean_exe TestWrapperApproach where
-  root := `test_wrapper_approach
-  supportInterpreter := true
-
-lean_exe TestDirectComplex where
-  root := `test_direct_complex
-  supportInterpreter := true
-
 
 -- ----------------------------------------------------------------------------------------------------
 -- -- Download and build OpenBLAS ---------------------------------------------------------------------
