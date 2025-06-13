@@ -69,9 +69,10 @@
 
 ### 📈 **Future Enhancements**
 1. **GraphBLAS support**: Sparse matrix operations
-2. **Complex number support**: Extend to ZGEMM, CGEMM
+2. **Single precision complex**: ComplexFloat32 support (CGEMM, etc.)
 3. **GPU acceleration**: CUDA/OpenCL bindings
 4. **Formal verification**: Complete mathematical proofs
+5. **Performance optimizations**: Complex-specific algorithms
 
 ## 🏆 **Achievements**
 

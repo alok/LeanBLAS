@@ -14,10 +14,12 @@ LeanBLAS provides type-safe BLAS operations with a focus on mathematical correct
 ## Features
 
 - **Complete BLAS Coverage**: Level 1, 2, and 3 operations with type-safe interfaces
-- **Complex Number Support**: Full support for complex arithmetic operations
+- **Full Complex Number Support**: 
   - ComplexFloat64 arrays with efficient interleaved storage
-  - Complex-specific operations (hemm, herk, her2k)
+  - All standard complex BLAS operations (z-prefixed)
+  - Complex-specific operations (hemv, hemm, herk, her2k)
   - Hermitian and symmetric matrix operations
+  - Conjugate transpose support
 - **FFI Bindings**: Efficient integration with OpenBLAS/system BLAS
 - **Mathematical Formalization**: Specifications using Lean's type system
 - **World-Class Testing**:
@@ -98,9 +100,9 @@ import LeanBLAS
 def x := #f64[1.0, 2.0, 3.0, 4.0]
 def y := #f64[5.0, 6.0, 7.0, 8.0]
 
--- Complex numbers use ComplexFloat type
-def z1 : ComplexFloat := ⟨1.0, 2.0⟩  -- 1 + 2i
-def z2 : ComplexFloat := ⟨3.0, -1.0⟩ -- 3 - i
+-- Create complex arrays using the #c64[...] syntax
+def cx := #c64[⟨1.0, 2.0⟩, ⟨3.0, -1.0⟩]  -- [1+2i, 3-i]
+def cy := #c64[⟨2.0, 0.0⟩, ⟨0.0, 1.0⟩]   -- [2+0i, 0+i]
 ```
 
 ### Level 1 Examples (Vector Operations)
@@ -176,24 +178,36 @@ def test_gemm : IO Unit := do
 
 ```lean
 import LeanBLAS
-import LeanBLAS.CBLAS.LevelTwoComplex
+import LeanBLAS.CBLAS.LevelOneComplex
 
--- Complex matrix-vector multiplication (ZGEMV)
-def test_complex_gemv : IO Unit := do
-  -- Create complex vector x = [1+i, 2+0i]
-  let x := ComplexFloat64Array.mk <| ByteArray.mk #[
-    -- Bytes for 1.0 + 1.0i
-    0, 0, 0, 0, 0, 0, 240, 63,  -- 1.0 (real)
-    0, 0, 0, 0, 0, 0, 240, 63,  -- 1.0 (imag)
-    -- Bytes for 2.0 + 0.0i
-    0, 0, 0, 0, 0, 0, 0, 64,    -- 2.0 (real)
-    0, 0, 0, 0, 0, 0, 0, 0      -- 0.0 (imag)
-  ] (by decide)
+-- Complex dot product
+def test_complex_dot : IO Unit := do
+  let x := #c64[⟨1.0, 2.0⟩, ⟨3.0, -1.0⟩]  -- [1+2i, 3-i]
+  let y := #c64[⟨2.0, 0.0⟩, ⟨1.0, 1.0⟩]   -- [2+0i, 1+i]
   
-  -- Hermitian matrix-vector multiplication
-  let result := BLAS.CBLAS.hemv 
-    Order.RowMajor UpLo.Upper 
-    2 ⟨1.0, 0.0⟩ A 0 2 x 0 1 ⟨0.0, 0.0⟩ y 0 1
+  -- Conjugate dot product: conj(x) · y
+  let dot_c := BLAS.CBLAS.dot 2 x 0 1 y 0 1
+  IO.println s!"Conjugate dot: {dot_c}"  -- (1-2i)*(2) + (3+i)*(1+i) = 2-4i + 2+4i = 4
+  
+  -- 2-norm of complex vector
+  let norm := BLAS.CBLAS.nrm2 2 x 0 1
+  IO.println s!"2-norm: {norm}"  -- sqrt(|1+2i|² + |3-i|²) = sqrt(5 + 10) = sqrt(15)
+
+-- Complex matrix operations
+import LeanBLAS.CBLAS.LevelThreeComplex
+
+def test_complex_gemm : IO Unit := do
+  -- A = [1+i, 2; 0+i, 3-i], B = [1, i; 2i, 1]
+  let A := #c64[⟨1.0, 1.0⟩, ⟨2.0, 0.0⟩, ⟨0.0, 1.0⟩, ⟨3.0, -1.0⟩]
+  let B := #c64[⟨1.0, 0.0⟩, ⟨0.0, 1.0⟩, ⟨0.0, 2.0⟩, ⟨1.0, 0.0⟩]
+  let C := #c64[⟨0.0, 0.0⟩, ⟨0.0, 0.0⟩, ⟨0.0, 0.0⟩, ⟨0.0, 0.0⟩]
+  
+  -- C = A * B
+  let result := BLAS.CBLAS.gemm Order.RowMajor 
+    Transpose.NoTrans Transpose.NoTrans
+    2 2 2 ComplexFloat.one A 0 2 B 0 2 ComplexFloat.zero C 0 2
+  
+  IO.println "Complex matrix multiplication completed"
 ```
 
 ## Testing Framework
