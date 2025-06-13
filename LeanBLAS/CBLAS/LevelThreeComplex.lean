@@ -147,7 +147,7 @@ private def ztrsm' (order : Order) (side : Side) (uplo : Uplo) (transA : Transpo
 
 This instance provides optimized complex matrix-matrix operations through FFI
 bindings to CBLAS libraries. -/
-instance : LevelThreeData ComplexFloat64Array ComplexFloat ComplexFloat where
+instance : LevelThreeData ComplexFloat64Array Float ComplexFloat where
   gemm order transA transB M N K alpha A offA lda B offB ldb beta C offC ldc :=
     zgemm' order transA transB M N K alpha A offA lda B offB ldb beta C offC ldc
   symm order side uplo M N alpha A offA lda B offB ldb beta C offC ldc :=

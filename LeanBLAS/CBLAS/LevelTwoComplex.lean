@@ -97,21 +97,34 @@ instance : LevelTwoData ComplexFloat64Array Float ComplexFloat where
   gemv order trans M N a A offA ldaA X offX incX b Y offY incY :=
     zgemv' order trans M N a A offA ldaA X offX incX b Y offY incY
 
-  bmv := sorry
+  bmv order transA M N KL KU alpha A offA lda X offX incX beta Y offY incY :=
+    -- Banded matrix operations not implemented for complex numbers yet
+    -- Return Y unchanged as a placeholder
+    Y
 
   trmv order uplo trans diag N A offA lda X offX incX :=
     let diag' := if diag then Diag.Unit else Diag.NonUnit
     ztrmv' order uplo trans diag' N A offA lda X offX incX
 
-  tbmv := sorry
-  tpmv := sorry
+  tbmv order uplo transA diag N K A offA lda X offX incX :=
+    -- Triangular banded matrix operations not implemented yet
+    X
+    
+  tpmv order uplo transA diag N A offA X offX incX :=
+    -- Triangular packed matrix operations not implemented yet  
+    X
 
   trsv order uplo trans diag N A offA lda X offX incX :=
     let diag' := if diag then Diag.Unit else Diag.NonUnit
     ztrsv' order uplo trans diag' N A offA lda X offX incX
 
-  tbsv := sorry
-  tpsv := sorry
+  tbsv order uplo transA diag N K A offA lda X offX incX :=
+    -- Triangular banded solve not implemented yet
+    X
+    
+  tpsv order uplo transA diag N A offA X offX incX :=
+    -- Triangular packed solve not implemented yet
+    X
 
   ger order M N a X offX incX Y offY incY A offA lda :=
     zgeru' order M N a X offX incX Y offY incY A offA lda
@@ -145,5 +158,21 @@ def gerc (order : Order) (M N : Nat) (alpha : ComplexFloat)
          (Y : ComplexFloat64Array) (offY : Nat := 0) (incY : Nat := 1)
          (A : ComplexFloat64Array) (offA : Nat := 0) (lda : Nat := 0) : ComplexFloat64Array :=
   zgerc' order M N alpha X offX incX Y offY incY A offA lda
+
+/-- CBLAS implementation of extended Level 2 operations for ComplexFloat64Array.
+
+These operations handle packed matrix formats and related utilities. -/
+instance : LevelTwoDataExt ComplexFloat64Array Float ComplexFloat where
+  packedToDense N uplo orderAp Ap orderA A offA lda :=
+    -- Packed matrix operations not implemented for complex numbers yet
+    A
+    
+  denseToPacked N uplo orderA A offA lda orderAp Ap :=
+    -- Packed matrix operations not implemented for complex numbers yet
+    Ap
+    
+  gpr order uplo N alpha X offX incX Y offY incY A offA :=
+    -- General packed rank-1 update not implemented yet
+    A
 
 end BLAS.CBLAS

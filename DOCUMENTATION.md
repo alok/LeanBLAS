@@ -42,5 +42,12 @@ example : usage
 - [ ] LeanBLAS/Spec/LevelTwo.lean - Level 2 BLAS operations  
 - [ ] LeanBLAS/Spec/LevelThree.lean - Level 3 BLAS operations
 - [ ] LeanBLAS/CBLAS/*.lean - Implementation modules
-- [ ] LeanBLAS/ComplexFloat.lean - Complex number support
+- [x] LeanBLAS/ComplexFloat.lean - Complex number support (fully documented)
 - [ ] LeanBLAS/FFI/*.lean - Foreign function interface bindings
+- [x] LeanBLAS/CBLAS/LevelOneComplex.lean - Complex Level 1 operations (documented)
+- [x] LeanBLAS/CBLAS/LevelTwoComplex.lean - Complex Level 2 operations (documented)
+- [x] LeanBLAS/CBLAS/LevelThreeComplex.lean - Complex Level 3 operations (documented)
+
+## Complex Number Documentation
+
+For comprehensive documentation on complex number support in LeanBLAS, see [docs/COMPLEX.md](docs/COMPLEX.md).

@@ -346,6 +346,7 @@ LeanBLAS/
 
 - **In-Code Documentation**: Mathematical specifications in source files
 - **`DOCUMENTATION.md`**: Documentation standards and guidelines
+- **`docs/COMPLEX.md`**: Comprehensive guide to complex number support
 - **`STATUS.md`**: Detailed implementation status and test results
 - **`AGENT.md`**: Development workflow and build commands
 

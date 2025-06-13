@@ -66,6 +66,9 @@ This provides BLAS operations for arrays of double-precision complex floating po
 commonly used in signal processing, quantum mechanics, and other applications requiring
 complex arithmetic.
 -/
+-- The instance for ComplexFloat64Array is automatically derived from the
+-- LevelOneData, LevelOneDataExt, LevelTwoData, and LevelThreeData instances
+-- defined in the CBLAS complex modules
 instance : BLAS ComplexFloat64Array Float ComplexFloat where
 
 

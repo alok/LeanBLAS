@@ -26,7 +26,7 @@ def test_complex_level1 : IO Unit := do
   --                                    = 3+4i + (2-4i+1i-2i²) 
   --                                    = 3+4i + (2-3i+2)
   --                                    = 3+4i + 4-3i = 7+1i
-  let dot_result := LevelOneData.dotu 2 x1 0 1 y1 0 1
+  let dot_result := CBLAS.zdotu 2 x1 0 1 y1 0 1
   IO.println s!"  Expected: 7+1i"
   IO.println s!"  Got: {dot_result}"
   
@@ -34,13 +34,13 @@ def test_complex_level1 : IO Unit := do
   IO.println "\nTesting zscal (complex scaling):"
   let scale_factor : ComplexFloat := ⟨2.0, -1.0⟩  -- 2-i
   let x_copy := x1  -- Would need proper copy in real test
-  let scaled := LevelOneData.scal 2 scale_factor x_copy 0 1
+  let scaled := CBLAS.zscal 2 scale_factor x_copy 0 1
   IO.println s!"  Scaling [1+0i, 2+1i] by {scale_factor}"
   IO.println "  Expected: [2-i, 5+0i]"
   
   -- Test znrm2 (2-norm)
   IO.println "\nTesting znrm2 (2-norm):"
-  let norm := LevelOneData.nrm2 2 x1 0 1
+  let norm := CBLAS.dznrm2 2 x1 0 1
   IO.println s!"  ||[1+0i, 2+1i]||₂ = sqrt(1² + 2² + 1²) = sqrt(6) ≈ {norm}"
 
 /-- Test complex Level 2 operations -/
@@ -134,7 +134,7 @@ def test_complex_level3 : IO Unit := do
   ]) (by decide)
   
   -- C = A * B
-  let result := LevelThreeData.gemm Order.RowMajor Transpose.NoTrans Transpose.NoTrans 
+  let result := CBLAS.zgemm Order.RowMajor Transpose.NoTrans Transpose.NoTrans 
                 2 2 2 ⟨1.0, 0.0⟩ A 0 2 B 0 2 ⟨0.0, 0.0⟩ C 0 2
   IO.println "  C = A * B where:"
   IO.println "  A = [[1+i, 2], [3, 4+i]], B = [[5, 6+i], [7+i, 8]]"
