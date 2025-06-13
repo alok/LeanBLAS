@@ -6,10 +6,13 @@ Authors: The LeanBLAS Development Team
 
 import LeanBLAS.Spec.LevelOne
 import LeanBLAS.Spec.LevelTwo
+import LeanBLAS.Spec.LevelThree
 import LeanBLAS.CBLAS.LevelOne
 import LeanBLAS.CBLAS.LevelOneComplex
 import LeanBLAS.CBLAS.LevelTwo
 import LeanBLAS.CBLAS.LevelTwoComplex
+import LeanBLAS.CBLAS.LevelThree
+import LeanBLAS.CBLAS.LevelThreeComplex
 
 -- Enable missing documentation linter for this file
 set_option linter.missingDocs true
@@ -46,7 +49,8 @@ class BLAS (Array : Type*) (R K : outParam Type*)
   extends
     LevelOneData Array R K,
     LevelOneDataExt Array R K,
-    LevelTwoData Array R K
+    LevelTwoData Array R K,
+    LevelThreeData Array R K
   where
 
 /-- Default BLAS instance for 64-bit floating point arrays.

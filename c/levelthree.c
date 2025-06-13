@@ -1,5 +1,6 @@
 #include "util.h"
 #include <cblas.h>
+#include <complex.h>
 #include <lean/lean.h>
 
 /** dgemm
@@ -235,6 +236,272 @@ LEAN_EXPORT lean_obj_res leanblas_cblas_dtrsm(
                 leanblas_cblas_diag(diag), (int)M, (int)N, alpha,
                 lean_float_array_cptr(A) + offA, (int)lda,
                 lean_float_array_cptr(B) + offB, (int)ldb);
+
+    return B;
+}
+
+/** zgemm
+ *
+ * Computes a general complex matrix-matrix product.
+ * C := alpha*op(A)*op(B) + beta*C
+ *
+ * @param order Row or column major
+ * @param transA No transpose, transpose, or conjugate transpose for A
+ * @param transB No transpose, transpose, or conjugate transpose for B
+ * @param M Number of rows in matrix C and op(A)
+ * @param N Number of columns in matrix C and op(B)
+ * @param K Number of columns in op(A) and rows in op(B)
+ * @param alpha Complex scalar multiplier for A*B
+ * @param A Pointer to complex matrix A
+ * @param offA starting index of A
+ * @param lda Leading dimension of A
+ * @param B Pointer to complex matrix B
+ * @param offB starting index of B
+ * @param ldb Leading dimension of B
+ * @param beta Complex scalar multiplier for C
+ * @param C Pointer to complex matrix C
+ * @param offC starting index of C
+ * @param ldc Leading dimension of C
+ *
+ * @return C with the result of alpha*op(A)*op(B) + beta*C
+ */
+LEAN_EXPORT lean_obj_res leanblas_cblas_zgemm(
+    const uint8_t order, const uint8_t transA, const uint8_t transB,
+    const size_t M, const size_t N, const size_t K, const lean_obj_arg alpha,
+    const b_lean_obj_arg A, const size_t offA, const size_t lda,
+    const b_lean_obj_arg B, const size_t offB, const size_t ldb,
+    const lean_obj_arg beta, lean_obj_arg C, const size_t offC, const size_t ldc) {
+    ensure_exclusive_byte_array(&C);
+
+    double alpha_real = lean_unbox_float(lean_ctor_get(alpha, 0));
+    double alpha_imag = lean_unbox_float(lean_ctor_get(alpha, 1));
+    double beta_real = lean_unbox_float(lean_ctor_get(beta, 0));
+    double beta_imag = lean_unbox_float(lean_ctor_get(beta, 1));
+    
+    double complex alpha_c = alpha_real + alpha_imag * I;
+    double complex beta_c = beta_real + beta_imag * I;
+
+    cblas_zgemm(leanblas_cblas_order(order), leanblas_cblas_transpose(transA),
+                leanblas_cblas_transpose(transB), (int)M, (int)N, (int)K, &alpha_c,
+                (const double complex *)(lean_float_array_cptr(A) + offA), (int)lda,
+                (const double complex *)(lean_float_array_cptr(B) + offB), (int)ldb, &beta_c,
+                (double complex *)(lean_float_array_cptr(C) + offC), (int)ldc);
+
+    return C;
+}
+
+/** zsymm
+ *
+ * Computes a complex matrix-matrix product where one matrix is symmetric.
+ * C := alpha*A*B + beta*C  or  C := alpha*B*A + beta*C
+ */
+LEAN_EXPORT lean_obj_res leanblas_cblas_zsymm(
+    const uint8_t order, const uint8_t side, const uint8_t uplo,
+    const size_t M, const size_t N, const lean_obj_arg alpha,
+    const b_lean_obj_arg A, const size_t offA, const size_t lda,
+    const b_lean_obj_arg B, const size_t offB, const size_t ldb,
+    const lean_obj_arg beta, lean_obj_arg C, const size_t offC, const size_t ldc) {
+    ensure_exclusive_byte_array(&C);
+
+    double alpha_real = lean_unbox_float(lean_ctor_get(alpha, 0));
+    double alpha_imag = lean_unbox_float(lean_ctor_get(alpha, 1));
+    double beta_real = lean_unbox_float(lean_ctor_get(beta, 0));
+    double beta_imag = lean_unbox_float(lean_ctor_get(beta, 1));
+    
+    double complex alpha_c = alpha_real + alpha_imag * I;
+    double complex beta_c = beta_real + beta_imag * I;
+
+    cblas_zsymm(leanblas_cblas_order(order), side == 0 ? CblasLeft : CblasRight,
+                leanblas_cblas_uplo(uplo), (int)M, (int)N, &alpha_c,
+                (const double complex *)(lean_float_array_cptr(A) + offA), (int)lda,
+                (const double complex *)(lean_float_array_cptr(B) + offB), (int)ldb, &beta_c,
+                (double complex *)(lean_float_array_cptr(C) + offC), (int)ldc);
+
+    return C;
+}
+
+/** zhemm
+ *
+ * Computes a complex matrix-matrix product where one matrix is Hermitian.
+ * C := alpha*A*B + beta*C  or  C := alpha*B*A + beta*C
+ */
+LEAN_EXPORT lean_obj_res leanblas_cblas_zhemm(
+    const uint8_t order, const uint8_t side, const uint8_t uplo,
+    const size_t M, const size_t N, const lean_obj_arg alpha,
+    const b_lean_obj_arg A, const size_t offA, const size_t lda,
+    const b_lean_obj_arg B, const size_t offB, const size_t ldb,
+    const lean_obj_arg beta, lean_obj_arg C, const size_t offC, const size_t ldc) {
+    ensure_exclusive_byte_array(&C);
+
+    double alpha_real = lean_unbox_float(lean_ctor_get(alpha, 0));
+    double alpha_imag = lean_unbox_float(lean_ctor_get(alpha, 1));
+    double beta_real = lean_unbox_float(lean_ctor_get(beta, 0));
+    double beta_imag = lean_unbox_float(lean_ctor_get(beta, 1));
+    
+    double complex alpha_c = alpha_real + alpha_imag * I;
+    double complex beta_c = beta_real + beta_imag * I;
+
+    cblas_zhemm(leanblas_cblas_order(order), side == 0 ? CblasLeft : CblasRight,
+                leanblas_cblas_uplo(uplo), (int)M, (int)N, &alpha_c,
+                (const double complex *)(lean_float_array_cptr(A) + offA), (int)lda,
+                (const double complex *)(lean_float_array_cptr(B) + offB), (int)ldb, &beta_c,
+                (double complex *)(lean_float_array_cptr(C) + offC), (int)ldc);
+
+    return C;
+}
+
+/** zsyrk
+ *
+ * Performs symmetric rank-k update for complex matrices.
+ * C := alpha*A*A^T + beta*C  or  C := alpha*A^T*A + beta*C
+ */
+LEAN_EXPORT lean_obj_res leanblas_cblas_zsyrk(
+    const uint8_t order, const uint8_t uplo, const uint8_t trans,
+    const size_t N, const size_t K, const lean_obj_arg alpha,
+    const b_lean_obj_arg A, const size_t offA, const size_t lda,
+    const lean_obj_arg beta, lean_obj_arg C, const size_t offC, const size_t ldc) {
+    ensure_exclusive_byte_array(&C);
+
+    double alpha_real = lean_unbox_float(lean_ctor_get(alpha, 0));
+    double alpha_imag = lean_unbox_float(lean_ctor_get(alpha, 1));
+    double beta_real = lean_unbox_float(lean_ctor_get(beta, 0));
+    double beta_imag = lean_unbox_float(lean_ctor_get(beta, 1));
+    
+    double complex alpha_c = alpha_real + alpha_imag * I;
+    double complex beta_c = beta_real + beta_imag * I;
+
+    cblas_zsyrk(leanblas_cblas_order(order), leanblas_cblas_uplo(uplo),
+                leanblas_cblas_transpose(trans), (int)N, (int)K, &alpha_c,
+                (const double complex *)(lean_float_array_cptr(A) + offA), (int)lda,
+                &beta_c, (double complex *)(lean_float_array_cptr(C) + offC), (int)ldc);
+
+    return C;
+}
+
+/** zherk
+ *
+ * Performs Hermitian rank-k update.
+ * C := alpha*A*A^H + beta*C  or  C := alpha*A^H*A + beta*C
+ * Note: alpha and beta must be real for Hermitian updates
+ */
+LEAN_EXPORT lean_obj_res leanblas_cblas_zherk(
+    const uint8_t order, const uint8_t uplo, const uint8_t trans,
+    const size_t N, const size_t K, const double alpha,
+    const b_lean_obj_arg A, const size_t offA, const size_t lda,
+    const double beta, lean_obj_arg C, const size_t offC, const size_t ldc) {
+    ensure_exclusive_byte_array(&C);
+
+    cblas_zherk(leanblas_cblas_order(order), leanblas_cblas_uplo(uplo),
+                leanblas_cblas_transpose(trans), (int)N, (int)K, alpha,
+                (const double complex *)(lean_float_array_cptr(A) + offA), (int)lda,
+                beta, (double complex *)(lean_float_array_cptr(C) + offC), (int)ldc);
+
+    return C;
+}
+
+/** zsyr2k
+ *
+ * Performs symmetric rank-2k update for complex matrices.
+ * C := alpha*A*B^T + alpha*B*A^T + beta*C
+ */
+LEAN_EXPORT lean_obj_res leanblas_cblas_zsyr2k(
+    const uint8_t order, const uint8_t uplo, const uint8_t trans,
+    const size_t N, const size_t K, const lean_obj_arg alpha,
+    const b_lean_obj_arg A, const size_t offA, const size_t lda,
+    const b_lean_obj_arg B, const size_t offB, const size_t ldb,
+    const lean_obj_arg beta, lean_obj_arg C, const size_t offC, const size_t ldc) {
+    ensure_exclusive_byte_array(&C);
+
+    double alpha_real = lean_unbox_float(lean_ctor_get(alpha, 0));
+    double alpha_imag = lean_unbox_float(lean_ctor_get(alpha, 1));
+    double beta_real = lean_unbox_float(lean_ctor_get(beta, 0));
+    double beta_imag = lean_unbox_float(lean_ctor_get(beta, 1));
+    
+    double complex alpha_c = alpha_real + alpha_imag * I;
+    double complex beta_c = beta_real + beta_imag * I;
+
+    cblas_zsyr2k(leanblas_cblas_order(order), leanblas_cblas_uplo(uplo),
+                 leanblas_cblas_transpose(trans), (int)N, (int)K, &alpha_c,
+                 (const double complex *)(lean_float_array_cptr(A) + offA), (int)lda,
+                 (const double complex *)(lean_float_array_cptr(B) + offB), (int)ldb,
+                 &beta_c, (double complex *)(lean_float_array_cptr(C) + offC), (int)ldc);
+
+    return C;
+}
+
+/** zher2k
+ *
+ * Performs Hermitian rank-2k update.
+ * C := alpha*A*B^H + conj(alpha)*B*A^H + beta*C
+ * Note: beta must be real for Hermitian updates
+ */
+LEAN_EXPORT lean_obj_res leanblas_cblas_zher2k(
+    const uint8_t order, const uint8_t uplo, const uint8_t trans,
+    const size_t N, const size_t K, const lean_obj_arg alpha,
+    const b_lean_obj_arg A, const size_t offA, const size_t lda,
+    const b_lean_obj_arg B, const size_t offB, const size_t ldb,
+    const double beta, lean_obj_arg C, const size_t offC, const size_t ldc) {
+    ensure_exclusive_byte_array(&C);
+
+    double alpha_real = lean_unbox_float(lean_ctor_get(alpha, 0));
+    double alpha_imag = lean_unbox_float(lean_ctor_get(alpha, 1));
+    double complex alpha_c = alpha_real + alpha_imag * I;
+
+    cblas_zher2k(leanblas_cblas_order(order), leanblas_cblas_uplo(uplo),
+                 leanblas_cblas_transpose(trans), (int)N, (int)K, &alpha_c,
+                 (const double complex *)(lean_float_array_cptr(A) + offA), (int)lda,
+                 (const double complex *)(lean_float_array_cptr(B) + offB), (int)ldb,
+                 beta, (double complex *)(lean_float_array_cptr(C) + offC), (int)ldc);
+
+    return C;
+}
+
+/** ztrmm
+ *
+ * Computes a triangular matrix-matrix product.
+ * B := alpha*op(A)*B  or  B := alpha*B*op(A)
+ */
+LEAN_EXPORT lean_obj_res leanblas_cblas_ztrmm(
+    const uint8_t order, const uint8_t side, const uint8_t uplo,
+    const uint8_t transA, const uint8_t diag, const size_t M, const size_t N,
+    const lean_obj_arg alpha, const b_lean_obj_arg A, const size_t offA,
+    const size_t lda, lean_obj_arg B, const size_t offB, const size_t ldb) {
+    ensure_exclusive_byte_array(&B);
+
+    double alpha_real = lean_unbox_float(lean_ctor_get(alpha, 0));
+    double alpha_imag = lean_unbox_float(lean_ctor_get(alpha, 1));
+    double complex alpha_c = alpha_real + alpha_imag * I;
+
+    cblas_ztrmm(leanblas_cblas_order(order), side == 0 ? CblasLeft : CblasRight,
+                leanblas_cblas_uplo(uplo), leanblas_cblas_transpose(transA),
+                leanblas_cblas_diag(diag), (int)M, (int)N, &alpha_c,
+                (const double complex *)(lean_float_array_cptr(A) + offA), (int)lda,
+                (double complex *)(lean_float_array_cptr(B) + offB), (int)ldb);
+
+    return B;
+}
+
+/** ztrsm
+ *
+ * Solves a triangular matrix equation.
+ * op(A)*X = alpha*B  or  X*op(A) = alpha*B
+ */
+LEAN_EXPORT lean_obj_res leanblas_cblas_ztrsm(
+    const uint8_t order, const uint8_t side, const uint8_t uplo,
+    const uint8_t transA, const uint8_t diag, const size_t M, const size_t N,
+    const lean_obj_arg alpha, const b_lean_obj_arg A, const size_t offA,
+    const size_t lda, lean_obj_arg B, const size_t offB, const size_t ldb) {
+    ensure_exclusive_byte_array(&B);
+
+    double alpha_real = lean_unbox_float(lean_ctor_get(alpha, 0));
+    double alpha_imag = lean_unbox_float(lean_ctor_get(alpha, 1));
+    double complex alpha_c = alpha_real + alpha_imag * I;
+
+    cblas_ztrsm(leanblas_cblas_order(order), side == 0 ? CblasLeft : CblasRight,
+                leanblas_cblas_uplo(uplo), leanblas_cblas_transpose(transA),
+                leanblas_cblas_diag(diag), (int)M, (int)N, &alpha_c,
+                (const double complex *)(lean_float_array_cptr(A) + offA), (int)lda,
+                (double complex *)(lean_float_array_cptr(B) + offB), (int)ldb);
 
     return B;
 }

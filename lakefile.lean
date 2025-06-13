@@ -102,6 +102,10 @@ lean_exe ComplexLevelTwo where
   root := `test.ComplexLevelTwo
   supportInterpreter := true
 
+lean_exe ComplexBLASTest where
+  root := `test.ComplexBLASTest
+  supportInterpreter := true
+
 lean_exe Level3Benchmarks where
   root := `Test.BenchmarksLevel3
 
