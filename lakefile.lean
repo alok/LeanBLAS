@@ -156,6 +156,10 @@ lean_exe Level3Benchmarks where
 lean_exe PropertyDebugTest where
   root := `Test.PropertyDebug
 
+lean_exe ComplexLevel1Comprehensive where
+  root := `Test.ComplexLevel1Comprehensive
+  supportInterpreter := true
+
 
 -- ----------------------------------------------------------------------------------------------------
 -- -- Download and build OpenBLAS ---------------------------------------------------------------------
