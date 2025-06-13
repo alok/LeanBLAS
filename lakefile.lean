@@ -160,6 +160,10 @@ lean_exe ComplexLevel1Comprehensive where
   root := `Test.ComplexLevel1Comprehensive
   supportInterpreter := true
 
+lean_exe ComplexLevel2Comprehensive where
+  root := `Test.ComplexLevel2Comprehensive
+  supportInterpreter := true
+
 
 -- ----------------------------------------------------------------------------------------------------
 -- -- Download and build OpenBLAS ---------------------------------------------------------------------
