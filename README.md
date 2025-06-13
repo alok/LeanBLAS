@@ -14,6 +14,10 @@ LeanBLAS provides type-safe BLAS operations with a focus on mathematical correct
 ## Features
 
 - **Complete BLAS Coverage**: Level 1, 2, and 3 operations with type-safe interfaces
+- **Complex Number Support**: Full support for complex arithmetic operations
+  - ComplexFloat64 arrays with efficient interleaved storage
+  - Complex-specific operations (hemm, herk, her2k)
+  - Hermitian and symmetric matrix operations
 - **FFI Bindings**: Efficient integration with OpenBLAS/system BLAS
 - **Mathematical Formalization**: Specifications using Lean's type system
 - **World-Class Testing**:
@@ -85,14 +89,18 @@ macos = ["-L/opt/homebrew/opt/openblas/lib", "-L/usr/local/opt/openblas/lib", "-
 
 ### Creating Arrays
 
-LeanBLAS uses `Float64Array` for efficient numerical operations:
+LeanBLAS uses `Float64Array` for real numbers and `ComplexFloat64Array` for complex numbers:
 
 ```lean
 import LeanBLAS
 
--- Create arrays using the #f64[...] syntax
+-- Create real arrays using the #f64[...] syntax
 def x := #f64[1.0, 2.0, 3.0, 4.0]
 def y := #f64[5.0, 6.0, 7.0, 8.0]
+
+-- Complex numbers use ComplexFloat type
+def z1 : ComplexFloat := ⟨1.0, 2.0⟩  -- 1 + 2i
+def z2 : ComplexFloat := ⟨3.0, -1.0⟩ -- 3 - i
 ```
 
 ### Level 1 Examples (Vector Operations)
@@ -164,6 +172,30 @@ def test_gemm : IO Unit := do
   IO.println s!"Result: {result.toFloatArray}"  -- Expected: [19.0, 22.0, 43.0, 50.0]
 ```
 
+### Complex Number Examples
+
+```lean
+import LeanBLAS
+import LeanBLAS.CBLAS.LevelTwoComplex
+
+-- Complex matrix-vector multiplication (ZGEMV)
+def test_complex_gemv : IO Unit := do
+  -- Create complex vector x = [1+i, 2+0i]
+  let x := ComplexFloat64Array.mk <| ByteArray.mk #[
+    -- Bytes for 1.0 + 1.0i
+    0, 0, 0, 0, 0, 0, 240, 63,  -- 1.0 (real)
+    0, 0, 0, 0, 0, 0, 240, 63,  -- 1.0 (imag)
+    -- Bytes for 2.0 + 0.0i
+    0, 0, 0, 0, 0, 0, 0, 64,    -- 2.0 (real)
+    0, 0, 0, 0, 0, 0, 0, 0      -- 0.0 (imag)
+  ] (by decide)
+  
+  -- Hermitian matrix-vector multiplication
+  let result := BLAS.CBLAS.hemv 
+    Order.RowMajor UpLo.Upper 
+    2 ⟨1.0, 0.0⟩ A 0 2 x 0 1 ⟨0.0, 0.0⟩ y 0 1
+```
+
 ## Testing Framework
 
 LeanBLAS features the most comprehensive BLAS testing suite available:
@@ -230,6 +262,34 @@ lake exe Gallery             # Showcase of all benchmarks
 - `syr2k` - Symmetric rank-2k update
 - `trsm` - Triangular solve with multiple right-hand sides
 
+### Complex Number Operations
+
+LeanBLAS provides full support for complex arithmetic:
+
+#### Complex Level 1
+
+- `zdotu`, `zdotc` - Complex dot products (unconjugated/conjugated)
+- `dznrm2` - Complex vector 2-norm (returns real)
+- `zscal` - Scale by complex scalar
+- `zaxpy` - Complex y := a*x + y
+- `zcopy`, `zswap` - Complex vector operations
+
+#### Complex Level 2
+
+- `zgemv` - General complex matrix-vector multiplication
+- `zhemv` - Hermitian matrix-vector multiplication
+- `ztrmv`, `ztrsv` - Triangular operations
+- `zgerc`, `zgeru` - Rank-1 updates (conjugated/unconjugated)
+- `zher`, `zher2` - Hermitian rank updates
+
+#### Complex Level 3
+
+- `zgemm` - General complex matrix multiplication
+- `zhemm` - Hermitian matrix multiplication
+- `ztrmm`, `ztrsm` - Triangular matrix operations
+- `zherk`, `zher2k` - Hermitian rank-k updates
+- `zsyrk`, `zsyr2k` - Symmetric rank-k updates
+
 ## Mathematical Formalization
 
 LeanBLAS goes beyond traditional BLAS implementations by providing:
@@ -295,17 +355,17 @@ LeanBLAS/
 - ✅ FFI bindings to system BLAS
 - ✅ Comprehensive testing framework
 - ✅ Mathematical formalization
+- ✅ Full complex number support (Level 1, 2, and 3)
 - ⚠️ Some proofs use `sorry` (work in progress)
-- ⚠️ Complex number support partially implemented
 
 ## Contributing
 
 LeanBLAS welcomes contributions! Key areas:
 
 - Completing mathematical proofs
-- Extending complex number support
 - Adding more numerical stability tests
 - Performance optimizations
+- Extended precision support
 
 ## License
 
