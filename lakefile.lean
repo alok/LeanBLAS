@@ -168,6 +168,10 @@ lean_exe ComplexExamples where
   root := `examples.ComplexExamples
   supportInterpreter := true
 
+lean_exe TestComplexFFI2 where
+  root := `test_complex_ffi2
+  supportInterpreter := true
+
 
 -- ----------------------------------------------------------------------------------------------------
 -- -- Download and build OpenBLAS ---------------------------------------------------------------------

@@ -1,5 +1,6 @@
 #include <lean/lean.h>
 #include <cblas.h>
+#include <string.h>
 #include "util.h"
 
 
@@ -84,26 +85,34 @@ LEAN_EXPORT lean_obj_res leanblas_byte_array_to_float_array(lean_obj_arg a){
 }
 
 LEAN_EXPORT lean_obj_res leanblas_complex_float_array_to_byte_array(lean_obj_arg a){
-  // ComplexFloatArray is a wrapper around FloatArray
-  // Extract the FloatArray from the ComplexFloatArray structure
-  lean_obj_arg float_array = lean_ctor_get(a, 0);
+  // ComplexFloatArray is a structure with a FloatArray field
+  // In Lean 4, we need to properly handle the structure
   
-  // Convert FloatArray to ByteArray (ComplexFloat64Array)
-  lean_obj_res r;
-  if (lean_is_exclusive(float_array)) {
-    r = float_array;
-    lean_inc(r);
-  } else {
-    r = lean_copy_float_array(float_array);
+  // First check if it's a valid constructor
+  if (!lean_is_ctor(a)) {
+    lean_internal_panic("leanblas_complex_float_array_to_byte_array: not a constructor");
   }
   
-  // Adjust the header to treat as ByteArray
-  lean_sarray_object * o = lean_to_sarray(r);
-  o->m_size *= 8;
-  o->m_capacity *= 8;
-  lean_set_st_header((lean_object*)o, LeanScalarArray, 1);
+  // Extract the FloatArray from field 0
+  lean_object* float_array = lean_ctor_get(a, 0);
   
-  return r;
+  if (!float_array) {
+    lean_internal_panic("leanblas_complex_float_array_to_byte_array: null float_array");
+  }
+  
+  // Create a new ByteArray with the same data
+  size_t float_count = lean_sarray_size(float_array);
+  size_t byte_size = float_count * sizeof(double);
+  
+  // Allocate new ByteArray
+  lean_obj_res byte_array = lean_alloc_sarray(1, byte_size, byte_size);
+  
+  // Copy the data
+  double* src = (double*)lean_sarray_cptr(float_array);
+  uint8_t* dst = (uint8_t*)lean_sarray_cptr(byte_array);
+  memcpy(dst, src, byte_size);
+  
+  return byte_array;
 }
 
 LEAN_EXPORT lean_obj_res leanblas_byte_array_to_complex_float_array(lean_obj_arg a){
