@@ -46,8 +46,8 @@ LEAN_EXPORT lean_obj_res leanblas_cblas_zdot(const size_t N,
                                        const b_lean_obj_arg Y, const size_t offY, const size_t incY){
 
   double r[2];
-  cblas_zdotc_sub((int)N, (void *)(lean_float_array_cptr(X) + 2*offX), (int)incX,
-                          (void *)(lean_float_array_cptr(Y) + 2*offY), (int)incY, r);
+  cblas_zdotc_sub((int)N, (void *)(lean_complex_float64_array_cptr(X) + 2*offX), (int)incX,
+                          (void *)(lean_complex_float64_array_cptr(Y) + 2*offY), (int)incY, r);
 
   lean_obj_res lean_res = lean_alloc_ctor(0, 0, 2*sizeof(double));
   lean_ctor_set_float(lean_res, 0*sizeof(double), r[0]);
@@ -60,8 +60,8 @@ LEAN_EXPORT lean_obj_res leanblas_cblas_zdotc(const size_t N,
                                       const b_lean_obj_arg X, const size_t offX, const size_t incX,
                                       const b_lean_obj_arg Y, const size_t offY, const size_t incY){
   double r[2];
-  cblas_zdotc_sub((int)N, (void *)(lean_float_array_cptr(X) + 2*offX), (int)incX,
-                          (void *)(lean_float_array_cptr(Y) + 2*offY), (int)incY, r);
+  cblas_zdotc_sub((int)N, (void *)(lean_complex_float64_array_cptr(X) + 2*offX), (int)incX,
+                          (void *)(lean_complex_float64_array_cptr(Y) + 2*offY), (int)incY, r);
 
   lean_obj_res lean_res = lean_alloc_ctor(0, 0, 2*sizeof(double));
   lean_ctor_set_float(lean_res, 0*sizeof(double), r[0]);
@@ -73,8 +73,8 @@ LEAN_EXPORT lean_obj_res leanblas_cblas_zdotu(const size_t N,
                                       const b_lean_obj_arg X, const size_t offX, const size_t incX,
                                       const b_lean_obj_arg Y, const size_t offY, const size_t incY){
   double r[2];
-  cblas_zdotu_sub((int)N, (void *)(lean_float_array_cptr(X) + 2*offX), (int)incX,
-                          (void *)(lean_float_array_cptr(Y) + 2*offY), (int)incY, r);
+  cblas_zdotu_sub((int)N, (void *)(lean_complex_float64_array_cptr(X) + 2*offX), (int)incX,
+                          (void *)(lean_complex_float64_array_cptr(Y) + 2*offY), (int)incY, r);
 
   lean_obj_res lean_res = lean_alloc_ctor(0, 0, 2*sizeof(double));
   lean_ctor_set_float(lean_res, 0*sizeof(double), r[0]);
@@ -83,23 +83,23 @@ LEAN_EXPORT lean_obj_res leanblas_cblas_zdotu(const size_t N,
 }
 
 LEAN_EXPORT double leanblas_cblas_dznrm2(const size_t N, const b_lean_obj_arg X, const size_t offX, const size_t incX){
-  return cblas_dznrm2((int)N, (void *)(lean_float_array_cptr(X) + 2*offX), (int)incX);
+  return cblas_dznrm2((int)N, (void *)(lean_complex_float64_array_cptr(X) + 2*offX), (int)incX);
 }
 
 LEAN_EXPORT double leanblas_cblas_dzasum(const size_t N, const b_lean_obj_arg X, const size_t offX, const size_t incX){
-  return cblas_dzasum((int)N, (void *)(lean_float_array_cptr(X) + 2*offX), (int)incX);
+  return cblas_dzasum((int)N, (void *)(lean_complex_float64_array_cptr(X) + 2*offX), (int)incX);
 }
 
 LEAN_EXPORT size_t leanblas_cblas_izamax(const size_t N, const b_lean_obj_arg X, const size_t offX, const size_t incX){
-  return cblas_izamax((int)N, (void *)(lean_float_array_cptr(X) + 2*offX), (int)incX);
+  return cblas_izamax((int)N, (void *)(lean_complex_float64_array_cptr(X) + 2*offX), (int)incX);
 }
 
 LEAN_EXPORT lean_obj_res leanblas_cblas_zswap(const size_t N, lean_obj_arg X, const size_t offX, const size_t incX,
                                                               lean_obj_arg Y, const size_t offY, const size_t incY){
   ensure_exclusive_byte_array(&X);
   ensure_exclusive_byte_array(&Y);
-  cblas_zswap((int)N, (void *)(lean_float_array_cptr(X) + 2*offX), (int)incX,
-                      (void *)(lean_float_array_cptr(Y) + 2*offY), (int)incY);
+  cblas_zswap((int)N, (void *)(lean_complex_float64_array_cptr(X) + 2*offX), (int)incX,
+                      (void *)(lean_complex_float64_array_cptr(Y) + 2*offY), (int)incY);
   lean_obj_res result = lean_alloc_ctor(0, 2, 0);
   lean_ctor_set(result, 0, X);
   lean_ctor_set(result, 1, Y);
@@ -109,8 +109,8 @@ LEAN_EXPORT lean_obj_res leanblas_cblas_zswap(const size_t N, lean_obj_arg X, co
 LEAN_EXPORT lean_obj_res leanblas_cblas_zcopy(const size_t N, const b_lean_obj_arg X, const size_t offX, const size_t incX,
                                                               lean_obj_arg Y, const size_t offY, const size_t incY){
   ensure_exclusive_byte_array(&Y);
-  cblas_zcopy((int)N, (void *)(lean_float_array_cptr(X) + 2*offX), (int)incX,
-                      (void *)(lean_float_array_cptr(Y) + 2*offY), (int)incY);
+  cblas_zcopy((int)N, (void *)(lean_complex_float64_array_cptr(X) + 2*offX), (int)incX,
+                      (void *)(lean_complex_float64_array_cptr(Y) + 2*offY), (int)incY);
   return Y;
 }
 
@@ -122,8 +122,8 @@ LEAN_EXPORT lean_obj_res leanblas_cblas_zaxpy(const size_t N, const b_lean_obj_a
   alpha_arr[0] = lean_ctor_get_float(alpha, 0*sizeof(double));
   alpha_arr[1] = lean_ctor_get_float(alpha, 1*sizeof(double));
   
-  cblas_zaxpy((int)N, alpha_arr, (void *)(lean_float_array_cptr(X) + 2*offX), (int)incX,
-                                 (void *)(lean_float_array_cptr(Y) + 2*offY), (int)incY);
+  cblas_zaxpy((int)N, alpha_arr, (void *)(lean_complex_float64_array_cptr(X) + 2*offX), (int)incX,
+                                 (void *)(lean_complex_float64_array_cptr(Y) + 2*offY), (int)incY);
   return Y;
 }
 
@@ -134,14 +134,14 @@ LEAN_EXPORT lean_obj_res leanblas_cblas_zscal(const size_t N, const b_lean_obj_a
   alpha_arr[0] = lean_ctor_get_float(alpha, 0*sizeof(double));
   alpha_arr[1] = lean_ctor_get_float(alpha, 1*sizeof(double));
   
-  cblas_zscal((int)N, alpha_arr, (void *)(lean_float_array_cptr(X) + 2*offX), (int)incX);
+  cblas_zscal((int)N, alpha_arr, (void *)(lean_complex_float64_array_cptr(X) + 2*offX), (int)incX);
   return X;
 }
 
 LEAN_EXPORT lean_obj_res leanblas_cblas_zdscal(const size_t N, const double alpha, 
                                                lean_obj_arg X, const size_t offX, const size_t incX){
   ensure_exclusive_byte_array(&X);
-  cblas_zdscal((int)N, alpha, (void *)(lean_float_array_cptr(X) + 2*offX), (int)incX);
+  cblas_zdscal((int)N, alpha, (void *)(lean_complex_float64_array_cptr(X) + 2*offX), (int)incX);
   return X;
 }
 

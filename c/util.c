@@ -1,6 +1,7 @@
 #include <lean/lean.h>
 #include <cblas.h>
 #include <string.h>
+#include <stdio.h>
 #include "util.h"
 
 
@@ -86,51 +87,73 @@ LEAN_EXPORT lean_obj_res leanblas_byte_array_to_float_array(lean_obj_arg a){
 
 LEAN_EXPORT lean_obj_res leanblas_complex_float_array_to_byte_array(lean_obj_arg a){
   // ComplexFloatArray is a structure with a FloatArray field
-  // In Lean 4, we need to properly handle the structure
+  // However, Lean may optimize single-field structures and pass the field directly
   
-  // First check if it's a valid constructor
-  if (!lean_is_ctor(a)) {
-    lean_internal_panic("leanblas_complex_float_array_to_byte_array: not a constructor");
+  lean_object* float_array;
+  
+  // Check if we received the FloatArray directly (optimization for single-field structures)
+  if (lean_is_sarray(a)) {
+    // We received the FloatArray directly
+    float_array = a;
+  } else if (lean_is_ctor(a)) {
+    // We received the ComplexFloatArray structure
+    float_array = lean_ctor_get(a, 0);
+  } else {
+    lean_internal_panic("leanblas_complex_float_array_to_byte_array: unexpected object type");
   }
-  
-  // Extract the FloatArray from field 0
-  lean_object* float_array = lean_ctor_get(a, 0);
   
   if (!float_array) {
     lean_internal_panic("leanblas_complex_float_array_to_byte_array: null float_array");
   }
   
-  // Create a new ByteArray with the same data
-  size_t float_count = lean_sarray_size(float_array);
-  size_t byte_size = float_count * sizeof(double);
+  // Convert FloatArray to ByteArray by reinterpreting the header
+  // This is similar to leanblas_float_array_to_byte_array
+  lean_obj_res r;
+  if (lean_is_exclusive(float_array)) r = float_array;
+  else r = lean_copy_float_array(float_array);
   
-  // Allocate new ByteArray
-  lean_obj_res byte_array = lean_alloc_sarray(1, byte_size, byte_size);
+  lean_sarray_object * o = lean_to_sarray(r);
+  o->m_size *= 8;  // FloatArray elements are 8 bytes each
+  o->m_capacity *= 8;
+  lean_set_st_header((lean_object*)o, LeanScalarArray, 1);
   
-  // Copy the data
-  double* src = (double*)lean_sarray_cptr(float_array);
-  uint8_t* dst = (uint8_t*)lean_sarray_cptr(byte_array);
-  memcpy(dst, src, byte_size);
+  // Debug output
+  printf("DEBUG: Created ComplexFloat64Array\n");
+  printf("  ByteArray size: %zu\n", lean_sarray_size(r));
+  printf("  Expected complex count: %zu\n", lean_sarray_size(r) / 16);
   
-  return byte_array;
+  // For single-field structures, Lean may expect just the field
+  // So we return the ByteArray directly
+  return r;
 }
 
 LEAN_EXPORT lean_obj_res leanblas_byte_array_to_complex_float_array(lean_obj_arg a){
-  // Convert ByteArray to FloatArray first
+  // First extract the ByteArray from ComplexFloat64Array
+  lean_object* byte_array;
+  
+  if (lean_is_sarray(a)) {
+    // We received the ByteArray directly
+    byte_array = a;
+  } else if (lean_is_ctor(a)) {
+    // We received the ComplexFloat64Array structure
+    byte_array = lean_ctor_get(a, 0);
+  } else {
+    lean_internal_panic("leanblas_byte_array_to_complex_float_array: unexpected object type");
+  }
+  
+  // Convert ByteArray to FloatArray
   lean_obj_res float_array;
-  if (lean_is_exclusive(a)) float_array = a;
-  else float_array = lean_copy_byte_array(a);
+  if (lean_is_exclusive(byte_array)) float_array = byte_array;
+  else float_array = lean_copy_byte_array(byte_array);
   
   lean_sarray_object * o = lean_to_sarray(float_array);
   o->m_size /= 8;
   o->m_capacity /= 8;
   lean_set_st_header((lean_object*)o, LeanScalarArray, 8);
   
-  // Wrap in ComplexFloatArray constructor
-  lean_obj_res r = lean_alloc_ctor(0, 1, 0);
-  lean_ctor_set(r, 0, float_array);
-  
-  return r;
+  // For single-field structures, Lean may expect just the field
+  // So we return the FloatArray directly
+  return float_array;
 }
 
 
