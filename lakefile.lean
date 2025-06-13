@@ -106,6 +106,14 @@ lean_exe ComplexValidation where
   root := `Test.ComplexValidation
   supportInterpreter := true
 
+lean_exe ComplexNumericalReference where
+  root := `Test.ComplexNumericalReference
+  supportInterpreter := true
+
+lean_exe ComplexEdgeCases where
+  root := `Test.ComplexEdgeCases
+  supportInterpreter := true
+
 lean_exe ComplexLevelTwo where
   root := `test.ComplexLevelTwo
   supportInterpreter := true
