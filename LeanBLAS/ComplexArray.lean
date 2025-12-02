@@ -34,8 +34,8 @@ def ComplexFloat64Array.ofList (xs : List ComplexFloat) : ComplexFloat64Array :=
 /-- Create a ComplexFloat64Array from separate real and imaginary arrays -/
 def ComplexFloat64Array.ofRealImag (reals : Array Float) (imags : Array Float) : ComplexFloat64Array :=
   let n := min reals.size imags.size
-  let complexArray := Array.range n |>.map fun idx => 
-    ComplexFloat.mk (reals.get! idx) (imags.get! idx)
+  let complexArray := Array.range n |>.map fun idx =>
+    ComplexFloat.mk (reals[idx]!) (imags[idx]!)
   let arr := ComplexFloatArray.ofArray complexArray
   ComplexFloatArray.toComplexFloat64Array arr
 
