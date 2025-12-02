@@ -28,10 +28,8 @@ require mathlib from git "https://github.com/leanprover-community/mathlib4" @ "m
 ----------------------------------------------------------------------------------------------------
 -- Build Lean ↔ BLAS bindings ---------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------
+-- Build the C FFI library (for internal use and executables)
 target libleanblasc pkg : FilePath := do
-  -- let openblas ← libopenblas.fetch
-  -- pkg.afterBuildCacheAsync <| openblas.bindM fun d => do
-
   pkg.afterBuildCacheAsync do
     let mut oFiles : Array (Job FilePath) := #[]
     for file in (← (pkg.dir / "c").readDir) do
@@ -41,15 +39,15 @@ target libleanblasc pkg : FilePath := do
         let weakArgs := #["-I", (← getLeanIncludeDir).toString]
         oFiles := oFiles.push (← buildO oFile srcJob weakArgs (#["-DNDEBUG", "-O3", "-fPIC"] ++ inclArgs) "gcc" getLeanTrace)
     let name := nameToStaticLib "leanblasc"
-
-    buildStaticLib (pkg.sharedLibDir / name) (oFiles)
+    buildStaticLib (pkg.sharedLibDir / name) oFiles
 
 ----------------------------------------------------------------------------------------------------
 
+-- Note: moreLinkObjs removed - dependents must link libleanblasc explicitly
+-- This is required for cross-package local path dependencies
 @[default_target]
 lean_lib LeanBLAS where
   roots := #[`LeanBLAS]
-  moreLinkObjs := #[libleanblasc]
 
 @[test_driver]
 lean_exe ComprehensiveTests where
