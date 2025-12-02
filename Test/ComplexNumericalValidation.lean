@@ -1,6 +1,7 @@
 import LeanBLAS
 import LeanBLAS.CBLAS.LevelOneComplex
 import LeanBLAS.FFI.FloatArray
+import LeanBLAS.TestUtils
 
 /-!
 # Robust Numerical Validation Tests for Complex BLAS
@@ -13,19 +14,9 @@ consistency with established numerical libraries.
 -/
 
 open BLAS CBLAS
+open BLAS.Test (complexApproxEq floatApproxEq DEFAULT_TOL)
 
 namespace BLAS.Test.ComplexNumericalValidation
-
-/-- Tolerance for floating point comparisons -/
-def DEFAULT_TOL : Float := 1e-10
-
-/-- Helper for complex number approximate equality -/
-def complexApproxEq (x y : ComplexFloat) (ε : Float := DEFAULT_TOL) : Bool :=
-  Float.abs (x.x - y.x) < ε && Float.abs (x.y - y.y) < ε
-
-/-- Helper for float approximate equality -/
-def floatApproxEq (x y : Float) (ε : Float := DEFAULT_TOL) : Bool :=
-  Float.abs (x - y) < ε
 
 /-- Test data structure for Level 1 operations -/
 structure Level1TestCase where
@@ -80,90 +71,98 @@ def knownTestVectors : List Level1TestCase := [
 /-- Test zdotu (unconjugated dot product) -/
 def test_zdotu_robust : IO Bool := do
   IO.println "\n=== Testing zdotu with known test vectors ==="
-  
+
   let mut allPassed := true
-  
-  for (i, testCase) in knownTestVectors.enum do
+  let mut i := 0
+
+  for testCase in knownTestVectors do
     IO.println s!"\nTest case {i + 1}: size = {testCase.size}"
-    
+
     let result := unconjugated_dot testCase.size testCase.x 0 1 testCase.y 0 1
     let passed := complexApproxEq result testCase.zdotu_expected
-    
+
     IO.println s!"  Expected: {testCase.zdotu_expected}"
     IO.println s!"  Got:      {result}"
     IO.println s!"  Status:   {if passed then "✓ PASS" else "✗ FAIL"}"
-    
+
     if !passed then
       allPassed := false
       let diff_re := Float.abs (result.x - testCase.zdotu_expected.x)
       let diff_im := Float.abs (result.y - testCase.zdotu_expected.y)
       IO.println s!"  Error:    |Δ_re| = {diff_re}, |Δ_im| = {diff_im}"
-  
+    i := i + 1
+
   return allPassed
 
 /-- Test zdotc (conjugated dot product) -/
 def test_zdotc_robust : IO Bool := do
   IO.println "\n=== Testing zdotc with known test vectors ==="
-  
+
   let mut allPassed := true
-  
-  for (i, testCase) in knownTestVectors.enum do
+  let mut i := 0
+
+  for testCase in knownTestVectors do
     IO.println s!"\nTest case {i + 1}: size = {testCase.size}"
-    
+
     let result := dot testCase.size testCase.x 0 1 testCase.y 0 1
     let passed := complexApproxEq result testCase.zdotc_expected
-    
+
     IO.println s!"  Expected: {testCase.zdotc_expected}"
     IO.println s!"  Got:      {result}"
     IO.println s!"  Status:   {if passed then "✓ PASS" else "✗ FAIL"}"
-    
+
     if !passed then
       allPassed := false
-  
+    i := i + 1
+
   return allPassed
 
 /-- Test dznrm2 (2-norm) -/
 def test_dznrm2_robust : IO Bool := do
   IO.println "\n=== Testing dznrm2 with known test vectors ==="
-  
+
   let mut allPassed := true
-  
-  for (i, testCase) in knownTestVectors.enum do
+  let mut i := 0
+
+  for testCase in knownTestVectors do
     IO.println s!"\nTest case {i + 1}: size = {testCase.size}"
-    
+
     let result := nrm2 testCase.size testCase.x 0 1
     let passed := floatApproxEq result testCase.dznrm2_expected
-    
+
     IO.println s!"  Expected: {testCase.dznrm2_expected}"
     IO.println s!"  Got:      {result}"
     IO.println s!"  Status:   {if passed then "✓ PASS" else "✗ FAIL"}"
-    
+
     if !passed then
       allPassed := false
       let diff := Float.abs (result - testCase.dznrm2_expected)
       IO.println s!"  Error:    |Δ| = {diff}"
-  
+    i := i + 1
+
   return allPassed
 
 /-- Test dzasum (sum of absolute values) -/
 def test_dzasum_robust : IO Bool := do
   IO.println "\n=== Testing dzasum with known test vectors ==="
-  
+
   let mut allPassed := true
-  
-  for (i, testCase) in knownTestVectors.enum do
+  let mut i := 0
+
+  for testCase in knownTestVectors do
     IO.println s!"\nTest case {i + 1}: size = {testCase.size}"
-    
+
     let result := asum testCase.size testCase.x 0 1
     let passed := floatApproxEq result testCase.dzasum_expected
-    
+
     IO.println s!"  Expected: {testCase.dzasum_expected}"
     IO.println s!"  Got:      {result}"
     IO.println s!"  Status:   {if passed then "✓ PASS" else "✗ FAIL"}"
-    
+
     if !passed then
       allPassed := false
-  
+    i := i + 1
+
   return allPassed
 
 /-- Test edge cases and special values -/
@@ -247,7 +246,7 @@ def main : IO Unit := do
   ]
   
   for (name, test) in tests do
-    IO.println s!"\n{'=' * 60}"
+    IO.println "\n============================================================"
     let passed ← test
     if !passed then
       allPassed := false

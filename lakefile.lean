@@ -97,10 +97,6 @@ lean_exe ComplexLevelOneTest where
   root := `Test.complex_level_one
   supportInterpreter := true
 
-lean_exe ComplexExtTest where
-  root := `Test.ComplexExtTest
-  supportInterpreter := true
-
 lean_exe ComplexValidation where
   root := `Test.ComplexValidation
   supportInterpreter := true
@@ -133,14 +129,6 @@ lean_exe ComplexCorrectnessLevel1 where
   root := `Test.ComplexCorrectnessLevel1
   supportInterpreter := true
 
-lean_exe ComplexCorrectnessLevel1Simple where
-  root := `Test.ComplexCorrectnessLevel1Simple
-  supportInterpreter := true
-
-lean_exe ComplexDirectTest where
-  root := `Test.ComplexDirectTest
-  supportInterpreter := true
-
 lean_exe ComplexCorrectnessLevel2 where
   root := `Test.ComplexCorrectnessLevel2
   supportInterpreter := true
@@ -166,120 +154,3 @@ lean_exe ComplexLevel2Comprehensive where
 lean_exe ComplexExamples where
   root := `examples.ComplexExamples
   supportInterpreter := true
-
-
--- ----------------------------------------------------------------------------------------------------
--- -- Download and build OpenBLAS ---------------------------------------------------------------------
--- -- -------------------------------------------------------------------------------------------------
--- -- This code was taken from: https://github.com/lean-dojo/LeanCopilot/blob/92a5ab6b58d06df8fd60d98dc38b1f674706eaad/lakefile.lean
--- ----------------------------------------------------------------------------------------------------
-
--- def nproc : IO Nat := do
---   let out ← IO.Process.output {cmd := "nproc", stdin := .null}
---   return min 1 ((out.stdout.trim.toNat? |>.getD 1) - 4)
-
--- private def nameToVersionedSharedLib (name : String) (v : String) : String :=
---   if Platform.isWindows then s!"{name}.dll"
---   else if Platform.isOSX  then s!"lib{name}.{v}.dylib"
---   else s!"lib{name}.so.{v}"
-
--- def afterReleaseAsync {α : Type} (pkg : Package) (build : JobM α) : FetchM (Job α) := do
---   if pkg.preferReleaseBuild ∧ pkg.name ≠ (← getRootPackage).name then
---     (← pkg.optGitHubRelease.fetch).mapM fun _ => build
---   else
---     Job.async build
-
--- def ensureDirExists (dir : FilePath) : IO Unit := do
---   if !(← dir.pathExists)  then
---     IO.FS.createDirAll dir
-
--- def gitClone (url : String) (cwd : Option FilePath) : LogIO Unit := do
---   proc (quiet := true) {
---     cmd := "git"
---     args := #["clone", "--recursive", url]
---     cwd := cwd
---   }
-
--- def getOpenBLASVersion (rootDir : FilePath) : LogIO String := do
---   -- Try to extract version from openblas_config.h after build
---   let configFile := rootDir / "openblas_config.h"
---   if ← configFile.pathExists then
---     let content ← IO.FS.readFile configFile
---     -- Look for #define OPENBLAS_VERSION " OpenBLAS x.y.z "
---     let lines := content.splitOn "\n"
---     for line in lines do
---       if line.contains "OPENBLAS_VERSION" && line.contains "define" then
---         -- Extract version from line like: #define OPENBLAS_VERSION " OpenBLAS 0.3.29 "
---         let parts := line.split (· == '"')
---         if parts.length ≥ 2 then
---           let versionStr := parts[1]!.trim
---           -- Remove "OpenBLAS " prefix if present
---           let version := if versionStr.startsWith "OpenBLAS " then
---             versionStr.drop 9
---           else
---             versionStr
---           return version.trim
---   -- Fallback: try to get version from Makefile.rule
---   let makefileRule := rootDir / "Makefile.rule"
---   if ← makefileRule.pathExists then
---     let content ← IO.FS.readFile makefileRule  
---     let lines := content.splitOn "\n"
---     for line in lines do
---       if line.startsWith "VERSION" && line.contains "=" then
---         let parts := line.split (· == '=')
---         if parts.length ≥ 2 then
---           return parts[1]!.trim
---   -- Default fallback
---   return "0.3"
-
--- target libopenblas pkg : FilePath := do
---   afterReleaseAsync pkg do
---     let rootDir := pkg.buildDir / "OpenBLAS"
---     ensureDirExists rootDir
---     let dst := pkg.sharedLibDir / (nameToSharedLib "openblas")
---     createParentDirs dst
---     let url := "https://github.com/OpenMathLib/OpenBLAS"
-
---     try
---       let depTrace := Hash.ofString url
---       setTrace depTrace
---       buildFileUnlessUpToDate' dst do
---         logInfo s!"Cloning OpenBLAS from {url}"
---         gitClone url pkg.buildDir
-
---         let numThreads := max 4 $ min 32 (← nproc)
---         let flags := #["NO_LAPACK=1", "NO_FORTRAN=1", s!"-j{numThreads}"]
---         logInfo s!"Building OpenBLAS with `make{flags.foldl (· ++ " " ++ ·) ""}`"
---         proc (quiet := true) {
---           cmd := "make"
---           args := flags
---           cwd := rootDir
---         }
---         proc {
---           cmd := "cp"
---           args := #[(rootDir / nameToSharedLib "openblas").toString, dst.toString]
---         }
---         -- Extract version from built OpenBLAS
---         let version ← getOpenBLASVersion rootDir
---         let dst' := pkg.sharedLibDir / (nameToVersionedSharedLib "openblas" version)
---         proc {
---           cmd := "cp"
---           args := #[dst.toString, dst'.toString]
---         }
---       let _ := (← getTrace)
---       return dst
-
---     else
---       proc {
---         cmd := "cp"
---         args := #[(rootDir / nameToSharedLib "openblas").toString, dst.toString]
---       }
---       -- Extract version from built OpenBLAS
---       let version ← getOpenBLASVersion rootDir
---       let dst' := pkg.sharedLibDir / (nameToVersionedSharedLib "openblas" version)
---       proc {
---         cmd := "cp"
---         args := #[dst.toString, dst'.toString]
---       }
---       addTrace <| ← computeTrace dst
---       return dst

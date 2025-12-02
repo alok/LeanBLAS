@@ -1,6 +1,8 @@
 import LeanBLAS
+import LeanBLAS.TestUtils
 
 open BLAS BLAS.CBLAS
+open BLAS.Test (complexApproxEq floatApproxEq infinity isNaN complexHasNaN complexHasInf)
 
 /-!
 # Complex BLAS Edge Case Tests
@@ -9,21 +11,8 @@ This module tests edge cases and special values for complex BLAS operations,
 including branch cuts, overflow/underflow, and special floating-point values.
 -/
 
-/-- Helper to create infinity -/
-def infinity : Float := 1.0 / 0.0
-
 /-- Helper to create NaN -/
 def nan : Float := 0.0 / 0.0
-
-/-- Check if a float is NaN -/
-def isNaN (x : Float) : Bool := x != x
-
-/-- Check if a complex number has NaN component -/
-def complexHasNaN (z : ComplexFloat) : Bool := isNaN z.x || isNaN z.y
-
-/-- Check if a complex number has infinity component -/
-def complexHasInf (z : ComplexFloat) : Bool := 
-  z.x == infinity || z.x == -infinity || z.y == infinity || z.y == -infinity
 
 /-- Test special floating-point values -/
 def test_special_values : IO Unit := do

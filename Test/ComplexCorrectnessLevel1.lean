@@ -1,6 +1,7 @@
 import LeanBLAS
 import LeanBLAS.CBLAS.LevelOneComplex
 import LeanBLAS.FFI.FloatArray
+import LeanBLAS.TestUtils
 
 /-!
 # Numerical Validation Tests for Complex Level 1 BLAS Operations
@@ -10,12 +11,9 @@ operations, comparing results against expected values with appropriate tolerance
 -/
 
 open BLAS CBLAS
+open BLAS.Test (complexApproxEq floatApproxEq)
 
 namespace BLAS.Test.ComplexCorrectness.Level1
-
-/-- Helper for complex number approximate equality -/
-def complexApproxEq (x y : ComplexFloat) (ε : Float := 1e-10) : Bool :=
-  Float.abs (x.x - y.x) < ε && Float.abs (x.y - y.y) < ε
 
 /-- Test zdotu (unconjugated dot product) -/
 def test_zdotu : IO Bool := do

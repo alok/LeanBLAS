@@ -8,4 +8,5 @@ import LeanBLAS.Spec.LevelThree
 import LeanBLAS.ComplexFloat
 import LeanBLAS.BLAS
 import LeanBLAS.ComplexArray
+import LeanBLAS.TestUtils
 

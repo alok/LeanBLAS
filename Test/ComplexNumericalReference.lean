@@ -1,6 +1,8 @@
 import LeanBLAS
+import LeanBLAS.TestUtils
 
 open BLAS BLAS.CBLAS
+open BLAS.Test (complexApproxEq floatApproxEq)
 
 /-!
 # Complex BLAS Numerical Reference Tests
@@ -24,13 +26,13 @@ All reference values were computed using:
 
 namespace ComplexReference
 
-/-- Helper to check complex equality with tolerance -/
+/-- Alias for tighter tolerance comparisons -/
 def complexNear (a b : ComplexFloat) (tol : Float := 1e-12) : Bool :=
-  Float.abs (a.x - b.x) < tol && Float.abs (a.y - b.y) < tol
+  complexApproxEq a b tol
 
-/-- Helper to check float equality with tolerance -/
+/-- Alias for tighter tolerance comparisons -/
 def floatNear (a b : Float) (tol : Float := 1e-12) : Bool :=
-  Float.abs (a - b) < tol
+  floatApproxEq a b tol
 
 /-- Level 1 reference tests -/
 def test_level1_references : IO Unit := do

@@ -1,14 +1,8 @@
 import LeanBLAS
+import LeanBLAS.TestUtils
 
 open BLAS BLAS.CBLAS
-
-/-- Helper function to check if two complex numbers are approximately equal -/
-def complexApproxEq (a b : ComplexFloat) (tol : Float := 1e-10) : Bool :=
-  Float.abs (a.x - b.x) < tol && Float.abs (a.y - b.y) < tol
-
-/-- Helper function to check if two floats are approximately equal -/
-def floatApproxEq (a b : Float) (tol : Float := 1e-10) : Bool :=
-  Float.abs (a - b) < tol
+open BLAS.Test (complexApproxEq floatApproxEq)
 
 /-- Test basic complex arithmetic operations -/
 def test_complex_arithmetic : IO Unit := do

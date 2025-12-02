@@ -62,11 +62,11 @@ instance : LevelOneData ComplexFloat64Array Float ComplexFloat where
   copy N X offX incX Y offY incY := zcopy N.toUSize X offX.toUSize incX.toUSize Y offY.toUSize incY.toUSize
   axpy N a X offX incX Y offY incY := zaxpy N.toUSize a X offX.toUSize incX.toUSize Y offY.toUSize incY.toUSize
   
-  -- Givens rotations for complex numbers
-  -- These would need proper implementation
-  rotg a b := (1.0, ComplexFloat.zero, ComplexFloat.zero, ComplexFloat.zero)  -- Placeholder
-  rotmg d1 d2 b1 b2 := (0.0, 0.0, 0.0, 0.0, ComplexFloat.zero)  -- Placeholder
-  rot N X offX incX Y offY incY c s := (X, Y)  -- Identity placeholder
+  -- Givens rotations for complex numbers - not implemented
+  -- CBLAS provides zrotg but the interface differs from real rotg
+  rotg _ _ := panic! "Complex Givens rotation (zrotg) not yet implemented"
+  rotmg _ _ _ _ := panic! "Complex modified Givens rotation not supported by CBLAS"
+  rot _ _ _ _ _ _ _ _ _ := panic! "Complex plane rotation (zrot/zdrot) not yet implemented"
   
   -- Scaling operations
   scal N a X offX incX := zscal N.toUSize a X offX.toUSize incX.toUSize

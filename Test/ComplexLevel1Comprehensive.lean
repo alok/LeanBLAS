@@ -1,6 +1,7 @@
 import LeanBLAS
 import LeanBLAS.CBLAS.LevelOneComplex
 import LeanBLAS.FFI.FloatArray
+import LeanBLAS.TestUtils
 
 /-!
 # Comprehensive Tests for Complex Level 1 BLAS Operations
@@ -11,16 +12,9 @@ including standard BLAS functions and extended operations.
 
 open BLAS CBLAS
 open LevelOneDataExt
+open BLAS.Test (complexApproxEq floatApproxEq)
 
 namespace BLAS.Test.ComplexLevel1Comprehensive
-
-/-- Helper for complex number approximate equality -/
-def complexApproxEq (x y : ComplexFloat) (ε : Float := 1e-10) : Bool :=
-  Float.abs (x.x - y.x) < ε && Float.abs (x.y - y.y) < ε
-
-/-- Helper for float approximate equality -/
-def floatApproxEq (x y : Float) (ε : Float := 1e-10) : Bool :=
-  Float.abs (x - y) < ε
 
 /-- Test swap operation -/
 def test_zswap : IO Bool := do
