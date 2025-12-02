@@ -53,12 +53,12 @@ lean_lib LeanBLAS where
 lean_exe ComprehensiveTests where
   root := `Test.TestRunner
 
-lean_exe CBLASLevelOneTest where
-  root := `Test.cblas_level_one
+lean_exe Level1RealTests where
+  root := `Test.Level1RealTests
   supportInterpreter := true
 
-lean_exe TriangularTest where
-  root := `Test.packed_triangular
+lean_exe PackedTriangularTests where
+  root := `Test.PackedTriangularTests
 
 lean_exe PropertyTests where
   root := `Test.Property
@@ -97,10 +97,6 @@ lean_exe ComplexNumericalReference where
 
 lean_exe ComplexEdgeCases where
   root := `Test.ComplexEdgeCases
-  supportInterpreter := true
-
-lean_exe ComplexPerformance where
-  root := `Test.ComplexPerformance
   supportInterpreter := true
 
 lean_exe ComplexArrayTest where
