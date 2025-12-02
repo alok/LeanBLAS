@@ -87,8 +87,8 @@ def test_zdotu_robust : IO Bool := do
 
     if !passed then
       allPassed := false
-      let diff_re := Float.abs (result.x - testCase.zdotu_expected.x)
-      let diff_im := Float.abs (result.y - testCase.zdotu_expected.y)
+      let diff_re := Float.abs (result.re - testCase.zdotu_expected.re)
+      let diff_im := Float.abs (result.im - testCase.zdotu_expected.im)
       IO.println s!"  Error:    |Δ_re| = {diff_re}, |Δ_im| = {diff_im}"
     i := i + 1
 

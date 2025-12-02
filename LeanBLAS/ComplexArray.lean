@@ -56,12 +56,12 @@ def ComplexFloat64Array.range (start stop : ComplexFloat) (n : Nat) : ComplexFlo
   if n ≤ 1 then
     ComplexFloat64Array.ofList [start]
   else
-    let step_r := (stop.x - start.x) / (n - 1).toFloat
-    let step_i := (stop.y - start.y) / (n - 1).toFloat
+    let step_r := (stop.re - start.re) / (n - 1).toFloat
+    let step_i := (stop.im - start.im) / (n - 1).toFloat
     let arr := Array.range n |>.map fun i =>
-      ComplexFloat.mk 
-        (start.x + i.toFloat * step_r)
-        (start.y + i.toFloat * step_i)
+      ComplexFloat.mk
+        (start.re + i.toFloat * step_r)
+        (start.im + i.toFloat * step_i)
     let complexArr := ComplexFloatArray.ofArray arr
     ComplexFloatArray.toComplexFloat64Array complexArr
 
@@ -104,14 +104,14 @@ instance : ToString ComplexFloat64Array where
 def ComplexFloat64Array.realParts (arr : ComplexFloat64Array) : Float64Array :=
   let complexArr := arr.toComplexFloatArray
   let reals := Array.range complexArr.size |>.map fun i =>
-    (complexArr.get! i).x
+    (complexArr.get! i).re
   FloatArray.mk reals |>.toFloat64Array
 
 /-- Extract imaginary parts as Float64Array -/
 def ComplexFloat64Array.imagParts (arr : ComplexFloat64Array) : Float64Array :=
   let complexArr := arr.toComplexFloatArray
   let imags := Array.range complexArr.size |>.map fun i =>
-    (complexArr.get! i).y
+    (complexArr.get! i).im
   FloatArray.mk imags |>.toFloat64Array
 
 /-- Create identity matrix in complex array format (row-major) -/

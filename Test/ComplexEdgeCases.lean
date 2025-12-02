@@ -58,18 +58,18 @@ def test_branch_cuts : IO Unit := do
   -- log(-1) should be 0 + πi
   let log_neg1 := log_arr.get! 0
   let pi := 3.141592653589793
-  assert! (Float.abs log_neg1.x < 1e-10)  -- Real part ≈ 0
-  assert! (Float.abs (log_neg1.y - pi) < 1e-10)  -- Imaginary part ≈ π
+  assert! (Float.abs log_neg1.re < 1e-10)  -- Real part ≈ 0
+  assert! (Float.abs (log_neg1.im - pi) < 1e-10)  -- Imaginary part ≈ π
   IO.println s!"✓ log(-1+0i) = {log_neg1} (branch cut gives 0+πi)"
-  
+
   -- Test sqrt branch cut
   let sqrt_result := LevelOneDataExt.sqrt (Array := ComplexFloat64Array) (R := Float) (K := ComplexFloat) 1 neg_real 0 1
   let sqrt_arr := sqrt_result.toComplexFloatArray
   let sqrt_neg1 := sqrt_arr.get! 0
-  
+
   -- sqrt(-1) should be 0 + i
-  assert! (Float.abs sqrt_neg1.x < 1e-10)  -- Real part ≈ 0
-  assert! (Float.abs (sqrt_neg1.y - 1.0) < 1e-10)  -- Imaginary part ≈ 1
+  assert! (Float.abs sqrt_neg1.re < 1e-10)  -- Real part ≈ 0
+  assert! (Float.abs (sqrt_neg1.im - 1.0) < 1e-10)  -- Imaginary part ≈ 1
   IO.println s!"✓ sqrt(-1+0i) = {sqrt_neg1} (branch cut gives 0+i)"
 
 /-- Test overflow and underflow -/
@@ -113,8 +113,8 @@ def test_zero_stride : IO Unit := do
   let dot_zero_stride := zdotc 3 x 0 0 x 0 0
   -- (2-3i) * (2+3i) * 3 = (4 + 9) * 3 = 39
   let expected := ComplexFloat.mk 39.0 0.0
-  assert! (Float.abs (dot_zero_stride.x - expected.x) < 1e-10)
-  assert! (Float.abs (dot_zero_stride.y - expected.y) < 1e-10)
+  assert! (Float.abs (dot_zero_stride.re - expected.re) < 1e-10)
+  assert! (Float.abs (dot_zero_stride.im - expected.im) < 1e-10)
   IO.println s!"✓ Dot product with zero stride = {dot_zero_stride} (expected: 39+0i)"
   
   -- Norm with zero stride
@@ -167,8 +167,8 @@ def test_stride_patterns : IO Unit := do
   let dot_strided := zdotc 3 data 0 2 data 1 2
   -- conj(1)*(-1) + conj(2)*(-2) + conj(3)*(-3) = -1 - 4 - 9 = -14
   let expected_dot := ComplexFloat.mk (-14.0) 0.0
-  assert! (Float.abs (dot_strided.x - expected_dot.x) < 1e-10)
-  assert! (Float.abs (dot_strided.y - expected_dot.y) < 1e-10)
+  assert! (Float.abs (dot_strided.re - expected_dot.re) < 1e-10)
+  assert! (Float.abs (dot_strided.im - expected_dot.im) < 1e-10)
   IO.println s!"✓ Dot product of strided views = {dot_strided}"
 
 /-- Main test runner -/

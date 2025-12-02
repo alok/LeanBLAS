@@ -17,20 +17,20 @@ def floatApproxEq (x y : Float) (ε : Float := DEFAULT_TOL) : Bool :=
 
 /-- Check if two complex numbers are approximately equal -/
 def complexApproxEq (x y : ComplexFloat) (ε : Float := DEFAULT_TOL) : Bool :=
-  Float.abs (x.x - y.x) < ε && Float.abs (x.y - y.y) < ε
+  Float.abs (x.re - y.re) < ε && Float.abs (x.im - y.im) < ε
 
 /-- Check if a float is NaN -/
 def isNaN (x : Float) : Bool := x != x
 
 /-- Check if a complex number has NaN component -/
-def complexHasNaN (z : ComplexFloat) : Bool := isNaN z.x || isNaN z.y
+def complexHasNaN (z : ComplexFloat) : Bool := isNaN z.re || isNaN z.im
 
 /-- Helper to create positive infinity -/
 def infinity : Float := 1.0 / 0.0
 
 /-- Check if a complex number has infinity component -/
 def complexHasInf (z : ComplexFloat) : Bool :=
-  z.x == infinity || z.x == -infinity || z.y == infinity || z.y == -infinity
+  z.re == infinity || z.re == -infinity || z.im == infinity || z.im == -infinity
 
 /-- Assert with message -/
 def assertWithMsg (cond : Bool) (msg : String) : IO Unit := do

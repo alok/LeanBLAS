@@ -45,7 +45,7 @@ private def zgemm' (order : Order) (transA transB : Transpose) (M N K : Nat)
               A offA.toUSize lda'.toUSize B offB.toUSize ldb'.toUSize
               beta C offC.toUSize ldc'.toUSize
 
-private def zsymm' (order : Order) (side : Side) (uplo : Uplo) (M N : Nat)
+private def zsymm' (order : Order) (side : Side) (uplo : UpLo) (M N : Nat)
           (alpha : ComplexFloat)
           (A : ComplexFloat64Array) (offA : Nat := 0) (lda : Nat := 0)
           (B : ComplexFloat64Array) (offB : Nat := 0) (ldb : Nat := 0)
@@ -58,7 +58,7 @@ private def zsymm' (order : Order) (side : Side) (uplo : Uplo) (M N : Nat)
               A offA.toUSize lda'.toUSize B offB.toUSize ldb'.toUSize
               beta C offC.toUSize ldc'.toUSize
 
-private def zhemm' (order : Order) (side : Side) (uplo : Uplo) (M N : Nat)
+private def zhemm' (order : Order) (side : Side) (uplo : UpLo) (M N : Nat)
           (alpha : ComplexFloat)
           (A : ComplexFloat64Array) (offA : Nat := 0) (lda : Nat := 0)
           (B : ComplexFloat64Array) (offB : Nat := 0) (ldb : Nat := 0)
@@ -71,61 +71,61 @@ private def zhemm' (order : Order) (side : Side) (uplo : Uplo) (M N : Nat)
               A offA.toUSize lda'.toUSize B offB.toUSize ldb'.toUSize
               beta C offC.toUSize ldc'.toUSize
 
-private def zsyrk' (order : Order) (uplo : Uplo) (trans : Transpose) (N K : Nat)
+private def zsyrk' (order : Order) (uplo : UpLo) (transA : Transpose) (N K : Nat)
           (alpha : ComplexFloat)
           (A : ComplexFloat64Array) (offA : Nat := 0) (lda : Nat := 0)
           (beta : ComplexFloat)
           (C : ComplexFloat64Array) (offC : Nat := 0) (ldc : Nat := 0) : ComplexFloat64Array :=
   let lda' := if lda = 0 then (if order = Order.RowMajor then
-                (if trans = Transpose.NoTrans then K else N)
-              else (if trans = Transpose.NoTrans then N else K)) else lda
+                (if transA = Transpose.NoTrans then K else N)
+              else (if transA = Transpose.NoTrans then N else K)) else lda
   let ldc' := if ldc = 0 then N else ldc
-  CBLAS.zsyrk order uplo trans N.toUSize K.toUSize alpha
+  CBLAS.zsyrk order uplo transA N.toUSize K.toUSize alpha
               A offA.toUSize lda'.toUSize beta C offC.toUSize ldc'.toUSize
 
-private def zherk' (order : Order) (uplo : Uplo) (trans : Transpose) (N K : Nat)
+private def zherk' (order : Order) (uplo : UpLo) (transA : Transpose) (N K : Nat)
           (alpha : Float)
           (A : ComplexFloat64Array) (offA : Nat := 0) (lda : Nat := 0)
           (beta : Float)
           (C : ComplexFloat64Array) (offC : Nat := 0) (ldc : Nat := 0) : ComplexFloat64Array :=
   let lda' := if lda = 0 then (if order = Order.RowMajor then
-                (if trans = Transpose.NoTrans then K else N)
-              else (if trans = Transpose.NoTrans then N else K)) else lda
+                (if transA = Transpose.NoTrans then K else N)
+              else (if transA = Transpose.NoTrans then N else K)) else lda
   let ldc' := if ldc = 0 then N else ldc
-  CBLAS.zherk order uplo trans N.toUSize K.toUSize alpha
+  CBLAS.zherk order uplo transA N.toUSize K.toUSize alpha
               A offA.toUSize lda'.toUSize beta C offC.toUSize ldc'.toUSize
 
-private def zsyr2k' (order : Order) (uplo : Uplo) (trans : Transpose) (N K : Nat)
+private def zsyr2k' (order : Order) (uplo : UpLo) (transA : Transpose) (N K : Nat)
           (alpha : ComplexFloat)
           (A : ComplexFloat64Array) (offA : Nat := 0) (lda : Nat := 0)
           (B : ComplexFloat64Array) (offB : Nat := 0) (ldb : Nat := 0)
           (beta : ComplexFloat)
           (C : ComplexFloat64Array) (offC : Nat := 0) (ldc : Nat := 0) : ComplexFloat64Array :=
   let lda' := if lda = 0 then (if order = Order.RowMajor then
-                (if trans = Transpose.NoTrans then K else N)
-              else (if trans = Transpose.NoTrans then N else K)) else lda
+                (if transA = Transpose.NoTrans then K else N)
+              else (if transA = Transpose.NoTrans then N else K)) else lda
   let ldb' := lda'  -- Usually same as A
   let ldc' := if ldc = 0 then N else ldc
-  CBLAS.zsyr2k order uplo trans N.toUSize K.toUSize alpha
+  CBLAS.zsyr2k order uplo transA N.toUSize K.toUSize alpha
                A offA.toUSize lda'.toUSize B offB.toUSize ldb'.toUSize
                beta C offC.toUSize ldc'.toUSize
 
-private def zher2k' (order : Order) (uplo : Uplo) (trans : Transpose) (N K : Nat)
+private def zher2k' (order : Order) (uplo : UpLo) (transA : Transpose) (N K : Nat)
           (alpha : ComplexFloat)
           (A : ComplexFloat64Array) (offA : Nat := 0) (lda : Nat := 0)
           (B : ComplexFloat64Array) (offB : Nat := 0) (ldb : Nat := 0)
           (beta : Float)
           (C : ComplexFloat64Array) (offC : Nat := 0) (ldc : Nat := 0) : ComplexFloat64Array :=
   let lda' := if lda = 0 then (if order = Order.RowMajor then
-                (if trans = Transpose.NoTrans then K else N)
-              else (if trans = Transpose.NoTrans then N else K)) else lda
+                (if transA = Transpose.NoTrans then K else N)
+              else (if transA = Transpose.NoTrans then N else K)) else lda
   let ldb' := lda'  -- Usually same as A
   let ldc' := if ldc = 0 then N else ldc
-  CBLAS.zher2k order uplo trans N.toUSize K.toUSize alpha
+  CBLAS.zher2k order uplo transA N.toUSize K.toUSize alpha
                A offA.toUSize lda'.toUSize B offB.toUSize ldb'.toUSize
                beta C offC.toUSize ldc'.toUSize
 
-private def ztrmm' (order : Order) (side : Side) (uplo : Uplo) (transA : Transpose) (diag : Diag)
+private def ztrmm' (order : Order) (side : Side) (uplo : UpLo) (transA : Transpose) (diag : Diag)
           (M N : Nat) (alpha : ComplexFloat)
           (A : ComplexFloat64Array) (offA : Nat := 0) (lda : Nat := 0)
           (B : ComplexFloat64Array) (offB : Nat := 0) (ldb : Nat := 0) : ComplexFloat64Array :=
@@ -134,7 +134,7 @@ private def ztrmm' (order : Order) (side : Side) (uplo : Uplo) (transA : Transpo
   CBLAS.ztrmm order side uplo transA diag M.toUSize N.toUSize alpha
               A offA.toUSize lda'.toUSize B offB.toUSize ldb'.toUSize
 
-private def ztrsm' (order : Order) (side : Side) (uplo : Uplo) (transA : Transpose) (diag : Diag)
+private def ztrsm' (order : Order) (side : Side) (uplo : UpLo) (transA : Transpose) (diag : Diag)
           (M N : Nat) (alpha : ComplexFloat)
           (A : ComplexFloat64Array) (offA : Nat := 0) (lda : Nat := 0)
           (B : ComplexFloat64Array) (offB : Nat := 0) (ldb : Nat := 0) : ComplexFloat64Array :=
@@ -152,10 +152,10 @@ instance : LevelThreeData ComplexFloat64Array Float ComplexFloat where
     zgemm' order transA transB M N K alpha A offA lda B offB ldb beta C offC ldc
   symm order side uplo M N alpha A offA lda B offB ldb beta C offC ldc :=
     zsymm' order side uplo M N alpha A offA lda B offB ldb beta C offC ldc
-  syrk order uplo trans N K alpha A offA lda beta C offC ldc :=
-    zsyrk' order uplo trans N K alpha A offA lda beta C offC ldc
-  syr2k order uplo trans N K alpha A offA lda B offB ldb beta C offC ldc :=
-    zsyr2k' order uplo trans N K alpha A offA lda B offB ldb beta C offC ldc
+  syrk order uplo transA N K alpha A offA lda beta C offC ldc :=
+    zsyrk' order uplo transA N K alpha A offA lda beta C offC ldc
+  syr2k order uplo transA N K alpha A offA lda B offB ldb beta C offC ldc :=
+    zsyr2k' order uplo transA N K alpha A offA lda B offB ldb beta C offC ldc
   trmm order side uplo transA diag M N alpha A offA lda B offB ldb :=
     let diag' := if diag then Diag.Unit else Diag.NonUnit
     ztrmm' order side uplo transA diag' M N alpha A offA lda B offB ldb
@@ -167,7 +167,7 @@ instance : LevelThreeData ComplexFloat64Array Float ComplexFloat where
 /-- Hermitian matrix-matrix multiplication (complex-specific).
     C := alpha * A * B + beta * C or C := alpha * B * A + beta * C
     where A is Hermitian -/
-def hemm (order : Order) (side : Side) (uplo : Uplo) (M N : Nat)
+def hemm (order : Order) (side : Side) (uplo : UpLo) (M N : Nat)
          (alpha : ComplexFloat)
          (A : ComplexFloat64Array) (offA : Nat := 0) (lda : Nat := 0)
          (B : ComplexFloat64Array) (offB : Nat := 0) (ldb : Nat := 0)
@@ -178,22 +178,22 @@ def hemm (order : Order) (side : Side) (uplo : Uplo) (M N : Nat)
 /-- Hermitian rank-k update (complex-specific).
     C := alpha * A * A^H + beta * C
     where alpha and beta must be real -/
-def herk (order : Order) (uplo : Uplo) (trans : Transpose) (N K : Nat)
+def herk (order : Order) (uplo : UpLo) (transA : Transpose) (N K : Nat)
          (alpha : Float)
          (A : ComplexFloat64Array) (offA : Nat := 0) (lda : Nat := 0)
          (beta : Float)
          (C : ComplexFloat64Array) (offC : Nat := 0) (ldc : Nat := 0) : ComplexFloat64Array :=
-  zherk' order uplo trans N K alpha A offA lda beta C offC ldc
+  zherk' order uplo transA N K alpha A offA lda beta C offC ldc
 
 /-- Hermitian rank-2k update (complex-specific).
     C := alpha * A * B^H + conj(alpha) * B * A^H + beta * C
     where beta must be real -/
-def her2k (order : Order) (uplo : Uplo) (trans : Transpose) (N K : Nat)
+def her2k (order : Order) (uplo : UpLo) (transA : Transpose) (N K : Nat)
           (alpha : ComplexFloat)
           (A : ComplexFloat64Array) (offA : Nat := 0) (lda : Nat := 0)
           (B : ComplexFloat64Array) (offB : Nat := 0) (ldb : Nat := 0)
           (beta : Float)
           (C : ComplexFloat64Array) (offC : Nat := 0) (ldc : Nat := 0) : ComplexFloat64Array :=
-  zher2k' order uplo trans N K alpha A offA lda B offB ldb beta C offC ldc
+  zher2k' order uplo transA N K alpha A offA lda B offB ldb beta C offC ldc
 
 end BLAS.CBLAS

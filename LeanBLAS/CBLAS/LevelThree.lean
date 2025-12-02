@@ -56,16 +56,18 @@ instance : LevelThreeData Float64Array Float Float where
   symm order side uplo M N alpha A offA lda B offB ldb beta C offC ldc := 
     dsymm order side uplo M.toUSize N.toUSize alpha A offA.toUSize lda.toUSize B offB.toUSize ldb.toUSize beta C offC.toUSize ldc.toUSize
 
-  syrk order uplo trans N K_dim alpha A offA lda beta C offC ldc := 
-    dsyrk order uplo trans N.toUSize K_dim.toUSize alpha A offA.toUSize lda.toUSize beta C offC.toUSize ldc.toUSize
+  syrk order uplo transA N K_dim alpha A offA lda beta C offC ldc :=
+    dsyrk order uplo transA N.toUSize K_dim.toUSize alpha A offA.toUSize lda.toUSize beta C offC.toUSize ldc.toUSize
 
-  syr2k order uplo trans N K_dim alpha A offA lda B offB ldb beta C offC ldc := 
-    dsyr2k order uplo trans N.toUSize K_dim.toUSize alpha A offA.toUSize lda.toUSize B offB.toUSize ldb.toUSize beta C offC.toUSize ldc.toUSize
+  syr2k order uplo transA N K_dim alpha A offA lda B offB ldb beta C offC ldc :=
+    dsyr2k order uplo transA N.toUSize K_dim.toUSize alpha A offA.toUSize lda.toUSize B offB.toUSize ldb.toUSize beta C offC.toUSize ldc.toUSize
 
-  trmm order side uplo transA diag M N alpha A offA lda B offB ldb := 
-    dtrmm order side uplo transA diag M.toUSize N.toUSize alpha A offA.toUSize lda.toUSize B offB.toUSize ldb.toUSize
+  trmm order side uplo transA diag M N alpha A offA lda B offB ldb :=
+    let diag' := if diag then Diag.Unit else Diag.NonUnit
+    dtrmm order side uplo transA diag' M.toUSize N.toUSize alpha A offA.toUSize lda.toUSize B offB.toUSize ldb.toUSize
 
-  trsm order side uplo transA diag M N alpha A offA lda B offB ldb := 
-    dtrsm order side uplo transA diag M.toUSize N.toUSize alpha A offA.toUSize lda.toUSize B offB.toUSize ldb.toUSize
+  trsm order side uplo transA diag M N alpha A offA lda B offB ldb :=
+    let diag' := if diag then Diag.Unit else Diag.NonUnit
+    dtrsm order side uplo transA diag' M.toUSize N.toUSize alpha A offA.toUSize lda.toUSize B offB.toUSize ldb.toUSize
 
 end BLAS.CBLAS

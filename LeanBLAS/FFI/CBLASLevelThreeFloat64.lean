@@ -23,37 +23,36 @@ opaque dsymm (order : Order) (side : Side) (uplo : UpLo)
     (B : @& Float64Array) (offB : USize) (ldb : USize) (beta : Float)
     (C : Float64Array) (offC : USize) (ldc : USize) : Float64Array
 
--- Symmetric rank-k update
--- C := alpha*A*A^T + beta*C  or  C := alpha*A^T*A + beta*C
+/-- Symmetric rank-k update: C := α*A*Aᵀ + β*C or C := α*Aᵀ*A + β*C -/
 @[extern "leanblas_cblas_dsyrk"]
-opaque dsyrk (order : Order) (uplo : UpLo) (trans : Transpose)
+opaque dsyrk (order : Order) (uplo : UpLo) (transA : Transpose)
     (N : USize) (K : USize) (alpha : Float)
     (A : @& Float64Array) (offA : USize) (lda : USize) (beta : Float)
     (C : Float64Array) (offC : USize) (ldc : USize) : Float64Array
 
--- Symmetric rank-2k update
--- C := alpha*A*B^T + alpha*B*A^T + beta*C  or  C := alpha*A^T*B + alpha*B^T*A + beta*C
+/-- Symmetric rank-2k update: C := α*A*Bᵀ + α*B*Aᵀ + β*C -/
 @[extern "leanblas_cblas_dsyr2k"]
-opaque dsyr2k (order : Order) (uplo : UpLo) (trans : Transpose)
+opaque dsyr2k (order : Order) (uplo : UpLo) (transA : Transpose)
     (N : USize) (K : USize) (alpha : Float)
     (A : @& Float64Array) (offA : USize) (lda : USize)
     (B : @& Float64Array) (offB : USize) (ldb : USize) (beta : Float)
     (C : Float64Array) (offC : USize) (ldc : USize) : Float64Array
 
--- Triangular matrix-matrix multiplication
--- B := alpha*A*B  or  B := alpha*B*A
+/-- Triangular matrix-matrix multiply: B := α*op(A)*B or B := α*B*op(A).
+    - side: Left (A*B) or Right (B*A)
+    - diag: Unit (diagonal assumed 1) or NonUnit (use actual diagonal values) -/
 @[extern "leanblas_cblas_dtrmm"]
 opaque dtrmm (order : Order) (side : Side) (uplo : UpLo)
-    (transA : Transpose) (diag : Bool)
+    (transA : Transpose) (diag : Diag)
     (M : USize) (N : USize) (alpha : Float)
     (A : @& Float64Array) (offA : USize) (lda : USize)
     (B : Float64Array) (offB : USize) (ldb : USize) : Float64Array
 
--- Triangular solve with multiple right-hand sides
--- op(A)*X = alpha*B  or  X*op(A) = alpha*B
+/-- Triangular solve: solve op(A)*X = α*B or X*op(A) = α*B for X.
+    Solution overwrites B. -/
 @[extern "leanblas_cblas_dtrsm"]
 opaque dtrsm (order : Order) (side : Side) (uplo : UpLo)
-    (transA : Transpose) (diag : Bool)
+    (transA : Transpose) (diag : Diag)
     (M : USize) (N : USize) (alpha : Float)
     (A : @& Float64Array) (offA : USize) (lda : USize)
     (B : Float64Array) (offB : USize) (ldb : USize) : Float64Array

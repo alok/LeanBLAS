@@ -15,7 +15,7 @@ namespace BLAS.Test.ComplexCorrectness.Level2
 
 /-- Helper for complex number approximate equality -/
 def complexApproxEq (x y : ComplexFloat) (ε : Float := 1e-10) : Bool :=
-  Float.abs (x.x - y.x) < ε && Float.abs (x.y - y.y) < ε
+  Float.abs (x.re - y.re) < ε && Float.abs (x.im - y.im) < ε
 
 /-- Helper to print complex matrix -/
 def printComplexMatrix (name : String) (m n : Nat) (_A : ComplexFloat64Array) : IO Unit := do

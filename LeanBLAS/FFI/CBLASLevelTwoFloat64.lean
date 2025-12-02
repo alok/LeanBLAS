@@ -22,45 +22,53 @@ opaque dbmv (order : Order) (transA : Transpose) (N : USize) (M : USize) (KL KU 
     (X : @& Float64Array) (offX incX : USize) (beta : Float)
     (Y : Float64Array) (offY incY : USize) : Float64Array
 
-/-- Triangular matrix-vector: X := AX -/
+/-- Triangular matrix-vector multiply: X := op(A)X where A is triangular.
+    - order: Row or column major storage
+    - uplo: Upper or Lower triangular
+    - transA: No transpose, transpose, or conjugate transpose
+    - diag: Unit (diagonal assumed 1) or NonUnit (use actual diagonal values)
+    - N: Order of matrix A -/
 @[extern "leanblas_cblas_dtrmv"]
 opaque dtrmv (order : Order) (uplo : UpLo)
-    (transA : Transpose) (diag : Bool) (N : USize)
+    (transA : Transpose) (diag : Diag) (N : USize)
     (A : @& Float64Array) (offA : USize) (lda : USize)
     (X : Float64Array) (offX incX : USize) : Float64Array
 
-/-- Triangular band matrix-vector -/
+/-- Triangular banded matrix-vector multiply: X := op(A)X where A is triangular banded.
+    - K: Number of super-diagonals (upper) or sub-diagonals (lower) -/
 @[extern "leanblas_cblas_dtbmv"]
 opaque dtbmv (order : Order) (uplo : UpLo)
-    (transA : Transpose) (diag : Bool) (N K : USize)
+    (transA : Transpose) (diag : Diag) (N K : USize)
     (A : @& Float64Array) (offA : USize) (lda : USize)
     (X : Float64Array) (offX incX : USize) : Float64Array
 
-/-- Triangular packed matrix-vector -/
+/-- Triangular packed matrix-vector multiply: X := op(A)X where A is triangular in packed format.
+    Packed format stores only the triangular part in a 1D array. -/
 @[extern "leanblas_cblas_dtpmv"]
 opaque dtpmv (order : Order) (uplo : UpLo)
-    (transA : Transpose) (diag : Bool) (N : USize)
+    (transA : Transpose) (diag : Diag) (N : USize)
     (A : @& Float64Array) (offA : USize)
     (X : Float64Array) (offX incX : USize) : Float64Array
 
-/-- Triangular solve: X := A⁻¹X -/
+/-- Triangular solve: solve op(A)X = B for X, result stored in X.
+    A is triangular, X contains B on entry and solution on exit. -/
 @[extern "leanblas_cblas_dtrsv"]
 opaque dtrsv (order : Order) (uplo : UpLo)
-    (transA : Transpose) (diag : Bool) (N : USize)
+    (transA : Transpose) (diag : Diag) (N : USize)
     (A : @& Float64Array) (offA : USize) (lda : USize)
     (X : Float64Array) (offX incX : USize) : Float64Array
 
-/-- Triangular band solve -/
+/-- Triangular banded solve: solve op(A)X = B for X where A is triangular banded. -/
 @[extern "leanblas_cblas_dtbsv"]
 opaque dtbsv (order : Order) (uplo : UpLo)
-    (transA : Transpose) (diag : Bool) (N K : USize)
+    (transA : Transpose) (diag : Diag) (N K : USize)
     (A : @& Float64Array) (offA : USize) (lda : USize)
     (X : Float64Array) (offX incX : USize) : Float64Array
 
-/-- Triangular packed solve -/
+/-- Triangular packed solve: solve op(A)X = B for X where A is triangular in packed format. -/
 @[extern "leanblas_cblas_dtpsv"]
 opaque dtpsv (order : Order) (uplo : UpLo)
-    (transA : Transpose) (diag : Bool) (N : USize)
+    (transA : Transpose) (diag : Diag) (N : USize)
     (A : @& Float64Array) (offA : USize)
     (X : Float64Array) (offX incX : USize) : Float64Array
 

@@ -117,7 +117,7 @@ def test_zscal : IO Bool := do
   let x2 := ComplexFloatArray.toComplexFloat64Array x2_arr
   let real_scale := 2.5
   
-  let x2_new := scalReal 2 real_scale x2 0 1
+  let x2_new := scaleByReal 2 real_scale x2 0 1
   let x2_result := x2_new.toComplexFloatArray
   
   let test2_ok := complexApproxEq (x2_result.get! 0) ⟨2.5, 5.0⟩ &&
@@ -210,12 +210,12 @@ def test_abs : IO Bool := do
   
   let z1 := LevelOneDataExt.abs (Array := ComplexFloat64Array) (R := Float) (K := ComplexFloat) 2 x1 0 1
   let z1_result := z1.toComplexFloatArray
-  
+
   -- |3+4i| = 5, |-5+12i| = 13
-  let test_ok := floatApproxEq (z1_result.get! 0).x 5.0 &&
-                 floatApproxEq (z1_result.get! 0).y 0.0 &&
-                 floatApproxEq (z1_result.get! 1).x 13.0 &&
-                 floatApproxEq (z1_result.get! 1).y 0.0
+  let test_ok := floatApproxEq (z1_result.get! 0).re 5.0 &&
+                 floatApproxEq (z1_result.get! 0).im 0.0 &&
+                 floatApproxEq (z1_result.get! 1).re 13.0 &&
+                 floatApproxEq (z1_result.get! 1).im 0.0
   IO.println s!"  Test: abs - {if test_ok then "✓" else "✗"}"
   
   return test_ok

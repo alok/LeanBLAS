@@ -28,15 +28,15 @@ The FFI bindings handle complex matrix storage:
 -/
 
 -- Level 2 Complex BLAS wrappers that provide the Nat-based interface
-private def zgemv' (order : Order) (trans : Transpose) (M N : Nat) (alpha : ComplexFloat)
+private def zgemv' (order : Order) (transA : Transpose) (M N : Nat) (alpha : ComplexFloat)
           (A : ComplexFloat64Array) (offA : Nat := 0) (lda : Nat := 0)
           (X : ComplexFloat64Array) (offX : Nat := 0) (incX : Nat := 1) (beta : ComplexFloat)
           (Y : ComplexFloat64Array) (offY : Nat := 0) (incY : Nat := 1) : ComplexFloat64Array :=
   let lda' := if lda = 0 then (if order = Order.RowMajor then N else M) else lda
-  CBLAS.zgemv order trans M.toUSize N.toUSize alpha A offA.toUSize lda'.toUSize
+  CBLAS.zgemv order transA M.toUSize N.toUSize alpha A offA.toUSize lda'.toUSize
               X offX.toUSize incX.toUSize beta Y offY.toUSize incY.toUSize
 
-private def zhemv' (order : Order) (uplo : Uplo) (N : Nat) (alpha : ComplexFloat)
+private def zhemv' (order : Order) (uplo : UpLo) (N : Nat) (alpha : ComplexFloat)
           (A : ComplexFloat64Array) (offA : Nat := 0) (lda : Nat := 0)
           (X : ComplexFloat64Array) (offX : Nat := 0) (incX : Nat := 1) (beta : ComplexFloat)
           (Y : ComplexFloat64Array) (offY : Nat := 0) (incY : Nat := 1) : ComplexFloat64Array :=
@@ -44,18 +44,18 @@ private def zhemv' (order : Order) (uplo : Uplo) (N : Nat) (alpha : ComplexFloat
   CBLAS.zhemv order uplo N.toUSize alpha A offA.toUSize lda'.toUSize
               X offX.toUSize incX.toUSize beta Y offY.toUSize incY.toUSize
 
-private def ztrmv' (order : Order) (uplo : Uplo) (trans : Transpose) (diag : Diag)
+private def ztrmv' (order : Order) (uplo : UpLo) (transA : Transpose) (diag : Diag)
           (N : Nat) (A : ComplexFloat64Array) (offA : Nat := 0) (lda : Nat := 0)
           (X : ComplexFloat64Array) (offX : Nat := 0) (incX : Nat := 1) : ComplexFloat64Array :=
   let lda' := if lda = 0 then N else lda
-  CBLAS.ztrmv order uplo trans diag N.toUSize A offA.toUSize lda'.toUSize
+  CBLAS.ztrmv order uplo transA diag N.toUSize A offA.toUSize lda'.toUSize
               X offX.toUSize incX.toUSize
 
-private def ztrsv' (order : Order) (uplo : Uplo) (trans : Transpose) (diag : Diag)
+private def ztrsv' (order : Order) (uplo : UpLo) (transA : Transpose) (diag : Diag)
           (N : Nat) (A : ComplexFloat64Array) (offA : Nat := 0) (lda : Nat := 0)
           (X : ComplexFloat64Array) (offX : Nat := 0) (incX : Nat := 1) : ComplexFloat64Array :=
   let lda' := if lda = 0 then N else lda
-  CBLAS.ztrsv order uplo trans diag N.toUSize A offA.toUSize lda'.toUSize
+  CBLAS.ztrsv order uplo transA diag N.toUSize A offA.toUSize lda'.toUSize
               X offX.toUSize incX.toUSize
 
 private def zgerc' (order : Order) (M N : Nat) (alpha : ComplexFloat)
@@ -74,14 +74,14 @@ private def zgeru' (order : Order) (M N : Nat) (alpha : ComplexFloat)
   CBLAS.zgeru order M.toUSize N.toUSize alpha X offX.toUSize incX.toUSize
               Y offY.toUSize incY.toUSize A offA.toUSize lda'.toUSize
 
-private def zher' (order : Order) (uplo : Uplo) (N : Nat) (alpha : Float)
+private def zher' (order : Order) (uplo : UpLo) (N : Nat) (alpha : Float)
          (X : ComplexFloat64Array) (offX : Nat := 0) (incX : Nat := 1)
          (A : ComplexFloat64Array) (offA : Nat := 0) (lda : Nat := 0) : ComplexFloat64Array :=
   let lda' := if lda = 0 then N else lda
   CBLAS.zher order uplo N.toUSize alpha X offX.toUSize incX.toUSize
              A offA.toUSize lda'.toUSize
 
-private def zher2' (order : Order) (uplo : Uplo) (N : Nat) (alpha : ComplexFloat)
+private def zher2' (order : Order) (uplo : UpLo) (N : Nat) (alpha : ComplexFloat)
           (X : ComplexFloat64Array) (offX : Nat := 0) (incX : Nat := 1)
           (Y : ComplexFloat64Array) (offY : Nat := 0) (incY : Nat := 1)
           (A : ComplexFloat64Array) (offA : Nat := 0) (lda : Nat := 0) : ComplexFloat64Array :=
@@ -94,17 +94,17 @@ private def zher2' (order : Order) (uplo : Uplo) (N : Nat) (alpha : ComplexFloat
 This instance provides optimized complex matrix-vector operations through FFI
 bindings to CBLAS libraries. -/
 instance : LevelTwoData ComplexFloat64Array Float ComplexFloat where
-  gemv order trans M N a A offA ldaA X offX incX b Y offY incY :=
-    zgemv' order trans M N a A offA ldaA X offX incX b Y offY incY
+  gemv order transA M N a A offA ldaA X offX incX b Y offY incY :=
+    zgemv' order transA M N a A offA ldaA X offX incX b Y offY incY
 
   bmv order transA M N KL KU alpha A offA lda X offX incX beta Y offY incY :=
     -- Banded matrix operations not implemented for complex numbers yet
     -- Return Y unchanged as a placeholder
     Y
 
-  trmv order uplo trans diag N A offA lda X offX incX :=
+  trmv order uplo transA diag N A offA lda X offX incX :=
     let diag' := if diag then Diag.Unit else Diag.NonUnit
-    ztrmv' order uplo trans diag' N A offA lda X offX incX
+    ztrmv' order uplo transA diag' N A offA lda X offX incX
 
   tbmv order uplo transA diag N K A offA lda X offX incX :=
     -- Triangular banded matrix operations not implemented yet
@@ -114,9 +114,9 @@ instance : LevelTwoData ComplexFloat64Array Float ComplexFloat where
     -- Triangular packed matrix operations not implemented yet  
     X
 
-  trsv order uplo trans diag N A offA lda X offX incX :=
+  trsv order uplo transA diag N A offA lda X offX incX :=
     let diag' := if diag then Diag.Unit else Diag.NonUnit
-    ztrsv' order uplo trans diag' N A offA lda X offX incX
+    ztrsv' order uplo transA diag' N A offA lda X offX incX
 
   tbsv order uplo transA diag N K A offA lda X offX incX :=
     -- Triangular banded solve not implemented yet
@@ -145,7 +145,7 @@ instance : LevelTwoData ComplexFloat64Array Float ComplexFloat where
 
 /-- Hermitian matrix-vector multiplication (complex-specific).
     y := alpha * A * x + beta * y where A is Hermitian -/
-def hemv (order : Order) (uplo : Uplo) (N : Nat) (alpha : ComplexFloat)
+def hemv (order : Order) (uplo : UpLo) (N : Nat) (alpha : ComplexFloat)
          (A : ComplexFloat64Array) (offA : Nat := 0) (lda : Nat := 0)
          (X : ComplexFloat64Array) (offX : Nat := 0) (incX : Nat := 1) (beta : ComplexFloat)
          (Y : ComplexFloat64Array) (offY : Nat := 0) (incY : Nat := 1) : ComplexFloat64Array :=

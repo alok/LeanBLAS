@@ -3,43 +3,43 @@
 namespace BLAS
 
 
-/-- -/
+/-- Complex number with double-precision real and imaginary parts. -/
 structure ComplexFloat where
-  x : Float
-  y : Float
+  re : Float
+  im : Float
   deriving Inhabited
 
 instance : ToString ComplexFloat where
-  toString c := toString c.x ++ " + " ++ toString c.y ++ "ⅈ"
+  toString c := toString c.re ++ " + " ++ toString c.im ++ "ⅈ"
 
 instance : BEq ComplexFloat where
-  beq a b := a.x == b.x && a.y == b.y
+  beq a b := a.re == b.re && a.im == b.im
 
 instance : Add ComplexFloat where
-  add a b := ⟨a.x + b.x, a.y + b.y⟩
+  add a b := ⟨a.re + b.re, a.im + b.im⟩
 
 instance : Sub ComplexFloat where
-  sub a b := ⟨a.x - b.x, a.y - b.y⟩
+  sub a b := ⟨a.re - b.re, a.im - b.im⟩
 
 instance : Mul ComplexFloat where
-  mul a b := ⟨a.x * b.x - a.y * b.y, a.x * b.y + a.y * b.x⟩
+  mul a b := ⟨a.re * b.re - a.im * b.im, a.re * b.im + a.im * b.re⟩
 
 instance : Div ComplexFloat where
   div a b :=
-    let d := b.x * b.x + b.y * b.y
-    ⟨(a.x * b.x + a.y * b.y) / d, (a.y * b.x - a.x * b.y) / d⟩
+    let d := b.re * b.re + b.im * b.im
+    ⟨(a.re * b.re + a.im * b.im) / d, (a.im * b.re - a.re * b.im) / d⟩
 
 instance : HDiv ComplexFloat Float ComplexFloat where
-  hDiv a b := ⟨a.x / b, a.y / b⟩
+  hDiv a b := ⟨a.re / b, a.im / b⟩
 
 instance : HMul ComplexFloat Float ComplexFloat where
-  hMul a b := ⟨a.x * b, a.y * b⟩
+  hMul a b := ⟨a.re * b, a.im * b⟩
 
 instance : HMul Float ComplexFloat ComplexFloat where
-  hMul a b := ⟨a * b.x, a * b.y⟩
+  hMul a b := ⟨a * b.re, a * b.im⟩
 
 instance : Neg ComplexFloat where
-  neg a := ⟨-a.x, -a.y⟩
+  neg a := ⟨-a.re, -a.im⟩
 
 def ComplexFloat.zero : ComplexFloat := ⟨0, 0⟩
 
@@ -47,18 +47,17 @@ def ComplexFloat.one : ComplexFloat := ⟨1, 0⟩
 
 def ComplexFloat.I : ComplexFloat := ⟨0, 1⟩
 
-def ComplexFloat.abs (a : ComplexFloat) : Float := Float.sqrt (a.x * a.x + a.y * a.y)
+def ComplexFloat.abs (a : ComplexFloat) : Float := Float.sqrt (a.re * a.re + a.im * a.im)
 
-def ComplexFloat.conj (a : ComplexFloat) : ComplexFloat := ⟨a.x, -a.y⟩
+def ComplexFloat.conj (a : ComplexFloat) : ComplexFloat := ⟨a.re, -a.im⟩
 
 def ComplexFloat.exp (a : ComplexFloat) : ComplexFloat :=
-  let e := Float.exp a.x
-  ⟨e * Float.cos a.y, e * Float.sin a.y⟩
+  let e := Float.exp a.re
+  ⟨e * Float.cos a.im, e * Float.sin a.im⟩
 
 def ComplexFloat.log (a : ComplexFloat) : ComplexFloat :=
-
   let r := ComplexFloat.abs a
-  let θ := Float.atan2 a.y a.x
+  let θ := Float.atan2 a.im a.re
   ⟨Float.log r, θ⟩
 
 def ComplexFloat.pow (a b : ComplexFloat) : ComplexFloat :=
@@ -66,27 +65,27 @@ def ComplexFloat.pow (a b : ComplexFloat) : ComplexFloat :=
 
 def ComplexFloat.sqrt (a : ComplexFloat) : ComplexFloat :=
   let r := ComplexFloat.abs a
-  let θ := Float.atan2 a.y a.x
+  let θ := Float.atan2 a.im a.re
   let r' := Float.sqrt r
   let θ' := θ / 2
   ⟨r' * Float.cos θ', r' * Float.sin θ'⟩
 
 def ComplexFloat.cbrt (a : ComplexFloat) : ComplexFloat :=
   let r := ComplexFloat.abs a
-  let θ := Float.atan2 a.y a.x
+  let θ := Float.atan2 a.im a.re
   let r' := Float.cbrt r
   let θ' := θ / 3
   ⟨r' * Float.cos θ', r' * Float.sin θ'⟩
 
 def ComplexFloat.sin (a : ComplexFloat) : ComplexFloat :=
-  let x := a.x
-  let y := a.y
-  ⟨Float.sin x * Float.cosh y, Float.cos x * Float.sinh y⟩
+  let re := a.re
+  let im := a.im
+  ⟨Float.sin re * Float.cosh im, Float.cos re * Float.sinh im⟩
 
 def ComplexFloat.cos (a : ComplexFloat) : ComplexFloat :=
-  let x := a.x
-  let y := a.y
-  ⟨Float.cos x * Float.cosh y, -Float.sin x * Float.sinh y⟩
+  let re := a.re
+  let im := a.im
+  ⟨Float.cos re * Float.cosh im, -Float.sin re * Float.sinh im⟩
 
 def ComplexFloat.tan (a : ComplexFloat) : ComplexFloat :=
   ComplexFloat.sin a / ComplexFloat.cos a
@@ -101,14 +100,14 @@ def ComplexFloat.atan (a : ComplexFloat) : ComplexFloat :=
   (ComplexFloat.log (ComplexFloat.one - a * ComplexFloat.I) - ComplexFloat.log (ComplexFloat.one + a * ComplexFloat.I)) * ComplexFloat.I / (2.0 : Float)
 
 def ComplexFloat.sinh (a : ComplexFloat) : ComplexFloat :=
-  let x := a.x
-  let y := a.y
-  ⟨Float.sinh x * Float.cos y, Float.cosh x * Float.sin y⟩
+  let re := a.re
+  let im := a.im
+  ⟨Float.sinh re * Float.cos im, Float.cosh re * Float.sin im⟩
 
 def ComplexFloat.cosh (a : ComplexFloat) : ComplexFloat :=
-  let x := a.x
-  let y := a.y
-  ⟨Float.cosh x * Float.cos y, Float.sinh x * Float.sin y⟩
+  let re := a.re
+  let im := a.im
+  ⟨Float.cosh re * Float.cos im, Float.sinh re * Float.sin im⟩
 
 def ComplexFloat.tanh (a : ComplexFloat) : ComplexFloat :=
   ComplexFloat.sinh a / ComplexFloat.cosh a
@@ -123,17 +122,17 @@ def ComplexFloat.atanh (a : ComplexFloat) : ComplexFloat :=
   (ComplexFloat.log (ComplexFloat.one + a) - ComplexFloat.log (ComplexFloat.one - a)) / (2.0:Float)
 
 
-def ComplexFloat.floor (a : ComplexFloat) : ComplexFloat := ⟨Float.floor a.x, Float.floor a.y⟩
+def ComplexFloat.floor (a : ComplexFloat) : ComplexFloat := ⟨Float.floor a.re, Float.floor a.im⟩
 
-def ComplexFloat.ceil (a : ComplexFloat) : ComplexFloat := ⟨Float.ceil a.x, Float.ceil a.y⟩
+def ComplexFloat.ceil (a : ComplexFloat) : ComplexFloat := ⟨Float.ceil a.re, Float.ceil a.im⟩
 
-def ComplexFloat.round (a : ComplexFloat) : ComplexFloat := ⟨Float.round a.x, Float.round a.y⟩
+def ComplexFloat.round (a : ComplexFloat) : ComplexFloat := ⟨Float.round a.re, Float.round a.im⟩
 
-def ComplexFloat.isFinite (a : ComplexFloat) : Bool := a.x.isFinite && a.y.isFinite
+def ComplexFloat.isFinite (a : ComplexFloat) : Bool := a.re.isFinite && a.im.isFinite
 
-def ComplexFloat.isNaN (a : ComplexFloat) : Bool := a.x.isNaN || a.y.isNaN
+def ComplexFloat.isNaN (a : ComplexFloat) : Bool := a.re.isNaN || a.im.isNaN
 
-def ComplexFloat.isInf (a : ComplexFloat) : Bool := a.x.isInf || a.y.isInf
+def ComplexFloat.isInf (a : ComplexFloat) : Bool := a.re.isInf || a.im.isInf
 
 
 ----------------------------------------------------------------------------------------------------
@@ -156,7 +155,7 @@ def ComplexFloatArray.get (a : ComplexFloatArray) (i : Fin a.size) : ComplexFloa
   a.get! i.val
 
 def ComplexFloatArray.set! (a : ComplexFloatArray) (i : Nat) (c : ComplexFloat) : ComplexFloatArray :=
-  ⟨a.data.set! (2*i) c.x |>.set! (2*i+1) c.y⟩
+  ⟨a.data.set! (2*i) c.re |>.set! (2*i+1) c.im⟩
 
 def ComplexFloatArray.set (a : ComplexFloatArray) (i : Fin a.size) (c : ComplexFloat) : ComplexFloatArray :=
   a.set! i.val c
@@ -164,13 +163,13 @@ def ComplexFloatArray.set (a : ComplexFloatArray) (i : Fin a.size) (c : ComplexF
 def ComplexFloatArray.mkEmpty : ComplexFloatArray := ⟨FloatArray.empty⟩
 
 def ComplexFloatArray.push (a : ComplexFloatArray) (c : ComplexFloat) : ComplexFloatArray :=
-  ⟨(a.data.push c.x).push c.y⟩
+  ⟨(a.data.push c.re).push c.im⟩
 
 def ComplexFloatArray.ofArray (xs : Array ComplexFloat) : ComplexFloatArray := Id.run do
   let mut data := FloatArray.empty
-  for x in xs do
-    data := data.push x.x
-    data := data.push x.y
+  for c in xs do
+    data := data.push c.re
+    data := data.push c.im
   return ⟨data⟩
 
 

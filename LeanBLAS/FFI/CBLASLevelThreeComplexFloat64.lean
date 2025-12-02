@@ -20,7 +20,7 @@ opaque zgemm (order : Order) (transA transB : Transpose) (M N K : USize)
 
 /-- Symmetric matrix multiply: C := αAB + βC or C := αBA + βC (A symmetric) -/
 @[extern "leanblas_cblas_zsymm"]
-opaque zsymm (order : Order) (side : Side) (uplo : Uplo) (M N : USize)
+opaque zsymm (order : Order) (side : Side) (uplo : UpLo) (M N : USize)
              (alpha : ComplexFloat)
              (A : @& ComplexFloat64Array) (offA : USize) (lda : USize)
              (B : @& ComplexFloat64Array) (offB : USize) (ldb : USize)
@@ -29,7 +29,7 @@ opaque zsymm (order : Order) (side : Side) (uplo : Uplo) (M N : USize)
 
 /-- Hermitian matrix multiply: C := αAB + βC or C := αBA + βC (A = Aᴴ) -/
 @[extern "leanblas_cblas_zhemm"]
-opaque zhemm (order : Order) (side : Side) (uplo : Uplo) (M N : USize)
+opaque zhemm (order : Order) (side : Side) (uplo : UpLo) (M N : USize)
              (alpha : ComplexFloat)
              (A : @& ComplexFloat64Array) (offA : USize) (lda : USize)
              (B : @& ComplexFloat64Array) (offB : USize) (ldb : USize)
@@ -38,7 +38,7 @@ opaque zhemm (order : Order) (side : Side) (uplo : Uplo) (M N : USize)
 
 /-- Symmetric rank-k update: C := αAAᵀ + βC or C := αAᵀA + βC -/
 @[extern "leanblas_cblas_zsyrk"]
-opaque zsyrk (order : Order) (uplo : Uplo) (trans : Transpose) (N K : USize)
+opaque zsyrk (order : Order) (uplo : UpLo) (transA : Transpose) (N K : USize)
              (alpha : ComplexFloat)
              (A : @& ComplexFloat64Array) (offA : USize) (lda : USize)
              (beta : ComplexFloat)
@@ -46,7 +46,7 @@ opaque zsyrk (order : Order) (uplo : Uplo) (trans : Transpose) (N K : USize)
 
 /-- Hermitian rank-k update: C := αAAᴴ + βC or C := αAᴴA + βC (α,β ∈ ℝ) -/
 @[extern "leanblas_cblas_zherk"]
-opaque zherk (order : Order) (uplo : Uplo) (trans : Transpose) (N K : USize)
+opaque zherk (order : Order) (uplo : UpLo) (transA : Transpose) (N K : USize)
              (alpha : Float)
              (A : @& ComplexFloat64Array) (offA : USize) (lda : USize)
              (beta : Float)
@@ -54,7 +54,7 @@ opaque zherk (order : Order) (uplo : Uplo) (trans : Transpose) (N K : USize)
 
 /-- Symmetric rank-2k update: C := αABᵀ + αBAᵀ + βC -/
 @[extern "leanblas_cblas_zsyr2k"]
-opaque zsyr2k (order : Order) (uplo : Uplo) (trans : Transpose) (N K : USize)
+opaque zsyr2k (order : Order) (uplo : UpLo) (transA : Transpose) (N K : USize)
               (alpha : ComplexFloat)
               (A : @& ComplexFloat64Array) (offA : USize) (lda : USize)
               (B : @& ComplexFloat64Array) (offB : USize) (ldb : USize)
@@ -63,7 +63,7 @@ opaque zsyr2k (order : Order) (uplo : Uplo) (trans : Transpose) (N K : USize)
 
 /-- Hermitian rank-2k update: C := αABᴴ + ᾱBAᴴ + βC (β ∈ ℝ) -/
 @[extern "leanblas_cblas_zher2k"]
-opaque zher2k (order : Order) (uplo : Uplo) (trans : Transpose) (N K : USize)
+opaque zher2k (order : Order) (uplo : UpLo) (transA : Transpose) (N K : USize)
               (alpha : ComplexFloat)
               (A : @& ComplexFloat64Array) (offA : USize) (lda : USize)
               (B : @& ComplexFloat64Array) (offB : USize) (ldb : USize)
@@ -72,14 +72,14 @@ opaque zher2k (order : Order) (uplo : Uplo) (trans : Transpose) (N K : USize)
 
 /-- Triangular matrix multiply: B := αop(A)B or B := αBop(A) -/
 @[extern "leanblas_cblas_ztrmm"]
-opaque ztrmm (order : Order) (side : Side) (uplo : Uplo) (transA : Transpose) (diag : Diag)
+opaque ztrmm (order : Order) (side : Side) (uplo : UpLo) (transA : Transpose) (diag : Diag)
              (M N : USize) (alpha : ComplexFloat)
              (A : @& ComplexFloat64Array) (offA : USize) (lda : USize)
              (B : ComplexFloat64Array) (offB : USize) (ldb : USize) : ComplexFloat64Array
 
 /-- Triangular solve: solve op(A)X = αB or Xop(A) = αB for X -/
 @[extern "leanblas_cblas_ztrsm"]
-opaque ztrsm (order : Order) (side : Side) (uplo : Uplo) (transA : Transpose) (diag : Diag)
+opaque ztrsm (order : Order) (side : Side) (uplo : UpLo) (transA : Transpose) (diag : Diag)
              (M N : USize) (alpha : ComplexFloat)
              (A : @& ComplexFloat64Array) (offA : USize) (lda : USize)
              (B : ComplexFloat64Array) (offB : USize) (ldb : USize) : ComplexFloat64Array

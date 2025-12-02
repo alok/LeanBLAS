@@ -15,7 +15,7 @@ namespace BLAS.Test.ComplexLevel2Comprehensive
 
 /-- Helper for complex number approximate equality -/
 def complexApproxEq (x y : ComplexFloat) (ε : Float := 1e-10) : Bool :=
-  Float.abs (x.x - y.x) < ε && Float.abs (x.y - y.y) < ε
+  Float.abs (x.re - y.re) < ε && Float.abs (x.im - y.im) < ε
 
 /-- Test zgemv (general matrix-vector multiply) -/
 def test_zgemv : IO Bool := do
@@ -230,9 +230,9 @@ def test_zher2 : IO Bool := do
   
   let A_new := her2 Order.RowMajor UpLo.Upper 2 alpha x 0 1 y 0 1 A 0 2
   let A_result := A_new.toComplexFloatArray
-  
+
   -- This is a complex calculation - we'll check a simpler result
-  let test_ok := (A_result.get! 0).x > 1.0  -- Diagonal should increase
+  let test_ok := (A_result.get! 0).re > 1.0  -- Diagonal should increase
   IO.println s!"  Test: Hermitian rank-2 update - {if test_ok then "✓" else "✗"}"
   
   return test_ok
