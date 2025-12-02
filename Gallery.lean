@@ -24,8 +24,8 @@ def runExe (cmd : String) (args : Array String := #[]) : IO Unit := do
 def main : IO Unit := do
   IO.println "================ LeanBLAS Benchmark Gallery ================"
 
-  IO.println "\n(1) Quick sanity + performance check (BenchmarksFixed)\n"
-  runExe "lake" #["exe", "BenchmarksFixedTest"]
+  IO.println "\n(1) Quick sanity + performance check (BenchmarksQuick)\n"
+  runExe "lake" #["exe", "BenchmarksQuickTest"]
 
   IO.println "\n(2) Full benchmark suite – cache & scaling analysis (BenchmarkTests)\n"
   runExe "lake" #["exe", "BenchmarkTests"]

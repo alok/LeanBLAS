@@ -8,7 +8,7 @@ def formatTime (sec : Float) : String :=
 
 open BLAS CBLAS
 
-namespace BLAS.Test.BenchmarksFixed
+namespace BLAS.Test.BenchmarksQuick
 
 /-- Approximate equality check for floats -/
 def approxEq (x y : Float) (tol : Float := 1e-10) : Bool :=
@@ -201,6 +201,6 @@ def main : IO Unit := do
   
   IO.println "\n✓ All benchmarks completed!"
 
-end BLAS.Test.BenchmarksFixed
+end BLAS.Test.BenchmarksQuick
 
-def main : IO Unit := BLAS.Test.BenchmarksFixed.main
+def main : IO Unit := BLAS.Test.BenchmarksQuick.main

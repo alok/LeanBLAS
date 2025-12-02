@@ -75,8 +75,8 @@ lean_exe CorrectnessTests where
 lean_exe Level3Tests where
   root := `Test.Level3
 
-lean_exe BenchmarksFixedTest where
-  root := `Test.BenchmarksFixed
+lean_exe BenchmarksQuickTest where
+  root := `Test.BenchmarksQuick
 
 -- Small utility executable used internally for measuring timings while
 -- developing the benchmark suite.  Not part of the public API.
