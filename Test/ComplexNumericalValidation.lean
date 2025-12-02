@@ -78,7 +78,7 @@ def test_zdotu_robust : IO Bool := do
   for testCase in knownTestVectors do
     IO.println s!"\nTest case {i + 1}: size = {testCase.size}"
 
-    let result := unconjugated_dot testCase.size testCase.x 0 1 testCase.y 0 1
+    let result := unconjugatedDot testCase.size testCase.x 0 1 testCase.y 0 1
     let passed := complexApproxEq result testCase.zdotu_expected
 
     IO.println s!"  Expected: {testCase.zdotu_expected}"
@@ -175,7 +175,7 @@ def test_edge_cases : IO Bool := do
   IO.println "\nTest: Zero-length vectors"
   let empty_x := #c64[]
   let empty_y := #c64[]
-  let dot_empty := unconjugated_dot 0 empty_x 0 1 empty_y 0 1
+  let dot_empty := unconjugatedDot 0 empty_x 0 1 empty_y 0 1
   let norm_empty := nrm2 0 empty_x 0 1
   let asum_empty := asum 0 empty_x 0 1
   
@@ -187,7 +187,7 @@ def test_edge_cases : IO Bool := do
   IO.println "\nTest: Single element vectors"
   let single_x := #c64[⟨3.0, 4.0⟩]  -- |3+4i| = 5
   let single_y := #c64[⟨1.0, 0.0⟩]
-  let dot_single := unconjugated_dot 1 single_x 0 1 single_y 0 1
+  let dot_single := unconjugatedDot 1 single_x 0 1 single_y 0 1
   let norm_single := nrm2 1 single_x 0 1
   let asum_single := asum 1 single_x 0 1
   
@@ -207,7 +207,7 @@ def test_edge_cases : IO Bool := do
   let stride_x := #c64[⟨1.0, 0.0⟩, ⟨999.0, 999.0⟩, ⟨2.0, 0.0⟩, ⟨888.0, 888.0⟩]
   let stride_y := #c64[⟨3.0, 0.0⟩, ⟨777.0, 777.0⟩, ⟨4.0, 0.0⟩, ⟨666.0, 666.0⟩]
   -- With stride 2, picks elements 0 and 2: [1, 2] · [3, 4] = 11
-  let dot_stride := unconjugated_dot 2 stride_x 0 2 stride_y 0 2
+  let dot_stride := unconjugatedDot 2 stride_x 0 2 stride_y 0 2
   IO.println s!"  zdotu with stride 2: {dot_stride} (expected: 11+0i)"
   
   let stride_ok := complexApproxEq dot_stride ⟨11.0, 0.0⟩

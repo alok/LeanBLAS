@@ -74,11 +74,11 @@ instance : LevelOneData ComplexFloat64Array Float ComplexFloat where
 -- Additional complex-specific operations
 
 /-- Unconjugated dot product for complex vectors -/
-def unconjugated_dot (N : Nat) (X : ComplexFloat64Array) (offX incX : Nat) (Y : ComplexFloat64Array) (offY incY : Nat) : ComplexFloat :=
+def unconjugatedDot (N : Nat) (X : ComplexFloat64Array) (offX incX : Nat) (Y : ComplexFloat64Array) (offY incY : Nat) : ComplexFloat :=
   zdotu N.toUSize X offX.toUSize incX.toUSize Y offY.toUSize incY.toUSize
 
-/-- Scale a complex vector by a real scalar -/  
-def scal_real (N : Nat) (a : Float) (X : ComplexFloat64Array) (offX incX : Nat) : ComplexFloat64Array :=
+/-- Scale a complex vector by a real scalar -/
+def scalReal (N : Nat) (a : Float) (X : ComplexFloat64Array) (offX incX : Nat) : ComplexFloat64Array :=
   zdscal N.toUSize a X offX.toUSize incX.toUSize
 
 instance : LevelOneDataExt ComplexFloat64Array Float ComplexFloat where

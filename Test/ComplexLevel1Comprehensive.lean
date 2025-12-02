@@ -117,7 +117,7 @@ def test_zscal : IO Bool := do
   let x2 := ComplexFloatArray.toComplexFloat64Array x2_arr
   let real_scale := 2.5
   
-  let x2_new := scal_real 2 real_scale x2 0 1
+  let x2_new := scalReal 2 real_scale x2 0 1
   let x2_result := x2_new.toComplexFloatArray
   
   let test2_ok := complexApproxEq (x2_result.get! 0) ⟨2.5, 5.0⟩ &&
