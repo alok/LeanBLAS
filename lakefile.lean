@@ -78,9 +78,6 @@ lean_exe CorrectnessTests where
 lean_exe Level3Tests where
   root := `Test.Level3
 
-lean_exe SimpleTest where
-  root := `Test.Simple
-
 lean_exe BenchmarksFixedTest where
   root := `Test.BenchmarksFixed
 
@@ -117,14 +114,6 @@ lean_exe ComplexArrayTest where
   root := `Test.ComplexArrayTest
   supportInterpreter := true
 
-lean_exe ComplexLevelTwo where
-  root := `test.ComplexLevelTwo
-  supportInterpreter := true
-
-lean_exe ComplexBLASTest where
-  root := `test.ComplexBLASTest
-  supportInterpreter := true
-
 lean_exe ComplexCorrectnessLevel1 where
   root := `Test.ComplexCorrectnessLevel1
   supportInterpreter := true
@@ -139,9 +128,6 @@ lean_exe ComplexNumericalValidation where
 
 lean_exe Level3Benchmarks where
   root := `Test.BenchmarksLevel3
-
-lean_exe PropertyDebugTest where
-  root := `Test.PropertyDebug
 
 lean_exe ComplexLevel1Comprehensive where
   root := `Test.ComplexLevel1Comprehensive
