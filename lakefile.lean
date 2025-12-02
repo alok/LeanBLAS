@@ -57,9 +57,6 @@ lean_exe CBLASLevelOneTest where
   root := `Test.cblas_level_one
   supportInterpreter := true
 
-lean_exe DenseVectorTest where
-  root := `Test.dense_vector
-
 lean_exe TriangularTest where
   root := `Test.packed_triangular
 
@@ -108,10 +105,6 @@ lean_exe ComplexPerformance where
 
 lean_exe ComplexArrayTest where
   root := `Test.ComplexArrayTest
-  supportInterpreter := true
-
-lean_exe ComplexCorrectnessLevel1 where
-  root := `Test.ComplexCorrectnessLevel1
   supportInterpreter := true
 
 lean_exe ComplexCorrectnessLevel2 where
