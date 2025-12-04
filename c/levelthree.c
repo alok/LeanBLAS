@@ -505,3 +505,136 @@ LEAN_EXPORT lean_obj_res leanblas_cblas_ztrsm(
 
     return B;
 }
+
+
+// ============================================================================
+// Float32 (single precision) Level 3 BLAS operations
+// ============================================================================
+
+/** sgemm
+ *
+ * Computes a general matrix-matrix product (single precision).
+ * C := alpha*A*B + beta*C
+ */
+LEAN_EXPORT lean_obj_res leanblas_cblas_sgemm(
+    const uint8_t order, const uint8_t transA, const uint8_t transB,
+    const size_t M, const size_t N, const size_t K, const double alpha,
+    const b_lean_obj_arg A, const size_t offA, const size_t lda,
+    const b_lean_obj_arg B, const size_t offB, const size_t ldb,
+    const double beta, lean_obj_arg C, const size_t offC, const size_t ldc) {
+    ensure_exclusive_byte_array(&C);
+
+    cblas_sgemm(leanblas_cblas_order(order), leanblas_cblas_transpose(transA),
+                leanblas_cblas_transpose(transB), (int)M, (int)N, (int)K, (float)alpha,
+                lean_float32_array_cptr(A) + offA, (int)lda,
+                lean_float32_array_cptr(B) + offB, (int)ldb, (float)beta,
+                lean_float32_array_cptr(C) + offC, (int)ldc);
+
+    return C;
+}
+
+/** ssymm
+ *
+ * Computes a matrix-matrix product where one matrix is symmetric (single precision).
+ * C := alpha*A*B + beta*C  or  C := alpha*B*A + beta*C
+ */
+LEAN_EXPORT lean_obj_res leanblas_cblas_ssymm(
+    const uint8_t order, const uint8_t side, const uint8_t uplo, const size_t M,
+    const size_t N, const double alpha, const b_lean_obj_arg A,
+    const size_t offA, const size_t lda, const b_lean_obj_arg B,
+    const size_t offB, const size_t ldb, const double beta, lean_obj_arg C,
+    const size_t offC, const size_t ldc) {
+    ensure_exclusive_byte_array(&C);
+
+    cblas_ssymm(leanblas_cblas_order(order), side == 0 ? CblasLeft : CblasRight,
+                leanblas_cblas_uplo(uplo), (int)M, (int)N, (float)alpha,
+                lean_float32_array_cptr(A) + offA, (int)lda,
+                lean_float32_array_cptr(B) + offB, (int)ldb, (float)beta,
+                lean_float32_array_cptr(C) + offC, (int)ldc);
+
+    return C;
+}
+
+/** ssyrk
+ *
+ * Performs a symmetric rank-k update (single precision).
+ * C := alpha*A*A^T + beta*C  or  C := alpha*A^T*A + beta*C
+ */
+LEAN_EXPORT lean_obj_res leanblas_cblas_ssyrk(
+    const uint8_t order, const uint8_t uplo, const uint8_t trans,
+    const size_t N, const size_t K, const double alpha, const b_lean_obj_arg A,
+    const size_t offA, const size_t lda, const double beta, lean_obj_arg C,
+    const size_t offC, const size_t ldc) {
+    ensure_exclusive_byte_array(&C);
+
+    cblas_ssyrk(leanblas_cblas_order(order), leanblas_cblas_uplo(uplo),
+                leanblas_cblas_transpose(trans), (int)N, (int)K, (float)alpha,
+                lean_float32_array_cptr(A) + offA, (int)lda, (float)beta,
+                lean_float32_array_cptr(C) + offC, (int)ldc);
+
+    return C;
+}
+
+/** ssyr2k
+ *
+ * Performs a symmetric rank-2k update (single precision).
+ * C := alpha*A*B^T + alpha*B*A^T + beta*C
+ */
+LEAN_EXPORT lean_obj_res leanblas_cblas_ssyr2k(
+    const uint8_t order, const uint8_t uplo, const uint8_t trans,
+    const size_t N, const size_t K, const double alpha, const b_lean_obj_arg A,
+    const size_t offA, const size_t lda, const b_lean_obj_arg B,
+    const size_t offB, const size_t ldb, const double beta, lean_obj_arg C,
+    const size_t offC, const size_t ldc) {
+    ensure_exclusive_byte_array(&C);
+
+    cblas_ssyr2k(leanblas_cblas_order(order), leanblas_cblas_uplo(uplo),
+                 leanblas_cblas_transpose(trans), (int)N, (int)K, (float)alpha,
+                 lean_float32_array_cptr(A) + offA, (int)lda,
+                 lean_float32_array_cptr(B) + offB, (int)ldb, (float)beta,
+                 lean_float32_array_cptr(C) + offC, (int)ldc);
+
+    return C;
+}
+
+/** strmm
+ *
+ * Computes a triangular matrix-matrix product (single precision).
+ * B := alpha*A*B  or  B := alpha*B*A
+ */
+LEAN_EXPORT lean_obj_res leanblas_cblas_strmm(
+    const uint8_t order, const uint8_t side, const uint8_t uplo,
+    const uint8_t transA, const uint8_t diag, const size_t M, const size_t N,
+    const double alpha, const b_lean_obj_arg A, const size_t offA,
+    const size_t lda, lean_obj_arg B, const size_t offB, const size_t ldb) {
+    ensure_exclusive_byte_array(&B);
+
+    cblas_strmm(leanblas_cblas_order(order), side == 0 ? CblasLeft : CblasRight,
+                leanblas_cblas_uplo(uplo), leanblas_cblas_transpose(transA),
+                leanblas_cblas_diag(diag), (int)M, (int)N, (float)alpha,
+                lean_float32_array_cptr(A) + offA, (int)lda,
+                lean_float32_array_cptr(B) + offB, (int)ldb);
+
+    return B;
+}
+
+/** strsm
+ *
+ * Solves a triangular matrix equation (single precision).
+ * op(A)*X = alpha*B  or  X*op(A) = alpha*B
+ */
+LEAN_EXPORT lean_obj_res leanblas_cblas_strsm(
+    const uint8_t order, const uint8_t side, const uint8_t uplo,
+    const uint8_t transA, const uint8_t diag, const size_t M, const size_t N,
+    const double alpha, const b_lean_obj_arg A, const size_t offA,
+    const size_t lda, lean_obj_arg B, const size_t offB, const size_t ldb) {
+    ensure_exclusive_byte_array(&B);
+
+    cblas_strsm(leanblas_cblas_order(order), side == 0 ? CblasLeft : CblasRight,
+                leanblas_cblas_uplo(uplo), leanblas_cblas_transpose(transA),
+                leanblas_cblas_diag(diag), (int)M, (int)N, (float)alpha,
+                lean_float32_array_cptr(A) + offA, (int)lda,
+                lean_float32_array_cptr(B) + offB, (int)ldb);
+
+    return B;
+}

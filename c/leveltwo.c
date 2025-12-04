@@ -672,3 +672,294 @@ LEAN_EXPORT lean_obj_res leanblas_cblas_dsyr2(const uint8_t order, const uint8_t
 
   return A;
 }
+
+
+// ============================================================================
+// Float32 (single precision) Level 2 BLAS operations
+// ============================================================================
+
+/** sgemv
+ *
+ * Computes a matrix-vector product using a general matrix (single precision).
+ */
+LEAN_EXPORT lean_obj_res leanblas_cblas_sgemv(const uint8_t order, const uint8_t transA,
+                                const size_t M, const size_t N, const double alpha,
+                                const b_lean_obj_arg A, const size_t offA, const size_t lda,
+                                const b_lean_obj_arg X, const size_t offX, const size_t incX,
+                                const double beta, lean_obj_arg Y, const size_t offY, const size_t incY){
+  ensure_exclusive_byte_array(&Y);
+
+  cblas_sgemv(leanblas_cblas_order(order), leanblas_cblas_transpose(transA),
+              (int)M, (int)N, (float)alpha, lean_float32_array_cptr(A) + offA, (int)lda,
+              lean_float32_array_cptr(X) + offX, (int)incX, (float)beta, lean_float32_array_cptr(Y) + offY, (int)incY);
+
+  return Y;
+}
+
+/** sgbmv
+ *
+ * Computes a matrix-vector product using a general band matrix (single precision).
+ */
+LEAN_EXPORT lean_obj_res leanblas_cblas_sgbmv(const uint8_t order, const uint8_t transA,
+                                const size_t M, const size_t N, const size_t KL, const size_t KU, const double alpha,
+                                const b_lean_obj_arg A, const size_t offA, const size_t lda,
+                                const b_lean_obj_arg X, const size_t offX, const size_t incX,
+                                const double beta, lean_obj_arg Y, const size_t offY, const size_t incY){
+  ensure_exclusive_byte_array(&Y);
+
+  cblas_sgbmv(leanblas_cblas_order(order), leanblas_cblas_transpose(transA),
+              (int)M, (int)N, (int)KL, (int)KU, (float)alpha, lean_float32_array_cptr(A) + offA, (int)lda,
+              lean_float32_array_cptr(X) + offX, (int)incX, (float)beta, lean_float32_array_cptr(Y) + offY, (int)incY);
+
+  return Y;
+}
+
+/** strmv
+ *
+ * Computes a matrix-vector product using a triangular matrix (single precision).
+ */
+LEAN_EXPORT lean_obj_res leanblas_cblas_strmv(const uint8_t order, const uint8_t uplo, const uint8_t transA, const uint8_t diag,
+                                const size_t N, const b_lean_obj_arg A, const size_t offA, const size_t lda,
+                                lean_obj_arg X, const size_t offX, const size_t incX){
+  ensure_exclusive_byte_array(&X);
+
+  cblas_strmv(leanblas_cblas_order(order), leanblas_cblas_uplo(uplo), leanblas_cblas_transpose(transA), leanblas_cblas_diag(diag),
+              (int)N, lean_float32_array_cptr(A) + offA, (int)lda, lean_float32_array_cptr(X) + offX, (int)incX);
+
+  return X;
+}
+
+/** stbmv
+ *
+ * Computes a matrix-vector product using a triangular band matrix (single precision).
+ */
+LEAN_EXPORT lean_obj_res leanblas_cblas_stbmv(const uint8_t order, const uint8_t uplo, const uint8_t transA, const uint8_t diag,
+                                const size_t N, const size_t K, const b_lean_obj_arg A, const size_t offA, const size_t lda,
+                                lean_obj_arg X, const size_t offX, const size_t incX){
+  ensure_exclusive_byte_array(&X);
+
+  cblas_stbmv(leanblas_cblas_order(order), leanblas_cblas_uplo(uplo), leanblas_cblas_transpose(transA), leanblas_cblas_diag(diag),
+              (int)N, (int)K, lean_float32_array_cptr(A) + offA, (int)lda, lean_float32_array_cptr(X) + offX, (int)incX);
+
+  return X;
+}
+
+/** stpmv
+ *
+ * Computes a matrix-vector product using a triangular packed matrix (single precision).
+ */
+LEAN_EXPORT lean_obj_res leanblas_cblas_stpmv(const uint8_t order, const uint8_t uplo, const uint8_t transA, const uint8_t diag,
+                                              const size_t N, const b_lean_obj_arg A, const size_t offA, lean_obj_arg X, const size_t offX,
+                                              const size_t incX){
+  ensure_exclusive_byte_array(&X);
+
+  cblas_stpmv(leanblas_cblas_order(order), leanblas_cblas_uplo(uplo), leanblas_cblas_transpose(transA), leanblas_cblas_diag(diag),
+              (int)N, lean_float32_array_cptr(A) + offA, lean_float32_array_cptr(X) + offX, (int)incX);
+
+  return X;
+}
+
+/** strsv
+ *
+ * Solves a system of linear equations with a triangular matrix (single precision).
+ */
+LEAN_EXPORT lean_obj_res leanblas_cblas_strsv(const uint8_t order, const uint8_t uplo, const uint8_t transA, const uint8_t diag,
+                                const size_t N, const b_lean_obj_arg A, const size_t offA, const size_t lda,
+                                lean_obj_arg X, const size_t offX, const size_t incX){
+  ensure_exclusive_byte_array(&X);
+
+  cblas_strsv(leanblas_cblas_order(order), leanblas_cblas_uplo(uplo), leanblas_cblas_transpose(transA), leanblas_cblas_diag(diag),
+              (int)N, lean_float32_array_cptr(A) + offA, (int)lda, lean_float32_array_cptr(X) + offX, (int)incX);
+
+  return X;
+}
+
+/** stbsv
+ *
+ * Solves a system of linear equations with a triangular band matrix (single precision).
+ */
+LEAN_EXPORT lean_obj_res leanblas_cblas_stbsv(const uint8_t order, const uint8_t uplo, const uint8_t transA, const uint8_t diag,
+                                const size_t N, const size_t K, const b_lean_obj_arg A, const size_t offA, const size_t lda,
+                                lean_obj_arg X, const size_t offX, const size_t incX){
+  ensure_exclusive_byte_array(&X);
+
+  cblas_stbsv(leanblas_cblas_order(order), leanblas_cblas_uplo(uplo), leanblas_cblas_transpose(transA), leanblas_cblas_diag(diag),
+              (int)N, (int)K, lean_float32_array_cptr(A) + offA, (int)lda, lean_float32_array_cptr(X) + offX, (int)incX);
+
+  return X;
+}
+
+/** stpsv
+ *
+ * Solves a system of linear equations with a triangular packed matrix (single precision).
+ */
+LEAN_EXPORT lean_obj_res leanblas_cblas_stpsv(const uint8_t order, const uint8_t uplo, const uint8_t transA, const uint8_t diag,
+                                const size_t N, const b_lean_obj_arg A, const size_t offA, lean_obj_arg X, const size_t offX, const size_t incX){
+  ensure_exclusive_byte_array(&X);
+
+  cblas_stpsv(leanblas_cblas_order(order), leanblas_cblas_uplo(uplo), leanblas_cblas_transpose(transA), leanblas_cblas_diag(diag),
+              (int)N, lean_float32_array_cptr(A) + offA, lean_float32_array_cptr(X) + offX, (int)incX);
+
+  return X;
+}
+
+/** sger
+ *
+ * Computes the outer product of two vectors (single precision).
+ */
+LEAN_EXPORT lean_obj_res leanblas_cblas_sger(const uint8_t order, const size_t M, const size_t N, const double alpha,
+                                const b_lean_obj_arg X, const size_t offX, const size_t incX,
+                                const b_lean_obj_arg Y, const size_t offY, const size_t incY,
+                                lean_obj_arg A, const size_t offA, const size_t lda){
+  ensure_exclusive_byte_array(&A);
+
+  cblas_sger(leanblas_cblas_order(order), (int)M, (int)N, (float)alpha,
+             lean_float32_array_cptr(X) + offX, (int)incX, lean_float32_array_cptr(Y) + offY, (int)incY,
+             lean_float32_array_cptr(A) + offA, (int)lda);
+
+  return A;
+}
+
+/** ssyr
+ *
+ * Computes the outer product of a vector with itself and adds it to a symmetric matrix (single precision).
+ */
+LEAN_EXPORT lean_obj_res leanblas_cblas_ssyr(const uint8_t order, const uint8_t uplo,
+                              const size_t N, const double alpha,
+                              const b_lean_obj_arg X, const size_t offX, const size_t incX,
+                              lean_obj_arg A, const size_t offA, const size_t lda){
+  ensure_exclusive_byte_array(&A);
+
+  cblas_ssyr(leanblas_cblas_order(order), leanblas_cblas_uplo(uplo),
+             (int)N, (float)alpha, lean_float32_array_cptr(X) + offX, (int)incX,
+             lean_float32_array_cptr(A) + offA, (int)lda);
+
+  return A;
+}
+
+/** ssyr2
+ *
+ * Computes the outer product of two vectors and adds it to a symmetric matrix (single precision).
+ */
+LEAN_EXPORT lean_obj_res leanblas_cblas_ssyr2(const uint8_t order, const uint8_t uplo,
+                               const size_t N, const double alpha,
+                               const b_lean_obj_arg X, const size_t offX, const size_t incX,
+                               const b_lean_obj_arg Y, const size_t offY, const size_t incY,
+                               lean_obj_arg A, const size_t offA, const size_t lda){
+  ensure_exclusive_byte_array(&A);
+
+  cblas_ssyr2(leanblas_cblas_order(order), leanblas_cblas_uplo(uplo),
+              (int)N, (float)alpha, lean_float32_array_cptr(X) + offX, (int)incX,
+              lean_float32_array_cptr(Y) + offY, (int)incY,
+              lean_float32_array_cptr(A) + offA, (int)lda);
+
+  return A;
+}
+
+// ============================================================================
+// Float32 Extended Operations (packed format conversion)
+// ============================================================================
+
+/** spacked_to_dense
+ *
+ * Convert packed triangular matrix to dense format (single precision).
+ */
+LEAN_EXPORT lean_obj_res leanblas_cblas_spacked_to_dense(const size_t N, const uint8_t uplo,
+                                const uint8_t orderAp, const b_lean_obj_arg Ap,
+                                const uint8_t orderA, lean_obj_arg A, const size_t offA, const size_t lds) {
+  ensure_exclusive_byte_array(&A);
+
+  const float* packed = lean_float32_array_cptr(Ap);
+  float* dense = lean_float32_array_cptr(A) + offA;
+  CBLAS_UPLO uplo_cblas = leanblas_cblas_uplo(uplo);
+  int row_major = (leanblas_cblas_order(orderA) == CblasRowMajor);
+
+  size_t packed_idx = 0;
+  for (size_t i = 0; i < N; i++) {
+    for (size_t j = 0; j < N; j++) {
+      size_t linear_idx = row_major ? i * lds + j : j * lds + i;
+      if (uplo_cblas == CblasUpper) {
+        if (j >= i) {
+          dense[linear_idx] = packed[packed_idx++];
+        } else {
+          dense[linear_idx] = 0.0f;
+        }
+      } else {
+        if (j <= i) {
+          dense[linear_idx] = packed[packed_idx++];
+        } else {
+          dense[linear_idx] = 0.0f;
+        }
+      }
+    }
+  }
+
+  return A;
+}
+
+/** sdense_to_packed
+ *
+ * Convert dense matrix to packed triangular format (single precision).
+ */
+LEAN_EXPORT lean_obj_res leanblas_cblas_sdense_to_packed(const size_t N, const uint8_t uplo,
+                                const uint8_t orderA, const b_lean_obj_arg A, const size_t offA, const size_t lda,
+                                const uint8_t orderAp, lean_obj_arg Ap) {
+  ensure_exclusive_byte_array(&Ap);
+
+  const float* dense = lean_float32_array_cptr(A) + offA;
+  float* packed = lean_float32_array_cptr(Ap);
+  CBLAS_UPLO uplo_cblas = leanblas_cblas_uplo(uplo);
+  int row_major = (leanblas_cblas_order(orderA) == CblasRowMajor);
+
+  size_t packed_idx = 0;
+  for (size_t i = 0; i < N; i++) {
+    for (size_t j = 0; j < N; j++) {
+      size_t linear_idx = row_major ? i * lda + j : j * lda + i;
+      if (uplo_cblas == CblasUpper) {
+        if (j >= i) {
+          packed[packed_idx++] = dense[linear_idx];
+        }
+      } else {
+        if (j <= i) {
+          packed[packed_idx++] = dense[linear_idx];
+        }
+      }
+    }
+  }
+
+  return Ap;
+}
+
+/** sgpr
+ *
+ * General rank-1 update on packed triangular: Ap := αXYᵀ + Ap (single precision).
+ */
+LEAN_EXPORT lean_obj_res leanblas_cblas_sgpr(const uint8_t order, const uint8_t uplo, const size_t N, const double alpha,
+                              const b_lean_obj_arg X, const size_t offX, const size_t incX,
+                              const b_lean_obj_arg Y, const size_t offY, const size_t incY,
+                              lean_obj_arg Ap, const size_t offA) {
+  ensure_exclusive_byte_array(&Ap);
+
+  float* packed = lean_float32_array_cptr(Ap) + offA;
+  const float* x = lean_float32_array_cptr(X) + offX;
+  const float* y = lean_float32_array_cptr(Y) + offY;
+  CBLAS_UPLO uplo_cblas = leanblas_cblas_uplo(uplo);
+  float alpha_f = (float)alpha;
+
+  size_t packed_idx = 0;
+  for (size_t i = 0; i < N; i++) {
+    for (size_t j = 0; j < N; j++) {
+      if (uplo_cblas == CblasUpper) {
+        if (j >= i) {
+          packed[packed_idx++] += alpha_f * x[i * incX] * y[j * incY];
+        }
+      } else {
+        if (j <= i) {
+          packed[packed_idx++] += alpha_f * x[i * incX] * y[j * incY];
+        }
+      }
+    }
+  }
+
+  return Ap;
+}
