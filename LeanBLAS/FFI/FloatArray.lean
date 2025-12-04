@@ -63,6 +63,18 @@ def Float64Array.size (a : Float64Array) := a.data.size / 8
 def ComplexFloat32Array.size (a : ComplexFloat32Array) := a.data.size / 8
 def ComplexFloat64Array.size (a : ComplexFloat64Array) := a.data.size / 16
 
+/-- Get element from Float32Array. Returns as Float (64-bit) for Lean compatibility. -/
+@[extern "leanblas_float32_array_get"]
+opaque Float32Array.get (a : @& Float32Array) (i : @& Nat) : Float
+
+/-- Set element in Float32Array. Takes Float (64-bit) and converts to 32-bit. -/
+@[extern "leanblas_float32_array_set"]
+opaque Float32Array.set (a : Float32Array) (i : @& Nat) (v : Float) : Float32Array
+
+/-- Create a Float32Array of given size filled with zeros. -/
+@[extern "leanblas_float32_array_mk"]
+opaque Float32Array.mkZero (n : @& Nat) : Float32Array
+
 /-- Convert a Lean FloatArray to Float64Array for BLAS operations.
     This is a zero-copy operation that reinterprets the memory layout. -/
 @[extern "leanblas_float_array_to_byte_array"]

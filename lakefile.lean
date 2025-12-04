@@ -125,3 +125,8 @@ lean_exe ComplexLevel2Comprehensive where
 lean_exe ComplexExamples where
   root := `examples.ComplexExamples
   supportInterpreter := true
+
+lean_exe Float32Test where
+  root := `Test.Float32Test
+  supportInterpreter := true
+  moreLinkObjs := #[libleanblasc]

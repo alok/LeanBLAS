@@ -605,3 +605,323 @@ LEAN_EXPORT lean_obj_res leanblas_cblas_dcos(const size_t N, lean_obj_arg X, con
   return X;
 }
 
+// ============================================================================
+// Float32 (Single Precision) BLAS Level 1 Operations
+// ============================================================================
+
+/** sdot - Single precision dot product
+ * @param N Number of elements
+ * @param X First vector (Float32Array)
+ * @param offX Starting offset in X
+ * @param incX Increment for X
+ * @param Y Second vector (Float32Array)
+ * @param offY Starting offset in Y
+ * @param incY Increment for Y
+ * @return Dot product as double (Lean's Float type)
+ */
+LEAN_EXPORT double leanblas_cblas_sdot(const size_t N,
+                                 const b_lean_obj_arg X, const size_t offX, const size_t incX,
+                                 const b_lean_obj_arg Y, const size_t offY, const size_t incY){
+  return (double)cblas_sdot((int)N, lean_float32_array_cptr(X) + offX, (int)incX,
+                                    lean_float32_array_cptr(Y) + offY, (int)incY);
+}
+
+/** snrm2 - Single precision Euclidean norm */
+LEAN_EXPORT double leanblas_cblas_snrm2(const size_t N, const b_lean_obj_arg X, const size_t offX, const size_t incX){
+  return (double)cblas_snrm2((int)N, lean_float32_array_cptr(X) + offX, (int)incX);
+}
+
+/** sasum - Single precision sum of absolute values */
+LEAN_EXPORT double leanblas_cblas_sasum(const size_t N, const b_lean_obj_arg X, const size_t offX, const size_t incX){
+  return (double)cblas_sasum((int)N, lean_float32_array_cptr(X) + offX, (int)incX);
+}
+
+/** isamax - Index of max absolute value (single precision) */
+LEAN_EXPORT size_t leanblas_cblas_isamax(const size_t N, const b_lean_obj_arg X, const size_t offX, const size_t incX){
+  return cblas_isamax((int)N, lean_float32_array_cptr(X) + offX, (int)incX);
+}
+
+/** sswap - Swap two single precision vectors */
+LEAN_EXPORT lean_obj_res leanblas_cblas_sswap(const size_t N, lean_obj_arg X, const size_t offX, const size_t incX,
+                                                              lean_obj_arg Y, const size_t offY, const size_t incY){
+  ensure_exclusive_byte_array(&X);
+  ensure_exclusive_byte_array(&Y);
+  cblas_sswap((int)N, lean_float32_array_cptr(X) + offX, (int)incX,
+                      lean_float32_array_cptr(Y) + offY, (int)incY);
+  lean_obj_res result = lean_alloc_ctor(0, 2, 0);
+  lean_ctor_set(result, 0, X);
+  lean_ctor_set(result, 1, Y);
+  return result;
+}
+
+/** scopy - Copy single precision vector */
+LEAN_EXPORT lean_obj_res leanblas_cblas_scopy(const size_t N, const b_lean_obj_arg X, const size_t offX, const size_t incX,
+                                                              lean_obj_arg Y, const size_t offY, const size_t incY){
+  ensure_exclusive_byte_array(&Y);
+  cblas_scopy((int)N, lean_float32_array_cptr(X) + offX, (int)incX,
+                      lean_float32_array_cptr(Y) + offY, (int)incY);
+  return Y;
+}
+
+/** saxpy - Single precision: Y := alpha*X + Y */
+LEAN_EXPORT lean_obj_res leanblas_cblas_saxpy(const size_t N, const double alpha,
+                                              const b_lean_obj_arg X, const size_t offX, const size_t incX,
+                                              lean_obj_arg Y, const size_t offY, const size_t incY){
+  ensure_exclusive_byte_array(&Y);
+  cblas_saxpy((int)N, (float)alpha, lean_float32_array_cptr(X) + offX, (int)incX,
+                                    lean_float32_array_cptr(Y) + offY, (int)incY);
+  return Y;
+}
+
+/** sscal - Single precision: X := alpha*X */
+LEAN_EXPORT lean_obj_res leanblas_cblas_sscal(const size_t N, const double alpha,
+                                              lean_obj_arg X, const size_t offX, const size_t incX){
+  ensure_exclusive_byte_array(&X);
+  cblas_sscal((int)N, (float)alpha, lean_float32_array_cptr(X) + offX, (int)incX);
+  return X;
+}
+
+/** srotg - Construct Givens rotation (single precision) */
+LEAN_EXPORT lean_obj_res leanblas_cblas_srotg(double a, double b){
+  float fa = (float)a, fb = (float)b, fc, fs;
+  cblas_srotg(&fa, &fb, &fc, &fs);
+  lean_obj_res result = lean_alloc_ctor(0, 0, 4*sizeof(double));
+  lean_ctor_set_float(result, 0*sizeof(double), (double)fa);
+  lean_ctor_set_float(result, 1*sizeof(double), (double)fb);
+  lean_ctor_set_float(result, 2*sizeof(double), (double)fc);
+  lean_ctor_set_float(result, 3*sizeof(double), (double)fs);
+  return result;
+}
+
+/** srot - Apply Givens rotation (single precision) */
+LEAN_EXPORT lean_obj_res leanblas_cblas_srot(const size_t N, lean_obj_arg X, const size_t offX, const size_t incX,
+                                                              lean_obj_arg Y, const size_t offY, const size_t incY,
+                                                              const double c, const double s){
+  ensure_exclusive_byte_array(&X);
+  ensure_exclusive_byte_array(&Y);
+  cblas_srot((int)N, lean_float32_array_cptr(X) + offX, (int)incX,
+                     lean_float32_array_cptr(Y) + offY, (int)incY, (float)c, (float)s);
+  lean_obj_res result = lean_alloc_ctor(0, 2, 0);
+  lean_ctor_set(result, 0, X);
+  lean_ctor_set(result, 1, Y);
+  return result;
+}
+
+/** sconst - Create constant single precision vector (non-standard) */
+LEAN_EXPORT lean_obj_res leanblas_cblas_sconst(const size_t N, const double alpha){
+  size_t byte_size = N * 4;
+  lean_obj_res arr = lean_alloc_sarray(1, byte_size, byte_size);
+  float* ptr = (float*)lean_sarray_cptr(arr);
+  float val = (float)alpha;
+  for (size_t i = 0; i < N; i++) {
+    ptr[i] = val;
+  }
+  return arr;
+}
+
+/** ssum - Sum of elements (single precision, non-standard) */
+LEAN_EXPORT double leanblas_cblas_ssum(const size_t N, const b_lean_obj_arg X, const size_t offX, const size_t incX){
+  const float* ptr = lean_float32_array_cptr(X) + offX;
+  double sum = 0.0;
+  for (size_t i = 0; i < N; i++) {
+    sum += (double)ptr[i * incX];
+  }
+  return sum;
+}
+
+/** srotmg - Construct modified Givens rotation (single precision) */
+LEAN_EXPORT lean_obj_res leanblas_cblas_srotmg(const double d1, const double d2, const double x1, const double y1){
+  float fd1 = (float)d1, fd2 = (float)d2, fx1 = (float)x1;
+  float param[5];
+  cblas_srotmg(&fd1, &fd2, &fx1, (float)y1, param);
+
+  lean_obj_res res = lean_alloc_ctor(0, 0, 5*sizeof(double));
+  lean_ctor_set_float(res, 0*sizeof(double), (double)fd1);
+  lean_ctor_set_float(res, 1*sizeof(double), (double)fd2);
+  lean_ctor_set_float(res, 2*sizeof(double), (double)fx1);
+  lean_ctor_set_float(res, 3*sizeof(double), (double)param[0]);
+  lean_ctor_set_float(res, 4*sizeof(double), (double)param[1]);
+  return res;
+}
+
+/** saxpby - Single precision: Y := alpha*X + beta*Y (non-standard) */
+LEAN_EXPORT lean_obj_res leanblas_cblas_saxpby(const size_t N, const double alpha, lean_obj_arg X, const size_t offX, const size_t incX,
+                                                               const double beta,  lean_obj_arg Y, const size_t offY, const size_t incY){
+  if (lean_is_exclusive(X) && !lean_is_exclusive(Y) &&
+      lean_sarray_size(X)/4 == N && offX == 0 && incX == 1 &&
+      lean_sarray_size(Y)/4 == N && offY == 0 && incY == 1){
+    cblas_sscal((int)N, (float)alpha, lean_float32_array_cptr(X) + offX, (int)incX);
+    cblas_saxpy((int)N, (float)beta, lean_float32_array_cptr(Y) + offY, (int)incY,
+                lean_float32_array_cptr(X) + offX, (int)incX);
+    lean_dec(Y);
+    return X;
+  } else {
+    ensure_exclusive_byte_array(&Y);
+    cblas_sscal((int)N, (float)beta, lean_float32_array_cptr(Y) + offY, (int)incY);
+    cblas_saxpy((int)N, (float)alpha, lean_float32_array_cptr(X) + offX, (int)incX,
+                lean_float32_array_cptr(Y) + offY, (int)incY);
+    lean_dec(X);
+    return Y;
+  }
+}
+
+/** sscaladd - Single precision: X := alpha*X + beta (non-standard) */
+LEAN_EXPORT lean_obj_res leanblas_cblas_sscaladd(const size_t N, const double alpha, lean_obj_arg X, const size_t offX, const size_t incX,
+                                                                  const double beta){
+  ensure_exclusive_byte_array(&X);
+  float* xptr = lean_float32_array_cptr(X);
+  float a = (float)alpha, b = (float)beta;
+  for (size_t i = 0; i < N; i++){
+    xptr[offX + i*incX] = a*xptr[offX + i*incX] + b;
+  }
+  return X;
+}
+
+/** simax_re - Index of max value (single precision) */
+LEAN_EXPORT size_t leanblas_cblas_simax_re(const size_t N, const b_lean_obj_arg X, const size_t offX, const size_t incX){
+  const float* xptr = lean_float32_array_cptr(X);
+  float max = xptr[offX];
+  size_t max_index = 0;
+  for (size_t i = 1; i < N; i++){
+    if (xptr[offX + i*incX] > max){
+      max = xptr[offX + i*incX];
+      max_index = i;
+    }
+  }
+  return offX + max_index*incX;
+}
+
+/** simin_re - Index of min value (single precision) */
+LEAN_EXPORT size_t leanblas_cblas_simin_re(const size_t N, const b_lean_obj_arg X, const size_t offX, const size_t incX){
+  const float* xptr = lean_float32_array_cptr(X);
+  float min = xptr[offX];
+  size_t min_index = 0;
+  for (size_t i = 1; i < N; i++){
+    if (xptr[offX + i*incX] < min){
+      min = xptr[offX + i*incX];
+      min_index = i;
+    }
+  }
+  return offX + min_index*incX;
+}
+
+/** smul - Element-wise multiply (single precision) */
+LEAN_EXPORT lean_obj_res leanblas_cblas_smul(const size_t N, lean_obj_arg X, const size_t offX, const size_t incX,
+                                                             lean_obj_arg Y, const size_t offY, const size_t incY){
+  if (lean_is_exclusive(X) && !lean_is_exclusive(Y) &&
+      lean_sarray_size(X)/4 == N && offX == 0 && incX == 1 &&
+      lean_sarray_size(Y)/4 == N && offY == 0 && incY == 1){
+    float* xptr = lean_float32_array_cptr(X);
+    const float* yptr = lean_float32_array_cptr(Y);
+    for (size_t i = 0; i < N; i++){
+      xptr[offX + i*incX] *= yptr[offY + i*incY];
+    }
+    lean_dec(Y);
+    return X;
+  } else {
+    ensure_exclusive_byte_array(&Y);
+    const float* xptr = lean_float32_array_cptr(X);
+    float* yptr = lean_float32_array_cptr(Y);
+    for (size_t i = 0; i < N; i++){
+      yptr[offY + i*incY] *= xptr[offX + i*incX];
+    }
+    lean_dec(X);
+    return Y;
+  }
+}
+
+/** sdiv - Element-wise divide (single precision) */
+LEAN_EXPORT lean_obj_res leanblas_cblas_sdiv(const size_t N, lean_obj_arg X, const size_t offX, const size_t incX,
+                                                             lean_obj_arg Y, const size_t offY, const size_t incY){
+  if (lean_is_exclusive(X) && !lean_is_exclusive(Y) &&
+      lean_sarray_size(X)/4 == N && offX == 0 && incX == 1 &&
+      lean_sarray_size(Y)/4 == N && offY == 0 && incY == 1){
+    float* xptr = lean_float32_array_cptr(X);
+    const float* yptr = lean_float32_array_cptr(Y);
+    for (size_t i = 0; i < N; i++){
+      xptr[offX + i*incX] /= yptr[offY + i*incY];
+    }
+    lean_dec(Y);
+    return X;
+  } else {
+    ensure_exclusive_byte_array(&Y);
+    const float* xptr = lean_float32_array_cptr(X);
+    float* yptr = lean_float32_array_cptr(Y);
+    for (size_t i = 0; i < N; i++){
+      yptr[offY + i*incY] = xptr[offX + i*incX] / yptr[offY + i*incY];
+    }
+    lean_dec(X);
+    return Y;
+  }
+}
+
+/** sinv - Element-wise inverse (single precision) */
+LEAN_EXPORT lean_obj_res leanblas_cblas_sinv(const size_t N, lean_obj_arg X, const size_t offX, const size_t incX){
+  ensure_exclusive_byte_array(&X);
+  float* xptr = lean_float32_array_cptr(X);
+  for (size_t i = 0; i < N; i++){
+    xptr[offX + i*incX] = 1.0f / xptr[offX + i*incX];
+  }
+  return X;
+}
+
+/** sabs - Element-wise absolute value (single precision) */
+LEAN_EXPORT lean_obj_res leanblas_cblas_sabs(const size_t N, lean_obj_arg X, const size_t offX, const size_t incX){
+  ensure_exclusive_byte_array(&X);
+  float* xptr = lean_float32_array_cptr(X);
+  for (size_t i = 0; i < N; i++){
+    xptr[offX + i*incX] = fabsf(xptr[offX + i*incX]);
+  }
+  return X;
+}
+
+/** ssqrt - Element-wise square root (single precision) */
+LEAN_EXPORT lean_obj_res leanblas_cblas_ssqrt(const size_t N, lean_obj_arg X, const size_t offX, const size_t incX){
+  ensure_exclusive_byte_array(&X);
+  float* xptr = lean_float32_array_cptr(X);
+  for (size_t i = 0; i < N; i++){
+    xptr[offX + i*incX] = sqrtf(xptr[offX + i*incX]);
+  }
+  return X;
+}
+
+/** sexp - Element-wise exponential (single precision) */
+LEAN_EXPORT lean_obj_res leanblas_cblas_sexp(const size_t N, lean_obj_arg X, const size_t offX, const size_t incX){
+  ensure_exclusive_byte_array(&X);
+  float* xptr = lean_float32_array_cptr(X);
+  for (size_t i = 0; i < N; i++){
+    xptr[offX + i*incX] = expf(xptr[offX + i*incX]);
+  }
+  return X;
+}
+
+/** slog - Element-wise natural log (single precision) */
+LEAN_EXPORT lean_obj_res leanblas_cblas_slog(const size_t N, lean_obj_arg X, const size_t offX, const size_t incX){
+  ensure_exclusive_byte_array(&X);
+  float* xptr = lean_float32_array_cptr(X);
+  for (size_t i = 0; i < N; i++){
+    xptr[offX + i*incX] = logf(xptr[offX + i*incX]);
+  }
+  return X;
+}
+
+/** ssin - Element-wise sine (single precision) */
+LEAN_EXPORT lean_obj_res leanblas_cblas_ssin(const size_t N, lean_obj_arg X, const size_t offX, const size_t incX){
+  ensure_exclusive_byte_array(&X);
+  float* xptr = lean_float32_array_cptr(X);
+  for (size_t i = 0; i < N; i++){
+    xptr[offX + i*incX] = sinf(xptr[offX + i*incX]);
+  }
+  return X;
+}
+
+/** scos - Element-wise cosine (single precision) */
+LEAN_EXPORT lean_obj_res leanblas_cblas_scos(const size_t N, lean_obj_arg X, const size_t offX, const size_t incX){
+  ensure_exclusive_byte_array(&X);
+  float* xptr = lean_float32_array_cptr(X);
+  for (size_t i = 0; i < N; i++){
+    xptr[offX + i*incX] = cosf(xptr[offX + i*incX]);
+  }
+  return X;
+}
+
