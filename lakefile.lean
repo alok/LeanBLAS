@@ -68,15 +68,19 @@ lean_exe EdgeCaseTests where
 
 lean_exe BenchmarkTests where
   root := `Test.Benchmarks
+  moreLinkObjs := #[libleanblasc]
 
 lean_exe CorrectnessTests where
   root := `Test.Correctness
+  moreLinkObjs := #[libleanblasc]
 
 lean_exe Level3Tests where
   root := `Test.Level3
+  moreLinkObjs := #[libleanblasc]
 
 lean_exe BenchmarksQuickTest where
   root := `Test.BenchmarksQuick
+  moreLinkObjs := #[libleanblasc]
 
 -- Small utility executable used internally for measuring timings while
 -- developing the benchmark suite.  Not part of the public API.
@@ -113,6 +117,7 @@ lean_exe ComplexNumericalValidation where
 
 lean_exe Level3Benchmarks where
   root := `Test.BenchmarksLevel3
+  moreLinkObjs := #[libleanblasc]
 
 lean_exe ComplexLevel1Comprehensive where
   root := `Test.ComplexLevel1Comprehensive

@@ -14,7 +14,7 @@ namespace BLAS.Test.Benchmarks
 
 /-- Timer utility for measuring execution time -/
 structure Timer where
-  start_time : UInt64    -- nanoseconds since arbitrary epoch
+  start_time : Nat    -- nanoseconds since arbitrary epoch
 
 namespace Timer
 
@@ -24,10 +24,10 @@ def start : IO Timer := do
 
 def elapsed (timer : Timer) : IO Float := do
   let t ← IO.monoNanosNow
-  let diff : UInt64 := t - timer.start_time
-  return Float.ofNat diff.toNat / 1000000000.0
+  let diff := t - timer.start_time
+  return Float.ofNat diff / 1000000000.0
 
-def elapsedNs (timer : Timer) : IO UInt64 := do
+def elapsedNs (timer : Timer) : IO Nat := do
   let t ← IO.monoNanosNow
   pure (t - timer.start_time)
 
@@ -40,14 +40,7 @@ def formatTime (sec : Float) : String :=
 
 end Timer
 
--- namespace-level re-export so callers can use `Timer.formatTime` or
--- `Benchmarks.formatTime` interchangeably.
-namespace Timer
-
-def formatTime (sec : Float) : String :=
-  _root_.BLAS.Test.Benchmarks.formatTime sec
-
-end Timer
+-- formatTime is already defined in Timer namespace above
 
 /-- Generate a test vector of given size with known pattern -/
 def generateTestVector (size : Nat) : Float64Array := Id.run do
@@ -68,7 +61,7 @@ def benchmarkDot (sizes : List Nat) : IO Unit := do
 
     -- Warm up
     for _ in [:10] do
-      let _ := ddot size x 0 1 y 0 1
+      let _ := ddot size.toUSize x 0 1 y 0 1
 
     -- Benchmark
     let iterations := if size > 1000000 then 10 else if size > 100000 then 50 else if size > 10000 then 100 else 500
@@ -97,7 +90,7 @@ def benchmarkNorm (sizes : List Nat) : IO Unit := do
 
     -- Warm up
     for _ in [:10] do
-      let _ := dnrm2 size x 0 1
+      let _ := dnrm2 size.toUSize x 0 1
 
     -- Benchmark
     let iterations := if size > 1000000 then 10 else if size > 100000 then 50 else if size > 10000 then 100 else 500
@@ -128,7 +121,7 @@ def benchmarkAxpy (sizes : List Nat) : IO Unit := do
 
     -- Warm up
     for _ in [:10] do
-      let _ := daxpy size alpha x 0 1 y 0 1
+      let _ := daxpy size.toUSize alpha x 0 1 y 0 1
 
     -- Benchmark
     let iterations := if size > 1000000 then 10 else if size > 100000 then 50 else if size > 10000 then 100 else 500
@@ -168,7 +161,7 @@ def analyzeCachePerformance : IO Unit := do
       -- accumulate into checksum to avoid optimisation
       let mut acc : Float := 0.0
       for i in [:iterations] do
-        acc := acc + dnrm2 size x (0).toUSize stride.toUSize
+        acc := acc + dnrm2 size.toUSize x (0).toUSize stride.toUSize
       let elapsed ← timer.elapsed
       let avg := elapsed / Float.ofNat iterations
       times := times.push avg
@@ -194,7 +187,7 @@ def estimateMemoryBandwidth : IO Unit := do
     let iterations := 1000
     let mut checksum : Float := 0.0
     for _ in [:iterations] do
-      checksum := checksum + dsum size x 0 1  -- Simple sum operation (memory bound)
+      checksum := checksum + dsum size.toUSize x 0 1  -- Simple sum operation (memory bound)
     let elapsed ← timer.elapsed
 
     let time_per_op := elapsed / Float.ofNat iterations
@@ -224,21 +217,21 @@ def analyzeScaling : IO Unit := do
     -- Measure dot product
     let timer1 ← Timer.start
     for _ in [:100] do
-      let _ := ddot size x 0 1 y 0 1
+      let _ := ddot size.toUSize x 0 1 y 0 1
     let dot_time ← timer1.elapsed
     let dot_time_avg := dot_time / 100.0
 
     -- Measure norm
     let timer2 ← Timer.start
     for _ in [:100] do
-      let _ := dnrm2 size x 0 1
+      let _ := dnrm2 size.toUSize x 0 1
     let norm_time ← timer2.elapsed
     let norm_time_avg := norm_time / 100.0
 
     -- Measure axpy
     let timer3 ← Timer.start
     for _ in [:100] do
-      let _ := daxpy size 2.0 x 0 1 y 0 1
+      let _ := daxpy size.toUSize 2.0 x 0 1 y 0 1
     let axpy_time ← timer3.elapsed
     let axpy_time_avg := axpy_time / 100.0
 

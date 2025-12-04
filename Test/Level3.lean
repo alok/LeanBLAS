@@ -121,8 +121,8 @@ def test_dtrmm : IO Unit := do
   let B := createMatrix 2 3 [1.0, 2.0, 3.0, 4.0, 5.0, 6.0]
   
   -- Test: B = 1.0 * A * B (side = Left, uplo = Upper)
-  let result := dtrmm Order.RowMajor Side.Left UpLo.Upper 
-                      Transpose.NoTrans false 2 3 1.0 A 0 2 B 0 3
+  let result := dtrmm Order.RowMajor Side.Left UpLo.Upper
+                      Transpose.NoTrans Diag.NonUnit 2 3 1.0 A 0 2 B 0 3
   
   IO.println s!"A (triangular) = {A}"
   IO.println s!"B (initial) = {B}"
@@ -139,8 +139,8 @@ def test_dtrsm : IO Unit := do
   let B := createMatrix 2 2 [3.0, 4.0, 1.0, 1.0]   -- Right-hand side
   
   -- Test: Solve A * X = 1.0 * B (side = Left, uplo = Upper)
-  let result := dtrsm Order.RowMajor Side.Left UpLo.Upper 
-                      Transpose.NoTrans false 2 2 1.0 A 0 2 B 0 2
+  let result := dtrsm Order.RowMajor Side.Left UpLo.Upper
+                      Transpose.NoTrans Diag.NonUnit 2 2 1.0 A 0 2 B 0 2
   
   IO.println s!"A (triangular) = {A}"
   IO.println s!"B (RHS) = {B}"
@@ -166,11 +166,12 @@ def test_performance : IO Unit := do
   let C := createMatrix size size (List.replicate (size * size) 1.0)
   
   IO.println s!"Testing {size}x{size} matrix multiplication..."
-  
+
   -- Time the operation (simple measurement)
   let start_time ← IO.monoMsNow
-  let _ := dgemm Order.RowMajor Transpose.NoTrans Transpose.NoTrans 
-                size size size 1.0 A 0 size B 0 size 0.0 C 0 size
+  let sizeU := size.toUSize
+  let _ := dgemm Order.RowMajor Transpose.NoTrans Transpose.NoTrans
+                sizeU sizeU sizeU 1.0 A 0 sizeU B 0 sizeU 0.0 C 0 sizeU
   let end_time ← IO.monoMsNow
   
   let duration := Float.ofNat (end_time - start_time) / 1000.0
