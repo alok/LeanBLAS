@@ -55,7 +55,10 @@ def main : IO Unit := do
     throw $ IO.userError "test `strictTriangularMul .ColMajor .Lower` failed"
 
 
-#eval main
+-- NOTE: This file is built as an executable via Lake (`lake exe PackedTriangularTests`).
+-- A top-level `#eval main` would run during compilation, before the BLAS FFI
+-- library is linked into the Lean process, causing missing-extern errors.
+-- Use the Lake executable to run this test suite instead.
 #exit
   let u : FloatArray := ⟨#[10,10,10]⟩
   let v : FloatArray := ⟨#[0,10,0]⟩
