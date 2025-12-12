@@ -48,6 +48,11 @@ target libleanblasc pkg : FilePath := do
 @[default_target]
 lean_lib LeanBLAS where
   roots := #[`LeanBLAS]
+  -- On macOS, Mathlib's shared library currently fails to link due to an upstream
+  -- duplicate-symbol issue with lld. Disabling precompilation avoids requiring
+  -- Mathlib:shared during development.
+  precompileModules := if System.Platform.isOSX then false else true
+  -- moreLinkObjs := #[libleanblasc]  -- disabled: causes cross-package target resolution issues
 
 @[test_driver]
 lean_exe ComprehensiveTests where
@@ -56,6 +61,7 @@ lean_exe ComprehensiveTests where
 lean_exe Level1RealTests where
   root := `Test.Level1RealTests
   supportInterpreter := true
+  moreLinkObjs := #[libleanblasc]
 
 lean_exe PackedTriangularTests where
   root := `Test.PackedTriangularTests
@@ -122,6 +128,7 @@ lean_exe Level3Benchmarks where
 lean_exe ComplexLevel1Comprehensive where
   root := `Test.ComplexLevel1Comprehensive
   supportInterpreter := true
+  moreLinkObjs := #[libleanblasc]
 
 lean_exe ComplexLevel2Comprehensive where
   root := `Test.ComplexLevel2Comprehensive

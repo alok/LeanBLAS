@@ -5,7 +5,7 @@ Authors: The LeanBLAS Development Team
 -/
 
 import Mathlib.Analysis.SpecialFunctions.Sqrt
-import Mathlib.Analysis.NormedSpace.RCLike
+import Mathlib.Analysis.Normed.Module.RCLike.Basic
 
 import LeanBLAS.Spec.Scalar
 

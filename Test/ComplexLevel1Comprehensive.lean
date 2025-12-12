@@ -158,8 +158,46 @@ def test_sum : IO Bool := do
 /-- Test extended operations: axpby -/
 def test_axpby : IO Bool := do
   IO.println "\n=== Testing axpby (y := alpha*x + beta*y) ==="
-  IO.println "  Skipping axpby test - implementation uses 'sorry'"
-  return true
+  
+  -- Test 1: Basic axpby
+  let x1_arr := ComplexFloatArray.ofArray #[⟨1.0, 2.0⟩, ⟨3.0, 4.0⟩, ⟨-1.0, 0.5⟩]
+  let x1 := ComplexFloatArray.toComplexFloat64Array x1_arr
+  let y1_arr := ComplexFloatArray.ofArray #[⟨5.0, -1.0⟩, ⟨-2.0, 3.0⟩, ⟨0.0, 0.0⟩]
+  let y1 := ComplexFloatArray.toComplexFloat64Array y1_arr
+  let alpha : ComplexFloat := ⟨1.0, -1.0⟩
+  let beta : ComplexFloat := ⟨0.5, 0.0⟩
+  
+  let y1_new := LevelOneDataExt.axpby (Array := ComplexFloat64Array) (R := Float) (K := ComplexFloat)
+    3 alpha x1 0 1 beta y1 0 1
+  let y1_result := y1_new.toComplexFloatArray
+  
+  -- Expected:
+  -- (1-i)*(1+2i) + 0.5*(5-i)   = 5.5 + 0.5i
+  -- (1-i)*(3+4i) + 0.5*(-2+3i) = 6.0 + 2.5i
+  -- (1-i)*(-1+0.5i)            = -0.5 + 1.5i
+  let test1_ok := complexApproxEq (y1_result.get! 0) ⟨5.5, 0.5⟩ &&
+                  complexApproxEq (y1_result.get! 1) ⟨6.0, 2.5⟩ &&
+                  complexApproxEq (y1_result.get! 2) ⟨-0.5, 1.5⟩
+  IO.println s!"  Test 1: axpby basic - {if test1_ok then "✓" else "✗"}"
+  
+  -- Test 2: axpby with stride
+  let x2_arr := ComplexFloatArray.ofArray #[⟨1.0, 0.0⟩, ⟨0.0, 0.0⟩, ⟨2.0, 0.0⟩, ⟨0.0, 0.0⟩]
+  let x2 := ComplexFloatArray.toComplexFloat64Array x2_arr
+  let y2_arr := ComplexFloatArray.ofArray #[⟨3.0, 0.0⟩, ⟨0.0, 0.0⟩, ⟨4.0, 0.0⟩, ⟨0.0, 0.0⟩]
+  let y2 := ComplexFloatArray.toComplexFloat64Array y2_arr
+  let alpha2 : ComplexFloat := ⟨2.0, 0.0⟩
+  let beta2 : ComplexFloat := ⟨1.0, 0.0⟩
+  
+  let y2_new := LevelOneDataExt.axpby (Array := ComplexFloat64Array) (R := Float) (K := ComplexFloat)
+    2 alpha2 x2 0 2 beta2 y2 0 2
+  let y2_result := y2_new.toComplexFloatArray
+  
+  -- Expected at indices 0 and 2: [2*1+3, 2*2+4] = [5, 8]
+  let test2_ok := complexApproxEq (y2_result.get! 0) ⟨5.0, 0.0⟩ &&
+                  complexApproxEq (y2_result.get! 2) ⟨8.0, 0.0⟩
+  IO.println s!"  Test 2: axpby stride - {if test2_ok then "✓" else "✗"}"
+  
+  return test1_ok && test2_ok
 
 /-- Test element-wise operations: mul -/
 def test_mul : IO Bool := do
