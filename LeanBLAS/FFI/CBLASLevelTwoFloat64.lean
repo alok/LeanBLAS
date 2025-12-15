@@ -1,4 +1,7 @@
 import LeanBLAS.FFI.FloatArray
+import LeanBLAS.Spec.LevelTwo
+
+set_option autoImplicit false
 
 namespace BLAS.CBLAS
 

@@ -34,8 +34,8 @@ LEAN_EXPORT lean_obj_res leanblas_cblas_dgemv(const uint8_t order, const uint8_t
   ensure_exclusive_byte_array(&Y);
 
   cblas_dgemv(leanblas_cblas_order(order), leanblas_cblas_transpose(transA),
-              (int)M, (int)N, alpha, lean_float_array_cptr(A) + offA, (int)lda,
-              lean_float_array_cptr(X) + offX, (int)incX, beta, lean_float_array_cptr(Y) + offY, (int)incY);
+              (int)M, (int)N, alpha, lean_float64_array_cptr(A) + offA, (int)lda,
+              lean_float64_array_cptr(X) + offX, (int)incX, beta, lean_float64_array_cptr(Y) + offY, (int)incY);
 
   return Y;
 }
@@ -74,8 +74,8 @@ LEAN_EXPORT lean_obj_res leanblas_cblas_dgbmv(const uint8_t order, const uint8_t
   ensure_exclusive_byte_array(&Y);
 
   cblas_dgbmv(leanblas_cblas_order(order), leanblas_cblas_transpose(transA),
-              (int)M, (int)N, (int)KL, (int)KU, alpha, lean_float_array_cptr(A) + offA, (int)lda,
-              lean_float_array_cptr(X) + offX, (int)incX, beta, lean_float_array_cptr(Y) + offY, (int)incY);
+              (int)M, (int)N, (int)KL, (int)KU, alpha, lean_float64_array_cptr(A) + offA, (int)lda,
+              lean_float64_array_cptr(X) + offX, (int)incX, beta, lean_float64_array_cptr(Y) + offY, (int)incY);
 
   return Y;
 }
@@ -106,7 +106,7 @@ LEAN_EXPORT lean_obj_res leanblas_cblas_dtrmv(const uint8_t order, const uint8_t
   ensure_exclusive_byte_array(&X);
 
   cblas_dtrmv(leanblas_cblas_order(order), leanblas_cblas_uplo(uplo), leanblas_cblas_transpose(transA), leanblas_cblas_diag(diag),
-              (int)N, lean_float_array_cptr(A) + offA, (int)lda, lean_float_array_cptr(X) + offX, (int)incX);
+              (int)N, lean_float64_array_cptr(A) + offA, (int)lda, lean_float64_array_cptr(X) + offX, (int)incX);
 
   return X;
 }
@@ -137,7 +137,7 @@ LEAN_EXPORT lean_obj_res leanblas_cblas_dtbmv(const uint8_t order, const uint8_t
   ensure_exclusive_byte_array(&X);
 
   cblas_dtbmv(leanblas_cblas_order(order), leanblas_cblas_uplo(uplo), leanblas_cblas_transpose(transA), leanblas_cblas_diag(diag),
-              (int)N, (int)K, lean_float_array_cptr(A) + offA, (int)lda, lean_float_array_cptr(X) + offX, (int)incX);
+              (int)N, (int)K, lean_float64_array_cptr(A) + offA, (int)lda, lean_float64_array_cptr(X) + offX, (int)incX);
 
   return X;
 }
@@ -165,7 +165,7 @@ LEAN_EXPORT lean_obj_res leanblas_cblas_dtpmv(const uint8_t order, const uint8_t
   ensure_exclusive_byte_array(&X);
 
   cblas_dtpmv(leanblas_cblas_order(order), leanblas_cblas_uplo(uplo), leanblas_cblas_transpose(transA), leanblas_cblas_diag(diag),
-              (int)N, lean_float_array_cptr(A) + offA, lean_float_array_cptr(X) + offX, (int)incX);
+              (int)N, lean_float64_array_cptr(A) + offA, lean_float64_array_cptr(X) + offX, (int)incX);
 
   return X;
 }
@@ -195,7 +195,7 @@ LEAN_EXPORT lean_obj_res leanblas_cblas_dtrsv(const uint8_t order, const uint8_t
   ensure_exclusive_byte_array(&X);
 
   cblas_dtrsv(leanblas_cblas_order(order), leanblas_cblas_uplo(uplo), leanblas_cblas_transpose(transA), leanblas_cblas_diag(diag),
-              (int)N, lean_float_array_cptr(A) + offA, (int)lda, lean_float_array_cptr(X) + offX, (int)incX);
+              (int)N, lean_float64_array_cptr(A) + offA, (int)lda, lean_float64_array_cptr(X) + offX, (int)incX);
 
   return X;
 }
@@ -226,7 +226,7 @@ LEAN_EXPORT lean_obj_res leanblas_cblas_dtbsv(const uint8_t order, const uint8_t
   ensure_exclusive_byte_array(&X);
 
   cblas_dtbsv(leanblas_cblas_order(order), leanblas_cblas_uplo(uplo), leanblas_cblas_transpose(transA), leanblas_cblas_diag(diag),
-              (int)N, (int)K, lean_float_array_cptr(A) + offA, (int)lda, lean_float_array_cptr(X) + offX, (int)incX);
+              (int)N, (int)K, lean_float64_array_cptr(A) + offA, (int)lda, lean_float64_array_cptr(X) + offX, (int)incX);
 
   return X;
 }
@@ -253,7 +253,7 @@ LEAN_EXPORT lean_obj_res leanblas_cblas_dtpsv(const uint8_t order, const uint8_t
   ensure_exclusive_byte_array(&X);
 
   cblas_dtpsv(leanblas_cblas_order(order), leanblas_cblas_uplo(uplo), leanblas_cblas_transpose(transA), leanblas_cblas_diag(diag),
-              (int)N, lean_float_array_cptr(A), lean_float_array_cptr(X) + offX, (int)incX);
+              (int)N, lean_float64_array_cptr(A), lean_float64_array_cptr(X) + offX, (int)incX);
 
   return X;
 }
@@ -286,8 +286,8 @@ LEAN_EXPORT lean_obj_res leanblas_cblas_dger(const uint8_t order, const size_t M
   ensure_exclusive_byte_array(&A);
 
   cblas_dger(leanblas_cblas_order(order), (int)M, (int)N, alpha,
-             lean_float_array_cptr(X) + offX, (int)incX, lean_float_array_cptr(Y) + offY, (int)incY,
-             lean_float_array_cptr(A) + offA, (int)lda);
+             lean_float64_array_cptr(X) + offX, (int)incX, lean_float64_array_cptr(Y) + offY, (int)incY,
+             lean_float64_array_cptr(A) + offA, (int)lda);
 
   return A;
 }
@@ -322,20 +322,19 @@ LEAN_EXPORT lean_obj_res leanblas_cblas_zgemv(const uint8_t order, const uint8_t
                                 const lean_obj_arg beta, lean_obj_arg Y, const size_t offY, const size_t incY){
   ensure_exclusive_byte_array(&Y);
 
-  double alpha_real = lean_unbox_float(lean_ctor_get(alpha, 0));
-  double alpha_imag = lean_unbox_float(lean_ctor_get(alpha, 1));
-  double beta_real = lean_unbox_float(lean_ctor_get(beta, 0));
-  double beta_imag = lean_unbox_float(lean_ctor_get(beta, 1));
+  double alpha_real, alpha_imag, beta_real, beta_imag;
+  leanblas_complexfloat_parts(alpha, &alpha_real, &alpha_imag);
+  leanblas_complexfloat_parts(beta, &beta_real, &beta_imag);
   
   double complex alpha_c = alpha_real + alpha_imag * I;
   double complex beta_c = beta_real + beta_imag * I;
 
   cblas_zgemv(leanblas_cblas_order(order), leanblas_cblas_transpose(transA),
               (int)M, (int)N, &alpha_c, 
-              (const double complex *)(lean_complex_float64_array_cptr(A) + offA), (int)lda,
-              (const double complex *)(lean_complex_float64_array_cptr(X) + offX), (int)incX, 
+              (const double complex *)(lean_complex_float64_array_cptr(A) + 2*offA), (int)lda,
+              (const double complex *)(lean_complex_float64_array_cptr(X) + 2*offX), (int)incX, 
               &beta_c, 
-              (double complex *)(lean_complex_float64_array_cptr(Y) + offY), (int)incY);
+              (double complex *)(lean_complex_float64_array_cptr(Y) + 2*offY), (int)incY);
 
   return Y;
 }
@@ -369,20 +368,19 @@ LEAN_EXPORT lean_obj_res leanblas_cblas_zhemv(const uint8_t order, const uint8_t
                                 const lean_obj_arg beta, lean_obj_arg Y, const size_t offY, const size_t incY){
   ensure_exclusive_byte_array(&Y);
 
-  double alpha_real = lean_unbox_float(lean_ctor_get(alpha, 0));
-  double alpha_imag = lean_unbox_float(lean_ctor_get(alpha, 1));
-  double beta_real = lean_unbox_float(lean_ctor_get(beta, 0));
-  double beta_imag = lean_unbox_float(lean_ctor_get(beta, 1));
+  double alpha_real, alpha_imag, beta_real, beta_imag;
+  leanblas_complexfloat_parts(alpha, &alpha_real, &alpha_imag);
+  leanblas_complexfloat_parts(beta, &beta_real, &beta_imag);
   
   double complex alpha_c = alpha_real + alpha_imag * I;
   double complex beta_c = beta_real + beta_imag * I;
 
   cblas_zhemv(leanblas_cblas_order(order), leanblas_cblas_uplo(uplo),
               (int)N, &alpha_c, 
-              (const double complex *)(lean_complex_float64_array_cptr(A) + offA), (int)lda,
-              (const double complex *)(lean_complex_float64_array_cptr(X) + offX), (int)incX, 
+              (const double complex *)(lean_complex_float64_array_cptr(A) + 2*offA), (int)lda,
+              (const double complex *)(lean_complex_float64_array_cptr(X) + 2*offX), (int)incX, 
               &beta_c, 
-              (double complex *)(lean_complex_float64_array_cptr(Y) + offY), (int)incY);
+              (double complex *)(lean_complex_float64_array_cptr(Y) + 2*offY), (int)incY);
 
   return Y;
 }
@@ -414,8 +412,8 @@ LEAN_EXPORT lean_obj_res leanblas_cblas_ztrmv(const uint8_t order, const uint8_t
 
   cblas_ztrmv(leanblas_cblas_order(order), leanblas_cblas_uplo(uplo),
               leanblas_cblas_transpose(transA), leanblas_cblas_diag(diag),
-              (int)N, (const double complex *)(lean_complex_float64_array_cptr(A) + offA), (int)lda,
-              (double complex *)(lean_complex_float64_array_cptr(X) + offX), (int)incX);
+              (int)N, (const double complex *)(lean_complex_float64_array_cptr(A) + 2*offA), (int)lda,
+              (double complex *)(lean_complex_float64_array_cptr(X) + 2*offX), (int)incX);
 
   return X;
 }
@@ -447,8 +445,8 @@ LEAN_EXPORT lean_obj_res leanblas_cblas_ztrsv(const uint8_t order, const uint8_t
 
   cblas_ztrsv(leanblas_cblas_order(order), leanblas_cblas_uplo(uplo),
               leanblas_cblas_transpose(transA), leanblas_cblas_diag(diag),
-              (int)N, (const double complex *)(lean_complex_float64_array_cptr(A) + offA), (int)lda,
-              (double complex *)(lean_complex_float64_array_cptr(X) + offX), (int)incX);
+              (int)N, (const double complex *)(lean_complex_float64_array_cptr(A) + 2*offA), (int)lda,
+              (double complex *)(lean_complex_float64_array_cptr(X) + 2*offX), (int)incX);
 
   return X;
 }
@@ -481,14 +479,14 @@ LEAN_EXPORT lean_obj_res leanblas_cblas_zgerc(const uint8_t order, const size_t 
                                 lean_obj_arg A, const size_t offA, const size_t lda){
   ensure_exclusive_byte_array(&A);
 
-  double alpha_real = lean_unbox_float(lean_ctor_get(alpha, 0));
-  double alpha_imag = lean_unbox_float(lean_ctor_get(alpha, 1));
+  double alpha_real, alpha_imag;
+  leanblas_complexfloat_parts(alpha, &alpha_real, &alpha_imag);
   double complex alpha_c = alpha_real + alpha_imag * I;
 
   cblas_zgerc(leanblas_cblas_order(order), (int)M, (int)N, &alpha_c,
-              (const double complex *)(lean_complex_float64_array_cptr(X) + offX), (int)incX,
-              (const double complex *)(lean_complex_float64_array_cptr(Y) + offY), (int)incY,
-              (double complex *)(lean_complex_float64_array_cptr(A) + offA), (int)lda);
+              (const double complex *)(lean_complex_float64_array_cptr(X) + 2*offX), (int)incX,
+              (const double complex *)(lean_complex_float64_array_cptr(Y) + 2*offY), (int)incY,
+              (double complex *)(lean_complex_float64_array_cptr(A) + 2*offA), (int)lda);
 
   return A;
 }
@@ -521,14 +519,14 @@ LEAN_EXPORT lean_obj_res leanblas_cblas_zgeru(const uint8_t order, const size_t 
                                 lean_obj_arg A, const size_t offA, const size_t lda){
   ensure_exclusive_byte_array(&A);
 
-  double alpha_real = lean_unbox_float(lean_ctor_get(alpha, 0));
-  double alpha_imag = lean_unbox_float(lean_ctor_get(alpha, 1));
+  double alpha_real, alpha_imag;
+  leanblas_complexfloat_parts(alpha, &alpha_real, &alpha_imag);
   double complex alpha_c = alpha_real + alpha_imag * I;
 
   cblas_zgeru(leanblas_cblas_order(order), (int)M, (int)N, &alpha_c,
-              (const double complex *)(lean_complex_float64_array_cptr(X) + offX), (int)incX,
-              (const double complex *)(lean_complex_float64_array_cptr(Y) + offY), (int)incY,
-              (double complex *)(lean_complex_float64_array_cptr(A) + offA), (int)lda);
+              (const double complex *)(lean_complex_float64_array_cptr(X) + 2*offX), (int)incX,
+              (const double complex *)(lean_complex_float64_array_cptr(Y) + 2*offY), (int)incY,
+              (double complex *)(lean_complex_float64_array_cptr(A) + 2*offA), (int)lda);
 
   return A;
 }
@@ -559,8 +557,8 @@ LEAN_EXPORT lean_obj_res leanblas_cblas_zher(const uint8_t order, const uint8_t 
 
   cblas_zher(leanblas_cblas_order(order), leanblas_cblas_uplo(uplo),
              (int)N, alpha,
-             (const double complex *)(lean_complex_float64_array_cptr(X) + offX), (int)incX,
-             (double complex *)(lean_complex_float64_array_cptr(A) + offA), (int)lda);
+             (const double complex *)(lean_complex_float64_array_cptr(X) + 2*offX), (int)incX,
+             (double complex *)(lean_complex_float64_array_cptr(A) + 2*offA), (int)lda);
 
   return A;
 }
@@ -593,15 +591,15 @@ LEAN_EXPORT lean_obj_res leanblas_cblas_zher2(const uint8_t order, const uint8_t
                                 lean_obj_arg A, const size_t offA, const size_t lda){
   ensure_exclusive_byte_array(&A);
 
-  double alpha_real = lean_unbox_float(lean_ctor_get(alpha, 0));
-  double alpha_imag = lean_unbox_float(lean_ctor_get(alpha, 1));
+  double alpha_real, alpha_imag;
+  leanblas_complexfloat_parts(alpha, &alpha_real, &alpha_imag);
   double complex alpha_c = alpha_real + alpha_imag * I;
 
   cblas_zher2(leanblas_cblas_order(order), leanblas_cblas_uplo(uplo),
               (int)N, &alpha_c,
-              (const double complex *)(lean_complex_float64_array_cptr(X) + offX), (int)incX,
-              (const double complex *)(lean_complex_float64_array_cptr(Y) + offY), (int)incY,
-              (double complex *)(lean_complex_float64_array_cptr(A) + offA), (int)lda);
+              (const double complex *)(lean_complex_float64_array_cptr(X) + 2*offX), (int)incX,
+              (const double complex *)(lean_complex_float64_array_cptr(Y) + 2*offY), (int)incY,
+              (double complex *)(lean_complex_float64_array_cptr(A) + 2*offA), (int)lda);
 
   return A;
 }
@@ -631,8 +629,8 @@ LEAN_EXPORT lean_obj_res leanblas_cblas_dsyr(const uint8_t order, const uint8_t 
   ensure_exclusive_byte_array(&A);
 
   cblas_dsyr(leanblas_cblas_order(order), leanblas_cblas_uplo(uplo),
-             (int)N, alpha, lean_float_array_cptr(X) + offX, (int)incX,
-             lean_float_array_cptr(A) + offA, (int)lda);
+             (int)N, alpha, lean_float64_array_cptr(X) + offX, (int)incX,
+             lean_float64_array_cptr(A) + offA, (int)lda);
 
   return A;
 }
@@ -666,9 +664,9 @@ LEAN_EXPORT lean_obj_res leanblas_cblas_dsyr2(const uint8_t order, const uint8_t
   ensure_exclusive_byte_array(&A);
 
   cblas_dsyr2(leanblas_cblas_order(order), leanblas_cblas_uplo(uplo),
-              (int)N, alpha, lean_float_array_cptr(X) + offX, (int)incX,
-              lean_float_array_cptr(Y) + offY, (int)incY,
-              lean_float_array_cptr(A) + offA, (int)lda);
+              (int)N, alpha, lean_float64_array_cptr(X) + offX, (int)incX,
+              lean_float64_array_cptr(Y) + offY, (int)incY,
+              lean_float64_array_cptr(A) + offA, (int)lda);
 
   return A;
 }

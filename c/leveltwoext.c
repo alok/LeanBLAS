@@ -111,8 +111,8 @@ LEAN_EXPORT lean_obj_res leanblas_cblas_dgpr(const uint8_t order, const uint8_t 
   ensure_exclusive_byte_array(&Ap);
 
   cblas_dgpr(leanblas_cblas_order(order), leanblas_cblas_uplo(uplo), (int)N, alpha,
-             lean_float_array_cptr(X) + offX, (int)incX, lean_float_array_cptr(Y) + offY, (int)incY,
-             lean_float_array_cptr(Ap) + offAp);
+             lean_float64_array_cptr(X) + offX, (int)incX, lean_float64_array_cptr(Y) + offY, (int)incY,
+             lean_float64_array_cptr(Ap) + offAp);
 
   return Ap;
 }
@@ -235,8 +235,8 @@ LEAN_EXPORT lean_obj_res leanblas_cblas_dpacked_to_dense(const size_t N,
   ensure_exclusive_byte_array(&A);
 
   cblas_dpacked_to_dense((int)N, leanblas_cblas_uplo(uplo),
-                         leanblas_cblas_order(orderAp), lean_float_array_cptr(Ap),
-                         leanblas_cblas_order(orderA),  lean_float_array_cptr(A) + offA, (int)lda);
+                         leanblas_cblas_order(orderAp), lean_float64_array_cptr(Ap),
+                         leanblas_cblas_order(orderA),  lean_float64_array_cptr(A) + offA, (int)lda);
 
   return A;
 }
@@ -343,8 +343,8 @@ LEAN_EXPORT lean_obj_res leanblas_cblas_ddense_to_packed(const size_t N,
   ensure_exclusive_byte_array(&Ap);
 
   cblas_ddense_to_packed((int)N, leanblas_cblas_uplo(uplo),
-                         leanblas_cblas_order(orderA),  lean_float_array_cptr(A) + offA, (int)lda,
-                         leanblas_cblas_order(orderAp), lean_float_array_cptr(Ap));
+                         leanblas_cblas_order(orderA),  lean_float64_array_cptr(A) + offA, (int)lda,
+                         leanblas_cblas_order(orderAp), lean_float64_array_cptr(Ap));
 
   return Ap;
 }

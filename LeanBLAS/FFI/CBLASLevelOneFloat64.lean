@@ -1,5 +1,7 @@
 import LeanBLAS.FFI.FloatArray
 
+set_option autoImplicit false
+
 namespace BLAS.CBLAS
 
 /-! # CBLAS Level 1 FFI Bindings for Float64

@@ -1,6 +1,8 @@
 import LeanBLAS.FFI.FloatArray
 import LeanBLAS.Spec.LevelTwo
 
+set_option autoImplicit false
+
 namespace BLAS.CBLAS
 
 /-! # CBLAS Level 3 FFI Bindings for Float32
