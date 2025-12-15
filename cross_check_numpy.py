@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """LeanBLAS × NumPy automated cross-check.
 
-Runs the *quick* Lean benchmark executable (`lake exe BenchmarksFixedTest`),
+Runs the *quick* Lean benchmark executable (`lake exe BenchmarksQuickTest`),
 extracts the checksum totals for DOT, NORM, AXPY and DSUM, recomputes the same
 loops with NumPy and fails (non-zero exit code) if they differ beyond a tiny
 tolerance (1e-8 *|value|).
@@ -33,8 +33,7 @@ RE_DSUM: Final = re.compile(r"Memory Bandwidth.*?Checksum:\s+([0-9.eE+\-]+)", re
 
 SIZE_DOT_NORM_AXPY: Final = 1_000_000
 SIZE_DSUM: Final = 10_000_000
-ITERATIONS: Final = 10  # hard-coded in BenchmarksFixed
-
+ITERATIONS: Final = 10  # hard-coded in BenchmarksQuick
 TOL_REL: Final = 1e-8  # relative tolerance
 
 
@@ -43,7 +42,7 @@ def run_lean() -> str:
 
     try:
         res = subprocess.run(
-            ["lake", "exe", "BenchmarksFixedTest"],
+            ["lake", "exe", "BenchmarksQuickTest"],
             capture_output=True,
             text=True,
             check=True,
@@ -57,7 +56,7 @@ def run_lean() -> str:
 
 
 def gen_vec(size: int) -> "np.ndarray":
-    """Generate the same vector pattern used in BenchmarksFixed (1,2,3,…)."""
+    """Generate the same vector pattern used in BenchmarksQuick (1,2,3,…)."""
 
     return np.arange(1, size + 1, dtype=np.float64)
 

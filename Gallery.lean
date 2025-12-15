@@ -4,7 +4,7 @@
 
 `lake exe Gallery` is a convenient front-end that:
 
-1. Runs the *fast* Level-1 benchmark set (`BenchmarksFixed`).
+1. Runs the *fast* Level-1 benchmark set (`BenchmarksQuickTest`).
 2. Runs the full benchmark suite (`BenchmarkTests`) for cache/scaling
    insights.
 
@@ -19,7 +19,9 @@ def runExe (cmd : String) (args : Array String := #[]) : IO Unit := do
   let out ← IO.Process.output {cmd := cmd, args := args, stdin := .null}
   IO.print out.stdout
   if out.exitCode ≠ 0 then
-    IO.eprintln "(Executable returned non-zero status.)"
+    if !out.stderr.isEmpty then
+      IO.eprint out.stderr
+    IO.eprintln s!"(Executable returned non-zero status: {out.exitCode}.)"
 
 def main : IO Unit := do
   IO.println "================ LeanBLAS Benchmark Gallery ================"

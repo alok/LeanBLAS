@@ -4,7 +4,7 @@ benchmark_compare.py
 ====================
 A simple benchmarking harness that measures the performance of NumPy's
 vector dot-product on a few representative sizes and compares it to the
-LeanBLAS benchmark suite (Test/Benchmarks.lean).
+LeanBLAS quick benchmark suite (LeanBLASTest/BenchmarksQuick.lean).
 
 Usage
 -----
@@ -14,7 +14,7 @@ Run from the project root after the Lean executables have been built::
 
 The script prints two sections:
 1. NumPy results (time/op, GFLOPS, ops/sec)
-2. Raw output from `lake exe Benchmarks` (LeanBLAS side)
+2. Raw output from `lake exe BenchmarksQuickTest` (LeanBLAS side)
 
 It does **not** attempt to parse the LeanBLAS output – human comparison is
 typically sufficient and the exact formatting may evolve.  Feel free to extend
@@ -141,12 +141,12 @@ def benchmark_numpy_axpy(sizes: list[int]) -> None:
 
 
 def run_lean_bench() -> None:
-    """Invoke `lake exe Benchmarks` and stream its stdout."""
+    """Invoke `lake exe BenchmarksQuickTest` and return its stdout."""
     # Ensure we are in the repo root where lakefile lives.
     repo_root = Path(__file__).resolve().parent
     try:
         result = subprocess.run(
-            ["lake", "exe", "BenchmarksFixedTest"],
+            ["lake", "exe", "BenchmarksQuickTest"],
             cwd=repo_root,
             capture_output=True,
             text=True,
@@ -158,7 +158,7 @@ def run_lean_bench() -> None:
         )
         return
     except subprocess.CalledProcessError as exc:
-        sys.stderr.write("`lake exe BenchmarkTests` failed – see output below.\n")
+        sys.stderr.write("`lake exe BenchmarksQuickTest` failed – see output below.\n")
         sys.stderr.write(exc.stdout)
         sys.stderr.write(exc.stderr)
         return

@@ -20,7 +20,7 @@ def main : IO Unit := do
 
   -- Single call ------------------------------------------------------------
   let start1 ← IO.monoNanosNow
-  let r := ddot size x 0 1 y 0 1
+  let r := ddot size.toUSize x 0 1 y 0 1
   let end1 ← IO.monoNanosNow
   let time_single := Float.ofNat (end1 - start1) / 1e9
   IO.println s!"Single call result: {r}, time: {time_single}s"
@@ -31,7 +31,7 @@ def main : IO Unit := do
   let start2 ← IO.monoNanosNow
   for i in [:iterations] do
     let n_i := size - i
-    checksum := checksum + ddot n_i x i.toUSize 1 y i.toUSize 1
+    checksum := checksum + ddot n_i.toUSize x i.toUSize 1 y i.toUSize 1
   let end2 ← IO.monoNanosNow
   IO.println s!"nanos start2 {start2} end2 {end2} diff {end2 - start2}"
   let time_total := Float.ofNat (end2 - start2) / 1e9
