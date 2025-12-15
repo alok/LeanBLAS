@@ -4,6 +4,8 @@ import LeanBLAS.TestUtils
 open BLAS BLAS.CBLAS
 open BLAS.Test (complexApproxEq floatApproxEq)
 
+namespace BLAS.Test.ComplexValidation
+
 /-- Test basic complex arithmetic operations -/
 def test_complex_arithmetic : IO Unit := do
   IO.println "\n=== Testing Complex Arithmetic ==="
@@ -18,7 +20,7 @@ def test_complex_arithmetic : IO Unit := do
   
   -- Test complex division
   let quot := a / b
-  let expected_quot := ComplexFloat.mk 1.6 0.2  -- (2+3i)/(1+2i) = (2+3i)(1-2i)/5 = (2-4i+3i-6i²)/5 = (8-i)/5
+  let expected_quot := ComplexFloat.mk 1.6 (-0.2)  -- (2+3i)/(1+2i) = (2+3i)(1-2i)/5 = (2-4i+3i-6i²)/5 = (8-i)/5
   assert! (complexApproxEq quot expected_quot)
   IO.println s!"✓ Complex division: ({a}) / ({b}) = {quot}"
   
@@ -72,7 +74,7 @@ def test_extended_operations : IO Unit := do
   -- Test complex exponential
   let pi := 3.14159265358979323846
   let x := #c64[⟨0.0, 0.0⟩, ⟨0.0, pi⟩, ⟨Float.log 2, 0.0⟩]
-  let exp_result := LevelOneDataExt.exp (Array := ComplexFloat64Array) (R := Float) (K := ComplexFloat) 3 x 0 1
+  let _ := LevelOneDataExt.exp (Array := ComplexFloat64Array) (R := Float) (K := ComplexFloat) 3 x 0 1
   IO.println "✓ Complex exponential:"
   IO.println "  exp(0+0i) = 1+0i"
   IO.println "  exp(0+πi) = -1+0i (Euler's identity)"
@@ -80,7 +82,7 @@ def test_extended_operations : IO Unit := do
   
   -- Test complex logarithm
   let y := #c64[⟨1.0, 0.0⟩, ⟨-1.0, 0.0⟩, ⟨0.0, 1.0⟩]
-  let log_result := LevelOneDataExt.log (Array := ComplexFloat64Array) (R := Float) (K := ComplexFloat) 3 y 0 1
+  let _ := LevelOneDataExt.log (Array := ComplexFloat64Array) (R := Float) (K := ComplexFloat) 3 y 0 1
   IO.println "✓ Complex logarithm:"
   IO.println "  log(1+0i) = 0+0i"
   IO.println "  log(-1+0i) = 0+πi"
@@ -88,8 +90,8 @@ def test_extended_operations : IO Unit := do
   
   -- Test trigonometric functions
   let z := #c64[⟨0.0, 0.0⟩, ⟨pi/2, 0.0⟩]
-  let sin_result := LevelOneDataExt.sin (Array := ComplexFloat64Array) (R := Float) (K := ComplexFloat) 2 z 0 1
-  let cos_result := LevelOneDataExt.cos (Array := ComplexFloat64Array) (R := Float) (K := ComplexFloat) 2 z 0 1
+  let _ := LevelOneDataExt.sin (Array := ComplexFloat64Array) (R := Float) (K := ComplexFloat) 2 z 0 1
+  let _ := LevelOneDataExt.cos (Array := ComplexFloat64Array) (R := Float) (K := ComplexFloat) 2 z 0 1
   IO.println "✓ Complex trigonometric:"
   IO.println "  sin(0) = 0, cos(0) = 1"
   IO.println "  sin(π/2) = 1, cos(π/2) = 0"
@@ -127,3 +129,5 @@ def main : IO Unit := do
   test_edge_cases
   
   IO.println "\n✅ All validation tests passed!"
+
+end BLAS.Test.ComplexValidation

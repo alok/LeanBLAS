@@ -40,9 +40,11 @@ def knownTestVectors : List Level1TestCase := [
     y := #c64[⟨3.0, 4.0⟩, ⟨1.0, -2.0⟩],
     alpha := ⟨2.5, -1.5⟩,
     zdotu_expected := ⟨7.0, 1.0⟩,
-    zdotc_expected := ⟨1.0, 2.0⟩,  -- conj(1)*(3+4i) + conj(2+i)*(1-2i) = 1*(3+4i) + (2-i)*(1-2i) = 3+4i + 2-4i-i-2 = 1+2i
+    -- conj(1)*(3+4i) + conj(2+i)*(1-2i) = (3+4i) + (2-i)*(1-2i) = (3+4i) + (0-5i) = 3 - i
+    zdotc_expected := ⟨3.0, -1.0⟩,
     dznrm2_expected := Float.sqrt 6.0,  -- sqrt(1² + 2² + 1²)
-    dzasum_expected := 8.0  -- |1| + |0| + |2| + |1| + |3| + |4| + |1| + |-2|
+    -- `dzasum` is computed on `x` only: sum_i (|Re(xᵢ)| + |Im(xᵢ)|)
+    dzasum_expected := 4.0  -- |1|+|0| + |2|+|1|
   },
   -- Test case 2: Pure real vectors
   {
@@ -265,5 +267,3 @@ def main : IO Unit := do
     IO.println "Please check the implementation against the reference values."
 
 end BLAS.Test.ComplexNumericalValidation
-
-def main : IO Unit := BLAS.Test.ComplexNumericalValidation.main

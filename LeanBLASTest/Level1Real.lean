@@ -2,6 +2,8 @@ import LeanBLAS
 
 open BLAS CBLAS Sorry
 
+namespace BLAS.Test.Level1Real
+
 def approxEq (x y : Float) : Bool :=
   (x - y).abs < 1e-14
 
@@ -184,7 +186,4 @@ def main : IO Unit := do
   test_daxpy_2
   test_dconst
 
--- NOTE: This file is built as an executable via Lake (`lake exe Level1RealTests`).
--- A top-level `#eval main` would run during compilation, before the BLAS FFI
--- library is linked into the Lean process, causing missing-extern errors.
--- Use the Lake executable to run this test suite instead.
+end BLAS.Test.Level1Real

@@ -332,5 +332,3 @@ def main : IO Unit := do
     throw $ IO.userError "Complex Level 1 tests failed"
 
 end BLAS.Test.ComplexLevel1Comprehensive
-
-def main : IO Unit := BLAS.Test.ComplexLevel1Comprehensive.main

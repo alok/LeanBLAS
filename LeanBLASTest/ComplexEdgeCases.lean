@@ -11,6 +11,8 @@ This module tests edge cases and special values for complex BLAS operations,
 including branch cuts, overflow/underflow, and special floating-point values.
 -/
 
+namespace BLAS.Test.ComplexEdgeCases
+
 /-- Helper to create NaN -/
 def nan : Float := 0.0 / 0.0
 
@@ -81,9 +83,9 @@ def test_overflow_underflow : IO Unit := do
   let large_vec := #c64[⟨large, large⟩, ⟨large, large⟩]
   let norm_large := dznrm2 2 large_vec 0 1
   
-  -- Should compute sqrt(2 * (large² + large²) + 2 * (large² + large²))
-  -- = sqrt(4 * 2 * large²) = 2 * sqrt(2) * large ≈ 2.828 * large
-  let expected := 2.0 * Float.sqrt 2.0 * large
+  -- Each element has |large + i·large|² = large² + large² = 2·large².
+  -- With two elements, sum = 4·large², so ||x||₂ = 2·large.
+  let expected := 2.0 * large
   assert! (Float.abs (norm_large / expected - 1.0) < 1e-10)
   IO.println s!"✓ Norm of large values handled correctly: {norm_large}"
   
@@ -184,3 +186,5 @@ def main : IO Unit := do
   
   IO.println "\n✅ All edge case tests passed!"
   IO.println "Complex BLAS operations handle special cases correctly."
+
+end BLAS.Test.ComplexEdgeCases

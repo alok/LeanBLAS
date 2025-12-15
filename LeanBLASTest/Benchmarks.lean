@@ -52,7 +52,7 @@ def generateTestVector (size : Nat) : Float64Array := Id.run do
 /-- Benchmark dot product operation -/
 def benchmarkDot (sizes : List Nat) : IO Unit := do
   IO.println "Benchmarking DOT product operation"
-  IO.println (String.mk (List.replicate 40 '-'))
+  IO.println (String.ofList (List.replicate 40 '-'))
   IO.println "Size\t\tTime (s)\tGFLOPS\t\tOps/sec"
 
   for size in sizes do
@@ -82,7 +82,7 @@ def benchmarkDot (sizes : List Nat) : IO Unit := do
 /-- Benchmark norm computation -/
 def benchmarkNorm (sizes : List Nat) : IO Unit := do
   IO.println "\nBenchmarking NORM computation"
-  IO.println (String.mk (List.replicate 40 '-'))
+  IO.println (String.ofList (List.replicate 40 '-'))
   IO.println "Size\t\tTime (s)\tGFLOPS\t\tOps/sec"
 
   for size in sizes do
@@ -111,7 +111,7 @@ def benchmarkNorm (sizes : List Nat) : IO Unit := do
 /-- Benchmark axpy operation -/
 def benchmarkAxpy (sizes : List Nat) : IO Unit := do
   IO.println "\nBenchmarking AXPY operation"
-  IO.println (String.mk (List.replicate 40 '-'))
+  IO.println (String.ofList (List.replicate 40 '-'))
   IO.println "Size\t\tTime (s)\tGFLOPS\t\tOps/sec"
 
   for size in sizes do
@@ -144,7 +144,7 @@ def benchmarkAxpy (sizes : List Nat) : IO Unit := do
 /-- Cache performance analysis -/
 def analyzeCachePerformance : IO Unit := do
   IO.println "\nCache Performance Analysis"
-  IO.println (String.mk (List.replicate 40 '-'))
+  IO.println (String.ofList (List.replicate 40 '-'))
 
   let sizes := [1000, 10000, 100000, 1000000]  -- Different cache levels
 
@@ -160,7 +160,7 @@ def analyzeCachePerformance : IO Unit := do
       let iterations := 1000
       -- accumulate into checksum to avoid optimisation
       let mut acc : Float := 0.0
-      for i in [:iterations] do
+      for _ in [:iterations] do
         acc := acc + dnrm2 size.toUSize x (0).toUSize stride.toUSize
       let elapsed ← timer.elapsed
       let avg := elapsed / Float.ofNat iterations
@@ -174,7 +174,7 @@ def analyzeCachePerformance : IO Unit := do
 /-- Memory bandwidth estimation -/
 def estimateMemoryBandwidth : IO Unit := do
   IO.println "\nMemory Bandwidth Estimation"
-  IO.println (String.mk (List.replicate 40 '-'))
+  IO.println (String.ofList (List.replicate 40 '-'))
 
   let sizes := [100000, 1000000, 10000000]
 
@@ -199,7 +199,7 @@ def estimateMemoryBandwidth : IO Unit := do
 /-- Scaling analysis -/
 def analyzeScaling : IO Unit := do
   IO.println "\nScaling Analysis (Time vs. Problem Size)"
-  IO.println (String.mk (List.replicate 40 '-'))
+  IO.println (String.ofList (List.replicate 40 '-'))
 
   let base_sizes := [1000, 2000, 4000, 8000, 16000, 32000]
 
@@ -251,12 +251,9 @@ def analyzeScaling : IO Unit := do
     IO.println s!"{size}\t\t{Float.toString dot_scale}\t\t{Float.toString norm_scale}\t\t{Float.toString axpy_scale}\t\t{Float.toString theoretical}"
 
 /-- Main benchmark runner -/
-def benchmarksMain : IO Unit := do
+def runAll (test_sizes : List Nat) : IO Unit := do
   IO.println "LeanBLAS Performance Benchmarking Suite"
-  IO.println (String.mk (List.replicate 50 '='))
-
-  -- Use larger sizes for more accurate timing
-  let test_sizes := [10000, 100000, 1000000, 5000000]
+  IO.println (String.ofList (List.replicate 50 '='))
 
   benchmarkDot test_sizes
   benchmarkNorm test_sizes
@@ -273,8 +270,7 @@ def benchmarksMain : IO Unit := do
   IO.println "- System load and other running processes"
   IO.println "- Compiler optimizations enabled"
 
+def main : IO Unit :=
+  runAll [10000, 100000, 1000000, 5000000]
+
 end BLAS.Test.Benchmarks
-
-/-! Entry point for `lake exe BenchmarkTests` -/
-
-def main : IO Unit := BLAS.Test.Benchmarks.benchmarksMain

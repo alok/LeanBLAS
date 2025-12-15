@@ -183,7 +183,7 @@ def test_zgerc : IO Bool := do
   -- A[1,0] = 3 + (2+0i)*conj(1+0i) = 3 + 2*1 = 5
   -- A[1,1] = 4 + (2+0i)*conj(0+1i) = 4 + 2*(0-1i) = 4 + (0-2i) = (4-2i)
   let test_ok := complexApproxEq (A_result.get! 0) ⟨2.0, 1.0⟩ &&
-                 complexApproxEq (A_result.get! 1) ⟨3.0, 1.0⟩ &&
+                 complexApproxEq (A_result.get! 1) ⟨3.0, -1.0⟩ &&
                  complexApproxEq (A_result.get! 2) ⟨5.0, 0.0⟩ &&
                  complexApproxEq (A_result.get! 3) ⟨4.0, -2.0⟩
   IO.println s!"  Test: Rank-1 update with conjugation - {if test_ok then "✓" else "✗"}"
@@ -231,8 +231,11 @@ def test_zher2 : IO Bool := do
   let A_new := her2 Order.RowMajor UpLo.Upper 2 alpha x 0 1 y 0 1 A 0 2
   let A_result := A_new.toComplexFloatArray
 
-  -- This is a complex calculation - we'll check a simpler result
-  let test_ok := (A_result.get! 0).re > 1.0  -- Diagonal should increase
+  -- For these specific x/y, the Hermitian rank-2 update increases the
+  -- upper off-diagonal to 2 and leaves the diagonal unchanged.
+  let test_ok := complexApproxEq (A_result.get! 0) ⟨1.0, 0.0⟩ &&
+                 complexApproxEq (A_result.get! 1) ⟨2.0, 0.0⟩ &&
+                 complexApproxEq (A_result.get! 3) ⟨1.0, 0.0⟩
   IO.println s!"  Test: Hermitian rank-2 update - {if test_ok then "✓" else "✗"}"
   
   return test_ok
@@ -270,5 +273,3 @@ def main : IO Unit := do
     throw $ IO.userError "Complex Level 2 tests failed"
 
 end BLAS.Test.ComplexLevel2Comprehensive
-
-def main : IO Unit := BLAS.Test.ComplexLevel2Comprehensive.main

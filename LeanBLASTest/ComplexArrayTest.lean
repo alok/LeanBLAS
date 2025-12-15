@@ -71,8 +71,8 @@ def main : IO Unit := do
   let real_parts := complex.realParts
   let imag_parts := complex.imagParts
   IO.println s!"  Complex array: {complex}"
-  IO.println s!"  Real parts: [1.0, 3.0]"  -- Float64Array doesn't have nice toString
-  IO.println s!"  Imag parts: [2.0, 4.0]"
+  IO.println s!"  Real parts: {real_parts.toFloatArray}"
+  IO.println s!"  Imag parts: {imag_parts.toFloatArray}"
   
   -- Demonstrate usage in BLAS operations
   IO.println "\n13. Using constructors with BLAS operations:"

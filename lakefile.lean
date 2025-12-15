@@ -54,91 +54,111 @@ lean_lib LeanBLAS where
   precompileModules := if System.Platform.isOSX then false else true
   -- moreLinkObjs := #[libleanblasc]  -- disabled: causes cross-package target resolution issues
 
+-- Test modules live under the `LeanBLASTest` namespace. We keep them in a
+-- separate library to avoid collisions with dependency packages that also ship
+-- `Test.*` modules (e.g. `plausible`).
+lean_lib LeanBLASTest where
+  roots := #[`LeanBLASTest]
+  precompileModules := if System.Platform.isOSX then false else true
+
 @[test_driver]
 lean_exe ComprehensiveTests where
-  root := `Test.TestRunner
+  root := `LeanBLASTest.TestRunner
+  moreLinkObjs := #[libleanblasc]
 
 lean_exe Level1RealTests where
-  root := `Test.Level1RealTests
+  root := `LeanBLASTest.Level1RealTests
   supportInterpreter := true
   moreLinkObjs := #[libleanblasc]
 
 lean_exe PackedTriangularTests where
-  root := `Test.PackedTriangularTests
+  root := `LeanBLASTest.PackedTriangularTests
+  moreLinkObjs := #[libleanblasc]
 
 lean_exe PropertyTests where
-  root := `Test.Property
+  root := `LeanBLASTest.PropertyTests
+  moreLinkObjs := #[libleanblasc]
 
 lean_exe EdgeCaseTests where
-  root := `Test.EdgeCases
+  root := `LeanBLASTest.EdgeCaseTests
+  moreLinkObjs := #[libleanblasc]
 
 lean_exe BenchmarkTests where
-  root := `Test.Benchmarks
+  root := `LeanBLASTest.BenchmarkTests
   moreLinkObjs := #[libleanblasc]
 
 lean_exe CorrectnessTests where
-  root := `Test.Correctness
+  root := `LeanBLASTest.CorrectnessTests
   moreLinkObjs := #[libleanblasc]
 
 lean_exe Level3Tests where
-  root := `Test.Level3
+  root := `LeanBLASTest.Level3Tests
   moreLinkObjs := #[libleanblasc]
 
 lean_exe BenchmarksQuickTest where
-  root := `Test.BenchmarksQuick
+  root := `LeanBLASTest.BenchmarksQuick
   moreLinkObjs := #[libleanblasc]
 
 -- Small utility executable used internally for measuring timings while
 -- developing the benchmark suite.  Not part of the public API.
 lean_exe TimeTest where
   root := `TimeTest
+  moreLinkObjs := #[libleanblasc]
 
 -- Public showcase executable
 lean_exe Gallery where
   root := `Gallery
 
 lean_exe ComplexValidation where
-  root := `Test.ComplexValidation
+  root := `LeanBLASTest.ComplexValidationTests
   supportInterpreter := true
+  moreLinkObjs := #[libleanblasc]
 
 lean_exe ComplexNumericalReference where
-  root := `Test.ComplexNumericalReference
+  root := `LeanBLASTest.ComplexNumericalReference
   supportInterpreter := true
+  moreLinkObjs := #[libleanblasc]
 
 lean_exe ComplexEdgeCases where
-  root := `Test.ComplexEdgeCases
+  root := `LeanBLASTest.ComplexEdgeCasesTests
   supportInterpreter := true
+  moreLinkObjs := #[libleanblasc]
 
 lean_exe ComplexArrayTest where
-  root := `Test.ComplexArrayTest
+  root := `LeanBLASTest.ComplexArrayTest
   supportInterpreter := true
+  moreLinkObjs := #[libleanblasc]
 
 lean_exe ComplexCorrectnessLevel2 where
-  root := `Test.ComplexCorrectnessLevel2
+  root := `LeanBLASTest.ComplexCorrectnessLevel2
   supportInterpreter := true
+  moreLinkObjs := #[libleanblasc]
 
 lean_exe ComplexNumericalValidation where
-  root := `Test.ComplexNumericalValidation
+  root := `LeanBLASTest.ComplexNumericalValidationTests
   supportInterpreter := true
+  moreLinkObjs := #[libleanblasc]
 
 lean_exe Level3Benchmarks where
-  root := `Test.BenchmarksLevel3
+  root := `LeanBLASTest.BenchmarksLevel3
   moreLinkObjs := #[libleanblasc]
 
 lean_exe ComplexLevel1Comprehensive where
-  root := `Test.ComplexLevel1Comprehensive
+  root := `LeanBLASTest.ComplexLevel1ComprehensiveTests
   supportInterpreter := true
   moreLinkObjs := #[libleanblasc]
 
 lean_exe ComplexLevel2Comprehensive where
-  root := `Test.ComplexLevel2Comprehensive
+  root := `LeanBLASTest.ComplexLevel2ComprehensiveTests
   supportInterpreter := true
+  moreLinkObjs := #[libleanblasc]
 
 lean_exe ComplexExamples where
   root := `examples.ComplexExamples
   supportInterpreter := true
+  moreLinkObjs := #[libleanblasc]
 
 lean_exe Float32Test where
-  root := `Test.Float32Test
+  root := `LeanBLASTest.Float32Test
   supportInterpreter := true
   moreLinkObjs := #[libleanblasc]

@@ -237,6 +237,3 @@ Level 3 operations tested:
 • Performance and numerical stability analysis"
 
 end BLAS.Test.Level3
-
--- Main entry point for the executable
-def main : IO Unit := BLAS.Test.Level3.main

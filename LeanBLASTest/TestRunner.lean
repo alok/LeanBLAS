@@ -1,7 +1,15 @@
-import Test.Property
-import Test.EdgeCases
-import Test.Benchmarks
-import Test.Correctness
+import LeanBLASTest.Property
+import LeanBLASTest.Level1Real
+import LeanBLASTest.PackedTriangular
+import LeanBLASTest.Level3
+import LeanBLASTest.EdgeCases
+import LeanBLASTest.Benchmarks
+import LeanBLASTest.Correctness
+import LeanBLASTest.ComplexNumericalValidation
+import LeanBLASTest.ComplexLevel1Comprehensive
+import LeanBLASTest.ComplexLevel2Comprehensive
+import LeanBLASTest.ComplexValidation
+import LeanBLASTest.ComplexEdgeCases
 import LeanBLAS
 
 /-!
@@ -42,9 +50,13 @@ structure TestReport where
 /-- Comprehensive test configuration -/
 structure TestConfig where
   run_property_tests : Bool := true
+  run_level1_real_tests : Bool := true
+  run_packed_triangular_tests : Bool := true
+  run_level3_tests : Bool := true
   run_edge_cases : Bool := true
   run_benchmarks : Bool := true
   run_correctness : Bool := true
+  run_complex_tests : Bool := true
   property_test_iterations : Nat := 1000
   benchmark_sizes : List Nat := [100, 1000, 10000]
   verbose : Bool := false
@@ -66,8 +78,8 @@ def runTestSuite (suite : TestSuite) (config : TestConfig) : IO TestReport := do
   
   let duration := Float.ofNat (end_time - start_time) / 1000.0
   let details := match status with
-    | TestStatus.Pass => s!"Completed successfully in {duration:.3f}s"
-    | TestStatus.Fail error => s!"Failed after {duration:.3f}s: {error}"
+    | TestStatus.Pass => s!"Completed successfully in {Float.toString duration}s"
+    | TestStatus.Fail error => s!"Failed after {Float.toString duration}s: {error}"
     | TestStatus.Skip reason => s!"Skipped: {reason}"
   
   return {
@@ -78,9 +90,33 @@ def runTestSuite (suite : TestSuite) (config : TestConfig) : IO TestReport := do
   }
 
 /-- Property test suite wrapper -/
-def propertyTestRunner : IO TestStatus := do
+def propertyTestRunner (config : TestConfig) : IO TestStatus := do
   try
-    BLAS.Test.Property.main
+    BLAS.Test.Property.runAll config.property_test_iterations
+    return TestStatus.Pass
+  catch e =>
+    return TestStatus.Fail e.toString
+
+/-- Real Level-1 (Float64) validation suite wrapper -/
+def level1RealTestRunner : IO TestStatus := do
+  try
+    BLAS.Test.Level1Real.main
+    return TestStatus.Pass
+  catch e =>
+    return TestStatus.Fail e.toString
+
+/-- Packed-triangular smoke tests wrapper -/
+def packedTriangularTestRunner : IO TestStatus := do
+  try
+    BLAS.Test.PackedTriangular.run
+    return TestStatus.Pass
+  catch e =>
+    return TestStatus.Fail e.toString
+
+/-- Level-3 (Float64) validation suite wrapper -/
+def level3TestRunner : IO TestStatus := do
+  try
+    BLAS.Test.Level3.main
     return TestStatus.Pass
   catch e =>
     return TestStatus.Fail e.toString
@@ -94,9 +130,9 @@ def edgeCaseTestRunner : IO TestStatus := do
     return TestStatus.Fail e.toString
 
 /-- Benchmark suite wrapper -/
-def benchmarkRunner : IO TestStatus := do
+def benchmarkRunner (config : TestConfig) : IO TestStatus := do
   try
-    BLAS.Test.Benchmarks.main
+    BLAS.Test.Benchmarks.runAll config.benchmark_sizes
     return TestStatus.Pass
   catch e =>
     return TestStatus.Fail e.toString
@@ -109,12 +145,67 @@ def correctnessTestRunner : IO TestStatus := do
   catch e =>
     return TestStatus.Fail e.toString
 
+/-- Complex numerical validation suite wrapper -/
+def complexNumericalValidationRunner : IO TestStatus := do
+  try
+    BLAS.Test.ComplexNumericalValidation.main
+    return TestStatus.Pass
+  catch e =>
+    return TestStatus.Fail e.toString
+
+/-- Complex level-1 comprehensive suite wrapper -/
+def complexLevel1Runner : IO TestStatus := do
+  try
+    BLAS.Test.ComplexLevel1Comprehensive.main
+    return TestStatus.Pass
+  catch e =>
+    return TestStatus.Fail e.toString
+
+/-- Complex level-2 comprehensive suite wrapper -/
+def complexLevel2Runner : IO TestStatus := do
+  try
+    BLAS.Test.ComplexLevel2Comprehensive.main
+    return TestStatus.Pass
+  catch e =>
+    return TestStatus.Fail e.toString
+
+/-- Misc complex validation suite wrapper -/
+def complexValidationRunner : IO TestStatus := do
+  try
+    BLAS.Test.ComplexValidation.main
+    return TestStatus.Pass
+  catch e =>
+    return TestStatus.Fail e.toString
+
+/-- Complex edge case suite wrapper -/
+def complexEdgeCasesRunner : IO TestStatus := do
+  try
+    BLAS.Test.ComplexEdgeCases.main
+    return TestStatus.Pass
+  catch e =>
+    return TestStatus.Fail e.toString
+
 /-- Define all available test suites -/
 def getAllTestSuites (config : TestConfig) : List TestSuite := [
   {
     name := "Property-Based Tests"
     description := "QuickCheck-style random testing of mathematical properties"
-    runner := if config.run_property_tests then propertyTestRunner else pure (TestStatus.Skip "Disabled in config")
+    runner := if config.run_property_tests then propertyTestRunner config else pure (TestStatus.Skip "Disabled in config")
+  },
+  {
+    name := "Level 1 Real Tests"
+    description := "CBLAS-backed Float64 smoke tests for core Level-1 ops"
+    runner := if config.run_level1_real_tests then level1RealTestRunner else pure (TestStatus.Skip "Disabled in config")
+  },
+  {
+    name := "Packed Triangular Tests"
+    description := "Packed triangular matrix-vector multiply smoke tests (tpmv)"
+    runner := if config.run_packed_triangular_tests then packedTriangularTestRunner else pure (TestStatus.Skip "Disabled in config")
+  },
+  {
+    name := "Level 3 Real Tests"
+    description := "CBLAS-backed Float64 validation for matrix-matrix operations"
+    runner := if config.run_level3_tests then level3TestRunner else pure (TestStatus.Skip "Disabled in config")
   },
   {
     name := "Edge Case Tests"
@@ -124,37 +215,68 @@ def getAllTestSuites (config : TestConfig) : List TestSuite := [
   {
     name := "Performance Benchmarks"
     description := "Performance analysis and scaling behavior verification"
-    runner := if config.run_benchmarks then benchmarkRunner else pure (TestStatus.Skip "Disabled in config")
+    runner := if config.run_benchmarks then benchmarkRunner config else pure (TestStatus.Skip "Disabled in config")
   },
   {
     name := "Formal Correctness"
     description := "Mathematical proof verification of BLAS properties"
     runner := if config.run_correctness then correctnessTestRunner else pure (TestStatus.Skip "Disabled in config")
+  },
+  {
+    name := "Complex Numerical Validation"
+    description := "Reference-checked complex BLAS validation (NumPy-derived vectors)"
+    runner := if config.run_complex_tests then complexNumericalValidationRunner else pure (TestStatus.Skip "Disabled in config")
+  },
+  {
+    name := "Complex Level 1 Comprehensive"
+    description := "Comprehensive complex Level-1 operation tests"
+    runner := if config.run_complex_tests then complexLevel1Runner else pure (TestStatus.Skip "Disabled in config")
+  },
+  {
+    name := "Complex Level 2 Comprehensive"
+    description := "Comprehensive complex Level-2 operation tests"
+    runner := if config.run_complex_tests then complexLevel2Runner else pure (TestStatus.Skip "Disabled in config")
+  },
+  {
+    name := "Complex Validation"
+    description := "Misc complex validation (arithmetic, strides, extended ops)"
+    runner := if config.run_complex_tests then complexValidationRunner else pure (TestStatus.Skip "Disabled in config")
+  },
+  {
+    name := "Complex Edge Cases"
+    description := "Special values, branch cuts, overflow/underflow, strides"
+    runner := if config.run_complex_tests then complexEdgeCasesRunner else pure (TestStatus.Skip "Disabled in config")
   }
 ]
 
 /-- Generate a comprehensive test report -/
 def generateReport (reports : List TestReport) : IO Unit := do
-  IO.println "\n" + "=" * 80
+  let sepEq := String.ofList (List.replicate 80 '=')
+  let sepDash := String.ofList (List.replicate 80 '-')
+
+  IO.println ("\n" ++ sepEq)
   IO.println "COMPREHENSIVE LEANBLAS TEST REPORT"
-  IO.println "=" * 80
+  IO.println sepEq
   
   let total_tests := reports.length
-  let passed_tests := reports.filter (fun r => matches r.status with | TestStatus.Pass => true | _ => false) |>.length
-  let failed_tests := reports.filter (fun r => matches r.status with | TestStatus.Fail _ => true | _ => false) |>.length
-  let skipped_tests := reports.filter (fun r => matches r.status with | TestStatus.Skip _ => true | _ => false) |>.length
+  let passed_tests := reports.filter (fun r => match r.status with | TestStatus.Pass => true | _ => false) |>.length
+  let failed_tests := reports.filter (fun r => match r.status with | TestStatus.Fail _ => true | _ => false) |>.length
+  let skipped_tests := reports.filter (fun r => match r.status with | TestStatus.Skip _ => true | _ => false) |>.length
   
+  let successRate :=
+    (Float.ofNat passed_tests / Float.ofNat (total_tests - skipped_tests)) * 100
+
   IO.println s!"Total Test Suites: {total_tests}
 Passed: {passed_tests}
 Failed: {failed_tests}
 Skipped: {skipped_tests}
-Success Rate: {Float.ofNat passed_tests / Float.ofNat (total_tests - skipped_tests) * 100:.1f}%"
+Success Rate: {Float.toString successRate}%"
   
   let total_time := reports.foldl (fun acc r => acc + r.duration) 0.0
-  IO.println s!"Total Execution Time: {total_time:.3f}s"
+  IO.println s!"Total Execution Time: {Float.toString total_time}s"
   
   IO.println "\nDETAILED RESULTS:"
-  IO.println "-" * 80
+  IO.println sepDash
   
   for report in reports do
     let status_icon := match report.status with
@@ -162,7 +284,7 @@ Success Rate: {Float.ofNat passed_tests / Float.ofNat (total_tests - skipped_tes
       | TestStatus.Fail _ => "❌"
       | TestStatus.Skip _ => "⏭️"
     
-    let mut output := s!"{status_icon} {report.suite}: {report.status}\n   Duration: {report.duration:.3f}s"
+    let mut output := s!"{status_icon} {report.suite}: {report.status}\n   Duration: {Float.toString report.duration}s"
     if report.details.length > 0 then
       output := output ++ s!"\n   Details: {report.details}"
     IO.println (output ++ "\n")
@@ -188,6 +310,9 @@ TEST COVERAGE HIGHLIGHTS:
 def runQuickTests : IO Unit := do
   let config : TestConfig := {
     run_property_tests := true
+    run_level1_real_tests := true
+    run_packed_triangular_tests := true
+    run_level3_tests := true
     run_edge_cases := true
     run_benchmarks := false
     run_correctness := true
@@ -209,10 +334,14 @@ def runQuickTests : IO Unit := do
 def runFullTests : IO Unit := do
   let config : TestConfig := {
     run_property_tests := true
+    run_level1_real_tests := true
+    run_packed_triangular_tests := true
+    run_level3_tests := true
     run_edge_cases := true
     run_benchmarks := true
     run_correctness := true
     property_test_iterations := 1000
+    benchmark_sizes := [10000, 100000, 1000000, 5000000]
     verbose := true
   }
   
@@ -247,13 +376,13 @@ def runInteractiveTests : IO Unit := do
     | "1" => runQuickTests
     | "2" => runFullTests
     | "3" => 
-      let report ← runTestSuite { name := "Property Tests", description := "", runner := propertyTestRunner } defaultConfig
+      let report ← runTestSuite { name := "Property Tests", description := "", runner := propertyTestRunner defaultConfig } defaultConfig
       generateReport [report]
     | "4" => 
       let report ← runTestSuite { name := "Edge Cases", description := "", runner := edgeCaseTestRunner } defaultConfig
       generateReport [report]
     | "5" => 
-      let report ← runTestSuite { name := "Benchmarks", description := "", runner := benchmarkRunner } defaultConfig
+      let report ← runTestSuite { name := "Benchmarks", description := "", runner := benchmarkRunner defaultConfig } defaultConfig
       generateReport [report]
     | "6" => 
       let report ← runTestSuite { name := "Correctness", description := "", runner := correctnessTestRunner } defaultConfig
@@ -263,13 +392,16 @@ def runInteractiveTests : IO Unit := do
       runQuickTests
 
 /-- Main test runner entry point -/
-def main : IO Unit := do
-  let args ← IO.Process.getArgs
+def main (args : List String) : IO Unit := do
   match args with
-    | [] => runInteractiveTests
+    | [] => runQuickTests
     | ["quick"] => runQuickTests
     | ["full"] => runFullTests
     | ["interactive"] => runInteractiveTests
+    | _ :: ["quick"] => runQuickTests
+    | _ :: ["full"] => runFullTests
+    | _ :: ["interactive"] => runInteractiveTests
+    | [_] => runQuickTests
     | _ => 
       IO.println "Usage: TestRunner [quick|full|interactive]"
       IO.println "  quick: Run essential tests only (fast)"
@@ -279,4 +411,5 @@ def main : IO Unit := do
 end BLAS.Test
 
 -- Module-level main for executable
-def main : IO Unit := BLAS.Test.main
+def main (args : List String) : IO Unit :=
+  BLAS.Test.main args

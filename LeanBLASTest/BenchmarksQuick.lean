@@ -1,6 +1,6 @@
 import LeanBLAS
 
-/-- Local pretty-printer for durations (replicates logic in Test/Benchmarks) -/
+/-- Local pretty-printer for durations (replicates logic in `LeanBLASTest/Benchmarks.lean`) -/
 def formatTime (sec : Float) : String :=
   if sec ≥ 0.001 then s!"{Float.toString sec} s"
   else if sec ≥ 1e-6 then s!"{Float.toString (sec * 1e6)} µs"
@@ -45,7 +45,7 @@ Expected: {expected_small}"
   
   -- Time a single operation first
   let start_single ← IO.monoNanosNow
-  let result := ddot size x 0 1 y 0 1
+  let result := ddot size.toUSize x 0 1 y 0 1
   let end_single ← IO.monoNanosNow
   let single_time := Float.ofNat (end_single - start_single) / 1e9
   IO.println s!"Single operation result: {result}
@@ -171,13 +171,13 @@ def testMemoryBandwidth : IO Unit := do
   let x := generateTestVector size
   
   -- Warm up
-  let _ := dsum size x 0 1
+  let _ := dsum size.toUSize x 0 1
   
   let iterations := 10
   let mut checksum := 0.0
   let start ← IO.monoNanosNow
   for _ in [:iterations] do
-    checksum := checksum + dsum size x 0 1
+    checksum := checksum + dsum size.toUSize x 0 1
   let end_time ← IO.monoNanosNow
 
   let total_time := Float.ofNat (end_time - start) / 1e9

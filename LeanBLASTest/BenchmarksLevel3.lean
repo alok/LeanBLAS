@@ -31,7 +31,7 @@ private def formatTime (sec : Float) : String :=
 /-- Benchmark GEMM for square matrices of various sizes. -/
 def benchGemm (sizes : List Nat) : IO Unit := do
   IO.println "GEMM (C = αAB + βC) benchmarks"
-  IO.println (String.mk (List.replicate 40 '-'))
+  IO.println (String.ofList (List.replicate 40 '-'))
   IO.println "Size\tTime/op\tGFLOPS\tchk"
 
   for n in sizes do

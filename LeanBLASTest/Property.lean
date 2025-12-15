@@ -10,7 +10,7 @@ of BLAS operations.
 
 open BLAS CBLAS
 
-namespace BLAS.Test
+namespace BLAS.Test.Property
 
 /-- Random number generator state -/
 structure RandState where
@@ -49,16 +49,18 @@ def zeroFloat64Array (size : Nat) : Float64Array :=
 def prop_dot_commutative (n : Nat) (x y : Float64Array) : Bool :=
   if n == 0 ∨ x.size < n ∨ y.size < n then true
   else
-    let dot1 := ddot n x 0 1 y 0 1
-    let dot2 := ddot n y 0 1 x 0 1
+    let n' := n.toUSize
+    let dot1 := ddot n' x 0 1 y 0 1
+    let dot2 := ddot n' y 0 1 x 0 1
     Float.abs (dot1 - dot2) < 1e-12
 
 /-- Property: norm squared should equal dot product with self -/
 def prop_norm_squared_eq_dot_self (n : Nat) (x : Float64Array) : Bool :=
   if n == 0 ∨ x.size < n then true
   else
-    let norm := dnrm2 n x 0 1
-    let dot_self := ddot n x 0 1 x 0 1
+    let n' := n.toUSize
+    let norm := dnrm2 n' x 0 1
+    let dot_self := ddot n' x 0 1 x 0 1
     -- Use relative error for better numerical stability
     if dot_self == 0.0 then
       norm == 0.0  -- Both should be zero
@@ -70,19 +72,20 @@ def prop_norm_squared_eq_dot_self (n : Nat) (x : Float64Array) : Bool :=
 def prop_axpy_linearity (n : Nat) (alpha beta : Float) (x y : Float64Array) : Bool :=
   if n == 0 ∨ x.size < n ∨ y.size < n then true
   else
+    let n' := n.toUSize
     -- Method 1: (alpha + beta)*x + y
-    let y_copy1 := dcopy n y 0 1 (zeroFloat64Array n) 0 1
-    let result1 := daxpy n (alpha + beta) x 0 1 y_copy1 0 1
+    let y_copy1 := dcopy n' y 0 1 (zeroFloat64Array n) 0 1
+    let result1 := daxpy n' (alpha + beta) x 0 1 y_copy1 0 1
     
     -- Method 2: beta*x + y, then alpha*x + result
-    let y_copy2 := dcopy n y 0 1 (zeroFloat64Array n) 0 1
-    let temp := daxpy n beta x 0 1 y_copy2 0 1
-    let result2 := daxpy n alpha x 0 1 temp 0 1
+    let y_copy2 := dcopy n' y 0 1 (zeroFloat64Array n) 0 1
+    let temp := daxpy n' beta x 0 1 y_copy2 0 1
+    let result2 := daxpy n' alpha x 0 1 temp 0 1
     
     -- Compare results
-    let diff := daxpy n (-1.0) result1 0 1 result2 0 1
-    let norm_diff := dnrm2 n diff 0 1
-    let norm_result := dnrm2 n result1 0 1
+    let diff := daxpy n' (-1.0) result1 0 1 result2 0 1
+    let norm_diff := dnrm2 n' diff 0 1
+    let norm_result := dnrm2 n' result1 0 1
     
     if norm_result == 0.0 then
       norm_diff < 1e-10
@@ -93,9 +96,10 @@ def prop_axpy_linearity (n : Nat) (alpha beta : Float) (x y : Float64Array) : Bo
 def prop_copy_preserves (n : Nat) (x y : Float64Array) : Bool :=
   if n == 0 ∨ x.size < n ∨ y.size < n then true
   else
-    let y' := dcopy n x 0 1 y 0 1
-    let dot_orig := ddot n x 0 1 x 0 1
-    let dot_copy := ddot n y' 0 1 y' 0 1
+    let n' := n.toUSize
+    let y' := dcopy n' x 0 1 y 0 1
+    let dot_orig := ddot n' x 0 1 x 0 1
+    let dot_copy := ddot n' y' 0 1 y' 0 1
     Float.abs (dot_orig - dot_copy) < 1e-12
 
 /-- Test runner for a single property -/
@@ -163,21 +167,21 @@ def runPropertyScalar (prop : Nat → Float → Float → Float64Array → Float
   return passed == numTests
 
 /-- Comprehensive property test suite -/
-def main : IO Unit := do
+def runAll (numTests : Nat) : IO Unit := do
   IO.println "Running Property-Based Tests for BLAS Level 1"
-  IO.println (String.mk (List.replicate 50 '='))
+  IO.println (String.ofList (List.replicate 50 '='))
   
   IO.println "\nTesting dot product commutativity..."
-  let test1 ← runProperty prop_dot_commutative 1000
+  let test1 ← runProperty prop_dot_commutative numTests
   
   IO.println "\nTesting norm squared equals dot with self..."
-  let test2 ← runPropertySingle prop_norm_squared_eq_dot_self 1000
+  let test2 ← runPropertySingle prop_norm_squared_eq_dot_self numTests
   
   IO.println "\nTesting axpy linearity..."
-  let test3 ← runPropertyScalar prop_axpy_linearity 1000
+  let test3 ← runPropertyScalar prop_axpy_linearity numTests
   
   IO.println "\nTesting copy preservation..."
-  let test4 ← runProperty prop_copy_preserves 1000
+  let test4 ← runProperty prop_copy_preserves numTests
   
   if test1 ∧ test2 ∧ test3 ∧ test4 then
     IO.println "\n✓ All property tests passed!"
@@ -185,7 +189,7 @@ def main : IO Unit := do
     IO.println "\n✗ Some property tests failed!"
     throw $ IO.userError "Property tests failed"
 
-end BLAS.Test
+def main : IO Unit :=
+  runAll 1000
 
--- Module-level main for executable
-def main : IO Unit := BLAS.Test.main
+end BLAS.Test.Property

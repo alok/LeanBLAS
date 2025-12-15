@@ -168,28 +168,32 @@ def test_large_offsets : IO Unit := do
   if !(approxEq norm_offset expected) then
     throw $ IO.userError "Large offset test failed"
 
-/-- Test numerical stability with cancellation -/
+/-- Test numerical stability for `dnrm2` across extreme dynamic ranges.
+
+This is *not* a cancellation test: the Euclidean norm squares entries, so `a` and `-a`
+do not cancel. Instead, we pick magnitudes where a naïve `sqrt (Σ xᵢ²)` would overflow
+(`large^2` is beyond `Float` range) unless the BLAS implementation uses a scaling
+algorithm (as `dnrm2` is expected to). -/
 def test_numerical_stability : IO Unit := do
   IO.println "Testing numerical stability..."
   
-  -- Test with values that could cause cancellation errors
-  let large := 1e8
-  let small := 1.0
+  let large : Float := 1e200
+  let small : Float := 1e-200
   let x := #f64[large, small, -large]
-  
+
   let norm_result := dnrm2 3 x 0 1
-  let expected := small  -- Should be approximately 1.0 after cancellation
-  
-  IO.println s!"Cancellation test norm: {norm_result} (expected ≈ {expected})"
-  
-  -- Allow for some numerical error but check it's reasonable
-  if Float.abs (norm_result - expected) > 1e-6 then
-    IO.println s!"Warning: Large numerical error in cancellation test: {Float.abs (norm_result - expected)}"
+  let expected := Float.sqrt 2.0 * Float.abs large
+
+  IO.println s!"Dynamic-range norm: {Float.toString norm_result} (expected ≈ {Float.toString expected})"
+
+  let rel_err := Float.abs ((norm_result - expected) / expected)
+  if rel_err > 1e-12 then
+    IO.println s!"Warning: Large relative error in dynamic-range norm test: {Float.toString rel_err}"
 
 /-- Main edge case test runner -/
 def main : IO Unit := do
   IO.println "Running Comprehensive Edge Case Tests"
-  IO.println (String.mk (List.replicate 50 '='))
+  IO.println (String.ofList (List.replicate 50 '='))
   
   test_zero_length
   IO.println ""
@@ -218,6 +222,3 @@ def main : IO Unit := do
   IO.println "✓ All edge case tests completed!"
 
 end BLAS.Test.EdgeCases
-
--- Module-level main for executable
-def main : IO Unit := BLAS.Test.EdgeCases.main
