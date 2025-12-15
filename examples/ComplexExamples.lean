@@ -33,11 +33,11 @@ def example_complex_vectors : IO Unit := do
   -- Scale vector by complex scalar
   let alpha : ComplexFloat := ⟨2.0, -1.0⟩
   let x_scaled := scal 3 alpha x 0 1
-  IO.println s!"Scaled vector: x * (2-i)"
+  IO.println s!"Scaled vector: x * (2-i) = {x_scaled}"
   
   -- Compute y = alpha*x + y
   let y_new := axpy 3 alpha x 0 1 y 0 1
-  IO.println s!"After axpy: y = (2-i)*x + y"
+  IO.println s!"After axpy: y = (2-i)*x + y = {y_new}"
 
 /-- Example 2: Hermitian matrix operations -/
 def example_hermitian_matrix : IO Unit := do
@@ -63,13 +63,13 @@ def example_hermitian_matrix : IO Unit := do
                 v 0 1 
                 ComplexFloat.zero result 0 1
   
-  IO.println "Hermitian matrix-vector product computed"
+  IO.println s!"Hermitian matrix-vector product: y = H * v = {y}"
   
   -- Hermitian rank-1 update: H = H + alpha * v * v^H
   let alpha : ComplexFloat := ⟨0.5, 0.0⟩  -- Must use real alpha for her
   let H_updated := her Order.RowMajor UpLo.Upper 3 alpha v 0 1 H_data 0 3
   
-  IO.println "Hermitian rank-1 update performed"
+  IO.println s!"Hermitian rank-1 update performed: H := H + 0.5 * v * vᴴ = {H_updated}"
 
 /-- Example 3: Complex matrix multiplication -/
 def example_complex_gemm : IO Unit := do
@@ -93,7 +93,7 @@ def example_complex_gemm : IO Unit := do
                        B 0 2
                        ComplexFloat.zero C 0 2
   
-  IO.println "Complex matrix multiplication: C = A * B"
+  IO.println s!"Complex matrix multiplication: C = A * B = {C_result}"
   
   -- Compute C = A^H * B (conjugate transpose)
   let C_conj := gemm Order.RowMajor Transpose.ConjTrans Transpose.NoTrans
@@ -102,7 +102,7 @@ def example_complex_gemm : IO Unit := do
                      B 0 2
                      ComplexFloat.zero C 0 2
   
-  IO.println "With conjugate transpose: C = A^H * B"
+  IO.println s!"With conjugate transpose: C = Aᴴ * B = {C_conj}"
 
 /-- Example 4: Solving triangular systems -/
 def example_triangular_solve : IO Unit := do
@@ -126,7 +126,7 @@ def example_triangular_solve : IO Unit := do
   let check := trmv Order.RowMajor UpLo.Upper Transpose.NoTrans false
                     3 U 0 3 x 0 1
   
-  IO.println "Verification: computed U * x"
+  IO.println s!"Verification: computed U * x = {check}"
 
 /-- Example 5: Working with complex numbers in scientific computing -/
 def example_fft_like : IO Unit := do
@@ -143,6 +143,8 @@ def example_fft_like : IO Unit := do
   let signal := #c64[⟨1.0, 0.0⟩, ⟨2.0, 0.0⟩, ⟨3.0, 0.0⟩, ⟨4.0, 0.0⟩]
   
   IO.println "Created twiddle factors and signal for DFT-like computation"
+  IO.println s!"Twiddle factors: {twiddles}"
+  IO.println s!"Signal: {signal}"
   
   -- This demonstrates how complex BLAS can be used in signal processing
   -- Real DFT would use matrix multiplication with Vandermonde matrix

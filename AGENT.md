@@ -3,16 +3,16 @@
 ## Build Commands
 - `lake build` - Build the project and check types ⚠️ Long build time due to mathlib dependencies
 - `lake build LeanBLAS` - Build just the core library ✅ Working
-- `lake exe CBLASLevelOneTest` - Run Level 1 BLAS tests
-- `lake exe DenseVectorTest` - Run dense vector tests
-- `lake exe TriangularTest` - Run triangular matrix tests
+- `lake exe Level1RealTests` - Run Level 1 BLAS tests (real)
+- `lake exe PackedTriangularTests` - Run packed triangular smoke tests
 - `lake exe Level3Tests` - Run Level 3 BLAS matrix operations tests
 - `lake exe PropertyTests` - Run property-based random tests
 - `lake exe EdgeCaseTests` - Run comprehensive edge case tests
 - `lake exe BenchmarkTests` - Run performance benchmarking suite
+- `lake exe BenchmarksQuickTest` - Run quick benchmark + checksum cross-checks
 - `lake exe CorrectnessTests` - Run formal correctness verification
 - `lake exe ComprehensiveTests` - Run all test suites with detailed reporting
-- `lake exe SimpleTest` - Run basic functionality test
+- `lake exe Gallery` - Run the benchmark gallery (quick + full + Level 3)
 - `./run_level3_tests.sh` - Run Level 3 BLAS C tests ✅ Working
 - `python3 simple_numpy_benchmark.py` - Run NumPy benchmarks ✅ Working (364 GFLOPS)
 
@@ -49,7 +49,7 @@
 - Use `cast sorry_proof` for type conversions with proofs
 
 ## Testing
-- Test files in `Test/` directory
+- Test files in `LeanBLASTest/` directory
 - Use `IO.println` for test output
 - Define `approxEq` for floating point comparisons
 - Throw `IO.userError` for test failures
@@ -159,13 +159,12 @@ See [ROADMAP.md](./ROADMAP.md) for detailed development plan.
    - Memory layout optimization
 
 ### 📁 Key Files
-- `Test/Property.lean` - Property-based testing framework (fixed with relative error)
-- `Test/EdgeCases.lean` - Edge case and boundary testing
-- `Test/Benchmarks.lean` - Performance measurement suite
-- `Test/Level3.lean` - Level 3 BLAS matrix operations tests
-- `Test/cblas_level_one.lean` - Level 1 BLAS vector operations tests
-- `Test/PropertyDebug.lean` - Debug tool for investigating test failures
-- `Test/TestRunner.lean` - Unified test execution with reporting
+- `LeanBLASTest/Property.lean` - Property-based testing framework (fixed with relative error)
+- `LeanBLASTest/EdgeCases.lean` - Edge case and boundary testing
+- `LeanBLASTest/Benchmarks.lean` - Performance measurement suite
+- `LeanBLASTest/Level3.lean` - Level 3 BLAS matrix operations tests
+- `LeanBLASTest/Level1Real.lean` - Level 1 BLAS vector operations tests
+- `LeanBLASTest/TestRunner.lean` - Unified test execution with reporting
 - `STATUS.md` - Detailed development status and achievements
 - `lakefile.lean` - Build configuration (fixed OpenBLAS paths)
 

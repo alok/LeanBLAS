@@ -217,7 +217,7 @@ LeanBLAS features the most comprehensive BLAS testing suite available:
 ### Quick Test
 
 ```bash
-lake exe SimpleTest       # Verify basic functionality
+lake exe ComprehensiveTests  # Runs the quick (essential) suite by default
 ```
 
 ### Comprehensive Testing
@@ -234,7 +234,7 @@ lake exe Level3Tests         # Level 3 BLAS operations testing
 
 ```bash
 lake exe BenchmarkTests      # Full performance analysis with scaling
-lake exe BenchmarksFixedTest # Quick performance sanity check
+lake exe BenchmarksQuickTest # Quick performance sanity check
 lake exe Level3Benchmarks    # Matrix multiplication benchmarks
 lake exe Gallery             # Showcase of all benchmarks
 ```
@@ -351,7 +351,7 @@ LeanBLAS/
 │   ├── Spec/          # Mathematical specifications
 │   ├── CBLAS/         # FFI implementations
 │   └── FFI/           # Low-level bindings
-├── Test/              # Comprehensive test suite
+├── LeanBLASTest/      # Comprehensive test suite
 ├── c/                 # C wrapper code
 └── *.py               # Python validation scripts
 ```

@@ -12,16 +12,18 @@ This document summarizes the comprehensive complex number support added to LeanB
 - Type-safe FFI bindings with proper complex number marshalling
 
 ### 2. ✅ Comprehensive Tests for Complex Level 1 Operations
-- Created `Test/ComplexLevel1Comprehensive.lean` with tests for:
+- Created `LeanBLASTest/ComplexLevel1Comprehensive.lean` with tests for:
   - Basic operations: swap, copy, axpy, scal
   - Dot products: both conjugated and unconjugated
   - Norms and sums: nrm2, asum
   - Extended operations: sum, mul, div, abs, sqrt
   - Index finding: imaxRe, imaxIm, iminRe, iminIm
-- Note: Some tests compile but have runtime issues (segfault) that need debugging
+- Runtime note: early versions of these tests hit segfaults due to an FFI enum
+  ABI mismatch; this is now fixed by importing `LeanBLAS.Spec.LevelTwo` in the
+  FFI modules and disabling `autoImplicit` there.
 
 ### 3. ✅ Comprehensive Tests for Complex Level 2 Operations
-- Created `Test/ComplexLevel2Comprehensive.lean` with tests for:
+- Created `LeanBLASTest/ComplexLevel2Comprehensive.lean` with tests for:
   - Matrix-vector operations: gemv, hemv, trmv, trsv
   - Rank updates: ger, gerc, her, her2
   - Numerical validation with expected results
@@ -47,30 +49,27 @@ This document summarizes the comprehensive complex number support added to LeanB
 - toString and other utility functions available
 
 ## Code Statistics
-- Total commits: 5
-- Files added/modified: 8+
-- Lines of code added: ~750+
-- Test coverage: Level 1, 2, and 3 operations
+- Files added/modified: multiple
+- Test coverage: Level 1, 2, and 3 operations (real + complex)
 
 ## Known Issues
-1. **Segfault in complex tests**: Some test executables crash at runtime
-   - Likely related to FFI or memory alignment issues
-   - Needs debugging with DYLD_LIBRARY_PATH settings
-
-2. **Some 'sorry' declarations**: 
+1. **Some 'sorry' declarations**:
    - axpby implementation uses 'sorry' for const operation
    - Some extended operations need proper implementation
 
+2. **Optional NumPy cross-check requires NumPy**:
+   - `python3 cross_check_numpy.py` requires the `numpy` Python package.
+   - `./run_ci_local.sh` will create `.venv` and install NumPy if needed.
+
 ## Future Work
-1. **Debug runtime issues**: Fix segfaults in test executables
-2. **Performance optimization**: Profile and optimize complex operations
-3. **Single precision**: Add ComplexFloat32 support
-4. **Numerical validation**: Extensive comparison with reference implementations
+1. **Performance optimization**: Profile and optimize complex operations
+2. **Single precision**: Add ComplexFloat32 support
+3. **Numerical validation**: Extensive comparison with reference implementations
 
 ## Branch Information
 - Branch name: `feat/complex-blas-support`
 - Base branch: `feat/level3-blas-implementation`
-- Commits ahead: 19
+- Commits ahead: (varies; this document is not auto-updated)
 
 ## How to Test
 ```bash
@@ -80,15 +79,15 @@ lake build
 # Run examples (if segfault fixed)
 lake exe ComplexExamples
 
-# Run comprehensive tests (if segfault fixed)
+# Run comprehensive tests
 lake exe ComplexLevel1Comprehensive
 lake exe ComplexLevel2Comprehensive
 ```
 
 ## Key Files Added/Modified
 1. `LeanBLAS/CBLAS/LevelThreeComplex.lean` - Level 3 complex operations
-2. `Test/ComplexLevel1Comprehensive.lean` - Level 1 comprehensive tests
-3. `Test/ComplexLevel2Comprehensive.lean` - Level 2 comprehensive tests
+2. `LeanBLASTest/ComplexLevel1Comprehensive.lean` - Level 1 comprehensive tests
+3. `LeanBLASTest/ComplexLevel2Comprehensive.lean` - Level 2 comprehensive tests
 4. `examples/ComplexExamples.lean` - Usage examples
 5. `lakefile.lean` - Added new test executables
 6. `README.md` - Updated with complex examples

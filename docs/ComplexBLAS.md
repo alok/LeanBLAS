@@ -143,9 +143,11 @@ The implementation provides full complex arithmetic:
 ## Testing
 
 Comprehensive test suites are provided:
-- `Test.ComplexCorrectnessLevel1`: Correctness tests for Level 1 operations
-- `Test.ComplexExtTest`: Tests for extended operations
-- `Test.ComplexValidation`: Validation of complex arithmetic and edge cases
+- `LeanBLASTest/ComplexLevel1Comprehensive.lean`: Comprehensive complex Level 1 tests
+- `LeanBLASTest/ComplexLevel2Comprehensive.lean`: Comprehensive complex Level 2 tests
+- `LeanBLASTest/ComplexNumericalValidation.lean`: NumPy-derived numerical validation vectors
+- `LeanBLASTest/ComplexValidation.lean`: Complex arithmetic, strides, and extended ops
+- `LeanBLASTest/ComplexEdgeCases.lean`: Special values, branch cuts, overflow/underflow
 
 ## Future Work
 

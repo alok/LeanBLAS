@@ -13,7 +13,7 @@ LeanBLAS is a Lean 4 library providing bindings and formal specifications for BL
    - Complete specifications in `LeanBLAS/Spec/LevelOne.lean`
    - Implementations include: dot, nrm2, asum, iamax, swap, copy, axpy, rotg, rotmg, rot, scal
    - Extended operations: const, sum, axpby, scaladd, mul, div, inv, abs, sqrt, exp, log, sin, cos
-   - Tests available in `Test/cblas_level_one.lean`
+   - Tests available in `LeanBLASTest/Level1Real.lean`
 
 2. **Level 2 BLAS (Matrix-Vector Operations)** ⚠️ Partial
    - FFI bindings for Float64 operations exist
@@ -44,7 +44,7 @@ LeanBLAS/
 │   ├── CBLAS/            # CBLAS interface implementations
 │   ├── FFI/              # Foreign Function Interface definitions
 │   └── Spec/             # Mathematical specifications
-├── Test/                 # Test files
+├── LeanBLASTest/         # Test files
 └── lake files            # Build configuration
 ```
 
@@ -65,8 +65,8 @@ LeanBLAS/
   - [ ] Add properties for matrix structure preservation (triangular, symmetric, etc.)
 
 - [ ] **Comprehensive Testing**
-  - [ ] Create `Test/cblas_level_two.lean` for Level 2 operations
-  - [ ] Create `Test/cblas_level_three.lean` for Level 3 operations
+  - [ ] Create `LeanBLASTest/cblas_level_two.lean` for Level 2 operations
+  - [ ] Create `LeanBLASTest/cblas_level_three.lean` for Level 3 operations
   - [ ] Add property-based tests using Lean's proof system
   - [ ] Create regression tests for bug fixes
 

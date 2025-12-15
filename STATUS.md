@@ -12,12 +12,12 @@
 - **FFI bindings** to CBLAS functions for all operations
 
 ### 🧪 **World-Class Testing Framework**
-- **Property-Based Testing** (`Test/Property.lean`): QuickCheck-style random testing
-- **Edge Case Testing** (`Test/EdgeCases.lean`): Comprehensive boundary condition testing
-- **Performance Benchmarking** (`Test/Benchmarks.lean`): GFLOPS measurement and scaling analysis
-- **Formal Correctness** (`Test/Correctness.lean`): Mathematical theorem verification
-- **Level 3 Specific Tests** (`Test/Level3.lean`): Matrix operation validation
-- **Unified Test Runner** (`Test/TestRunner.lean`): Comprehensive reporting system
+- **Property-Based Testing** (`LeanBLASTest/Property.lean`): QuickCheck-style random testing
+- **Edge Case Testing** (`LeanBLASTest/EdgeCases.lean`): Comprehensive boundary condition testing
+- **Performance Benchmarking** (`LeanBLASTest/Benchmarks.lean`): GFLOPS measurement and scaling analysis
+- **Formal Correctness** (`LeanBLASTest/Correctness.lean`): Mathematical theorem verification
+- **Level 3 Specific Tests** (`LeanBLASTest/Level3.lean`): Matrix operation validation
+- **Unified Test Runner** (`LeanBLASTest/TestRunner.lean`): Comprehensive reporting system
 
 ### 📚 **Enhanced Documentation**
 - **Updated AGENT.md** with comprehensive build commands and development workflow
@@ -62,7 +62,7 @@
 3. **Test CBLAS bindings**: Verify FFI integration works
 
 ### 🧪 **Testing Validation**
-1. **Run existing Level 1 tests**: `lake exe CBLASLevelOneTest`
+1. **Run existing Level 1 tests**: `lake exe Level1RealTests`
 2. **Execute property-based tests**: `lake exe PropertyTests` 
 3. **Validate edge cases**: `lake exe EdgeCaseTests`
 4. **Run comprehensive suite**: `lake exe ComprehensiveTests`
