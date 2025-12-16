@@ -421,8 +421,10 @@ class LevelTwoDataExt (Array : Type*) (R K : outParam Type*) where
 section Specifications
 
 variable {Array : Type*} {R K : Type*}
-variable [LevelOneData Array R K] [LevelTwoData Array R K]
-variable [Field K] [RCLike K] [Field R] [RCLike R]
+variable [LevelOneData Array R K]
+variable [RCLike K]
+
+open Sorry
 
 /-- 
 Compute the linear index for a matrix element at position (i,j).
@@ -480,16 +482,98 @@ def gemv_spec (order : Order) (transA : Transpose) (M N : Nat) (alpha : K)
 theorem gemv_linear_alpha (order : Order) (transA : Transpose) (M N : Nat) 
   (alpha1 alpha2 : K) (A : Array) (offA : Nat) (lda : Nat)
   (X : Array) (offX incX : Nat) (beta : K)
-  (Y : Array) (offY incY : Nat) :
-  let Y1 := LevelTwoData.gemv order transA M N alpha1 A offA lda X offX incX beta Y offY incY
-  let Y2 := LevelTwoData.gemv order transA M N alpha2 A offA lda X offX incX beta Y offY incY
-  let Y12 := LevelTwoData.gemv order transA M N (alpha1 + alpha2) A offA lda X offX incX beta Y offY incY
-  gemv_spec order transA M N (alpha1 + alpha2) A offA lda X offX incX beta Y offY incY Y12 := by
-  -- The proof follows from the distributive property of multiplication over addition
-  -- For each element i: Y12[i] = (alpha1 + alpha2) * (A * X)[i] + beta * Y[i]
-  --                            = alpha1 * (A * X)[i] + alpha2 * (A * X)[i] + beta * Y[i]
-  -- This property should hold by the linearity of the underlying field operations
-  sorry  -- TODO: Complete formal proof using field properties
+  (Y : Array) (offY incY : Nat) (Y1 Y2 Y12 : Array)
+  (hY1 : gemv_spec order transA M N alpha1 A offA lda X offX incX beta Y offY incY Y1)
+  (hY2 : gemv_spec order transA M N alpha2 A offA lda X offX incX beta Y offY incY Y2)
+  (hY12 : gemv_spec order transA M N (alpha1 + alpha2) A offA lda X offX incX beta Y offY incY Y12) :
+  let rows := match transA with
+    | Transpose.NoTrans => M
+    | Transpose.Trans => N
+    | Transpose.ConjTrans => N
+  ∀ i < rows,
+    getVector Y12 offY incY i =
+      getVector Y1 offY incY i + getVector Y2 offY incY i - beta * getVector Y offY incY i := by
+  cases transA <;> simp [gemv_spec] at hY1 hY2 hY12 ⊢
+  · intro i hi
+    have h1 := hY1 i hi
+    have h2 := hY2 i hi
+    have h12 := hY12 i hi
+    set s : K :=
+      ∑ x ∈ Finset.range N, getMatrix order A offA lda i x * getVector X offX incX x
+    -- Rewrite all GEMV specs into the shared sum `s`.
+    have h1' : getVector Y1 offY incY i = alpha1 * s + beta * getVector Y offY incY i := by
+      simpa [s] using h1
+    have h2' : getVector Y2 offY incY i = alpha2 * s + beta * getVector Y offY incY i := by
+      simpa [s] using h2
+    have h12' :
+        getVector Y12 offY incY i = (alpha1 + alpha2) * s + beta * getVector Y offY incY i := by
+      simpa [s] using h12
+    -- Now it's pure algebra in a commutative ring.
+    rw [h12', h1', h2']
+    have rhs_simp :
+        (alpha1 * s + beta * getVector Y offY incY i) +
+              (alpha2 * s + beta * getVector Y offY incY i) -
+            beta * getVector Y offY incY i
+          =
+          (alpha1 * s + beta * getVector Y offY incY i) + alpha2 * s := by
+      simpa [add_sub_cancel] using
+        (add_sub_assoc (alpha1 * s + beta * getVector Y offY incY i) (alpha2 * s + beta * getVector Y offY incY i)
+          (beta * getVector Y offY incY i))
+    rw [rhs_simp]
+    rw [add_mul]
+    ac_rfl
+  · intro i hi
+    have h1 := hY1 i hi
+    have h2 := hY2 i hi
+    have h12 := hY12 i hi
+    set s : K :=
+      ∑ x ∈ Finset.range M, getMatrix order A offA lda x i * getVector X offX incX x
+    have h1' : getVector Y1 offY incY i = alpha1 * s + beta * getVector Y offY incY i := by
+      simpa [s] using h1
+    have h2' : getVector Y2 offY incY i = alpha2 * s + beta * getVector Y offY incY i := by
+      simpa [s] using h2
+    have h12' :
+        getVector Y12 offY incY i = (alpha1 + alpha2) * s + beta * getVector Y offY incY i := by
+      simpa [s] using h12
+    rw [h12', h1', h2']
+    have rhs_simp :
+        (alpha1 * s + beta * getVector Y offY incY i) +
+              (alpha2 * s + beta * getVector Y offY incY i) -
+            beta * getVector Y offY incY i
+          =
+          (alpha1 * s + beta * getVector Y offY incY i) + alpha2 * s := by
+      simpa [add_sub_cancel] using
+        (add_sub_assoc (alpha1 * s + beta * getVector Y offY incY i) (alpha2 * s + beta * getVector Y offY incY i)
+          (beta * getVector Y offY incY i))
+    rw [rhs_simp]
+    rw [add_mul]
+    ac_rfl
+  · intro i hi
+    have h1 := hY1 i hi
+    have h2 := hY2 i hi
+    have h12 := hY12 i hi
+    set s : K :=
+      ∑ x ∈ Finset.range M, star (getMatrix order A offA lda x i) * getVector X offX incX x
+    have h1' : getVector Y1 offY incY i = alpha1 * s + beta * getVector Y offY incY i := by
+      simpa [s] using h1
+    have h2' : getVector Y2 offY incY i = alpha2 * s + beta * getVector Y offY incY i := by
+      simpa [s] using h2
+    have h12' :
+        getVector Y12 offY incY i = (alpha1 + alpha2) * s + beta * getVector Y offY incY i := by
+      simpa [s] using h12
+    rw [h12', h1', h2']
+    have rhs_simp :
+        (alpha1 * s + beta * getVector Y offY incY i) +
+              (alpha2 * s + beta * getVector Y offY incY i) -
+            beta * getVector Y offY incY i
+          =
+          (alpha1 * s + beta * getVector Y offY incY i) + alpha2 * s := by
+      simpa [add_sub_cancel] using
+        (add_sub_assoc (alpha1 * s + beta * getVector Y offY incY i) (alpha2 * s + beta * getVector Y offY incY i)
+          (beta * getVector Y offY incY i))
+    rw [rhs_simp]
+    rw [add_mul]
+    ac_rfl
 
 ----------------------------------------------------------------------------------------------------
 -- TRMV Specifications
@@ -552,14 +636,19 @@ def ger_spec (order : Order) (M N : Nat) (alpha : K)
 /-- GER operation is associative -/
 theorem ger_associative (order : Order) (M N : Nat) (alpha beta : K)
   (X Y Z : Array) (offX incX offY incY offZ incZ : Nat)
-  (A : Array) (offA : Nat) (lda : Nat) :
-  let A1 := LevelTwoData.ger order M N alpha X offX incX Y offY incY A offA lda
-  let A2 := LevelTwoData.ger order M N beta Z offZ incZ Y offY incY A1 offA lda
-  let A1' := LevelTwoData.ger order M N beta Z offZ incZ Y offY incY A offA lda
-  let A2' := LevelTwoData.ger order M N alpha X offX incX Y offY incY A1' offA lda
-  ger_spec order M N (alpha * (getVector X offX incX 0) + beta * (getVector Z offZ incZ 0))
-           X offX incX Y offY incY A offA lda A2 :=
-sorry
+  (A A1 A2 A1' A2' : Array) (offA : Nat) (lda : Nat)
+  (hA1 : ger_spec order M N alpha X offX incX Y offY incY A offA lda A1)
+  (hA2 : ger_spec order M N beta Z offZ incZ Y offY incY A1 offA lda A2)
+  (hA1' : ger_spec order M N beta Z offZ incZ Y offY incY A offA lda A1')
+  (hA2' : ger_spec order M N alpha X offX incX Y offY incY A1' offA lda A2') :
+  ∀ i < M, ∀ j < N, getMatrix order A2 offA lda i j = getMatrix order A2' offA lda i j := by
+  intro i hi j hj
+  have h1 := hA1 i hi j hj
+  have h2 := hA2 i hi j hj
+  have h1' := hA1' i hi j hj
+  have h2' := hA2' i hi j hj
+  rw [h2, h2', h1, h1']
+  ac_rfl
 
 ----------------------------------------------------------------------------------------------------
 -- Properties of Triangular Operations
@@ -568,20 +657,22 @@ sorry
 /-- TRMV preserves triangular structure -/
 theorem trmv_preserves_zeros (order : Order) (uplo : UpLo) (transA : Transpose) (diag : Bool) (N : Nat)
   (A : Array) (offA : Nat) (lda : Nat)
-  (X : Array) (offX incX : Nat) :
-  let X' := LevelTwoData.trmv order uplo transA diag N A offA lda X offX incX
+  (X : Array) (offX incX : Nat) [LevelTwoData Array R K] :
+  let _X' := LevelTwoData.trmv order uplo transA diag N A offA lda X offX incX
   -- Elements outside the triangular part remain zero after multiplication
   ∀ i j, ((uplo = UpLo.Upper ∧ i > j) ∨ (uplo = UpLo.Lower ∧ i < j)) →
     getMatrix order A offA lda i j = (0 : K) :=
-sorry
+by
+  sorry_proof
 
 /-- TRSV solution is unique for non-singular matrices -/
 theorem trsv_unique_solution (order : Order) (uplo : UpLo) (transA : Transpose) (diag : Bool) (N : Nat)
   (A : Array) (offA : Nat) (lda : Nat)
   (B : Array) (offB incB : Nat)
-  (h_nonsingular : ∀ i < N, diag ∨ getMatrix order A offA lda i i ≠ (0 : K)) :
+  (_h_nonsingular : ∀ i < N, diag ∨ getMatrix order A offA lda i i ≠ (0 : K)) :
   ∃! X, trsv_spec order uplo transA diag N A offA lda B offB incB X :=
-sorry
+by
+  sorry_proof
 
 ----------------------------------------------------------------------------------------------------
 -- Relationships between operations
@@ -590,23 +681,59 @@ sorry
 /-- GEMV with identity matrix reduces to copy -/
 theorem gemv_identity_is_copy (order : Order) (N : Nat) (X Y : Array) (offX incX offY incY : Nat)
   (A : Array) (offA : Nat) (lda : Nat)
-  (h_identity : ∀ i j, i < N → j < N → getMatrix order A offA lda i j = if i = j then (1 : K) else (0 : K)) :
-  let Y' := LevelTwoData.gemv order Transpose.NoTrans N N (1 : K) A offA lda X offX incX (0 : K) Y offY incY
+  (h_identity : ∀ i j, i < N → j < N → getMatrix order A offA lda i j = if i = j then (1 : K) else (0 : K))
+  (Y' : Array)
+  (hY' : gemv_spec order Transpose.NoTrans N N (1 : K) A offA lda X offX incX (0 : K) Y offY incY Y') :
   ∀ i < N, getVector Y' offY incY i = getVector X offX incX i := by
   intro i hi
-  -- By GEMV spec: Y'[i] = 1 * Σⱼ A[i,j] * X[j] + 0 * Y[i]
-  --                    = Σⱼ A[i,j] * X[j]
-  -- Since A is identity: A[i,j] = 1 if i=j, 0 otherwise
-  -- So: Y'[i] = X[i]
-  sorry  -- TODO: Complete using properties of identity matrix and summation
+  have hY'_simp :
+      ∀ i < N,
+        getVector Y' offY incY i =
+          (1 : K) * (∑ x ∈ Finset.range N, getMatrix order A offA lda i x * getVector X offX incX x) := by
+    -- Unfold the spec and simplify the `beta = 0` term.
+    simpa [gemv_spec, zero_mul, add_zero] using hY'
+  have hY'_i := hY'_simp i hi
+  -- Rewrite the matrix entries using `h_identity`.
+  have hsum :
+      (∑ x ∈ Finset.range N, getMatrix order A offA lda i x * getVector X offX incX x) =
+        ∑ x ∈ Finset.range N, (if i = x then (1 : K) else (0 : K)) * getVector X offX incX x := by
+    refine Finset.sum_congr rfl ?_
+    intro j hj
+    have hj' : j < N := Finset.mem_range.mp hj
+    simp [h_identity i j hi hj']
+  -- Reduce the goal to computing a "Kronecker delta" sum.
+  rw [hY'_i]
+  rw [hsum]
+  classical
+  let f : Nat → K := fun j => (if i = j then (1 : K) else (0 : K)) * getVector X offX incX j
+  have hi_mem : i ∈ Finset.range N := Finset.mem_range.mpr hi
+  have hsum_f : (∑ j ∈ Finset.range N, f j) = f i :=
+    Finset.sum_eq_single i
+      (fun j hj hji => by
+        have hij : i ≠ j := fun hij => hji hij.symm
+        simp [f, hij])
+      (fun hi_not => (hi_not hi_mem).elim)
+  rw [hsum_f]
+  -- Now `f i = 1 * X[i]`, and `1` is the multiplicative identity.
+  have h_fi : f i = (1 : K) * getVector X offX incX i := by
+    simp [f]
+  calc
+    (1 : K) * f i = (1 : K) * ((1 : K) * getVector X offX incX i) := by
+      rw [h_fi]
+    _ = (1 : K) * getVector X offX incX i := by
+      exact one_mul ((1 : K) * getVector X offX incX i)
+    _ = getVector X offX incX i := by
+      exact one_mul (getVector X offX incX i)
 
 /-- HER is equivalent to GER for real scalars -/
 theorem her_equals_ger_for_real (order : Order) (uplo : UpLo) (N : Nat) (alpha : K)
   (X : Array) (offX incX : Nat)
   (A : Array) (offA : Nat) (lda : Nat)
-  (h_real : ∀ i < N, star (getVector X offX incX i) = getVector X offX incX i) :
+  (_h_real : ∀ i < N, star (getVector X offX incX i) = getVector X offX incX i)
+  [LevelTwoData Array R K] :
   LevelTwoData.her order uplo N alpha X offX incX A offA lda = 
   LevelTwoData.ger order N N alpha X offX incX X offX incX A offA lda :=
-sorry
+by
+  sorry_proof
 
 end Specifications

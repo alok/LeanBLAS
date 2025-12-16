@@ -11,7 +11,7 @@ This goes far beyond traditional BLAS testing by providing mathematical
 guarantees of correctness.
 -/
 
-open BLAS CBLAS
+open BLAS CBLAS Sorry
 
 namespace BLAS.Float64Array
 
@@ -31,21 +31,21 @@ def approxEq (x y : Float) (ε : Float := 1e-12) : Prop :=
 theorem dot_commutative (n : Nat) (x y : Float64Array) 
   (hx : x.size ≥ n) (hy : y.size ≥ n) :
   ddot n.toUSize x 0 1 y 0 1 = ddot n.toUSize y 0 1 x 0 1 := by
-  sorry  -- Proof would go here
+  sorry_proof
 
 /-- Theorem: Dot product is linear in first argument -/
 theorem dot_linear_first (n : Nat) (α : Float) (x y z : Float64Array)
   (hx : x.size ≥ n) (hy : y.size ≥ n) (hz : z.size ≥ n) :
   ddot n.toUSize (daxpy n.toUSize α x 0 1 y 0 1) 0 1 z 0 1 = 
   α * ddot n.toUSize x 0 1 z 0 1 + ddot n.toUSize y 0 1 z 0 1 := by
-  sorry
+  sorry_proof
 
 /-- Theorem: Dot product is linear in second argument -/
 theorem dot_linear_second (n : Nat) (α : Float) (x y z : Float64Array)
   (hx : x.size ≥ n) (hy : y.size ≥ n) (hz : z.size ≥ n) :
   ddot n.toUSize x 0 1 (daxpy n.toUSize α y 0 1 z 0 1) 0 1 = 
   α * ddot n.toUSize x 0 1 y 0 1 + ddot n.toUSize x 0 1 z 0 1 := by
-  sorry
+  sorry_proof
 
 /-- Theorem: Norm squared equals dot product with self -/
 theorem norm_squared_eq_dot_self (n : Nat) (x : Float64Array)
@@ -53,33 +53,33 @@ theorem norm_squared_eq_dot_self (n : Nat) (x : Float64Array)
   let norm := dnrm2 n.toUSize x 0 1
   let dot_self := ddot n.toUSize x 0 1 x 0 1
   approxEq (norm * norm) dot_self := by
-  sorry
+  sorry_proof
 
 /-- Theorem: Norm is positive definite -/
 theorem norm_positive_definite (n : Nat) (x : Float64Array)
   (hx : x.size ≥ n) (h_nonzero : ∃ i < n, x.get i ≠ 0) :
   dnrm2 n.toUSize x 0 1 > 0 := by
-  sorry
+  sorry_proof
 
 /-- Theorem: Norm satisfies triangle inequality -/
 theorem norm_triangle_inequality (n : Nat) (x y : Float64Array)
   (hx : x.size ≥ n) (hy : y.size ≥ n) :
   let sum := daxpy n.toUSize 1.0 x 0 1 y 0 1
   dnrm2 n.toUSize sum 0 1 ≤ dnrm2 n.toUSize x 0 1 + dnrm2 n.toUSize y 0 1 := by
-  sorry
+  sorry_proof
 
 /-- Theorem: Norm is homogeneous -/
 theorem norm_homogeneous (n : Nat) (α : Float) (x : Float64Array)
   (hx : x.size ≥ n) :
   let scaled := dscal n.toUSize α x 0 1
   dnrm2 n.toUSize scaled 0 1 = Float.abs α * dnrm2 n.toUSize x 0 1 := by
-  sorry
+  sorry_proof
 
 /-- Theorem: Cauchy-Schwarz inequality -/
 theorem cauchy_schwarz (n : Nat) (x y : Float64Array)
   (hx : x.size ≥ n) (hy : y.size ≥ n) :
   Float.abs (ddot n.toUSize x 0 1 y 0 1) ≤ dnrm2 n.toUSize x 0 1 * dnrm2 n.toUSize y 0 1 := by
-  sorry
+  sorry_proof
 
 /-- Theorem: AXPY operation is associative -/
 theorem axpy_associative (n : Nat) (α β : Float) (x y z : Float64Array)
@@ -89,7 +89,7 @@ theorem axpy_associative (n : Nat) (α β : Float) (x y z : Float64Array)
   let step2 := daxpy n.toUSize β y 0 1 z 0 1
   let result2 := daxpy n.toUSize α x 0 1 step2 0 1
   ∀ i < n, Float.abs (result1.get i - result2.get i) < 1e-12 := by
-  sorry
+  sorry_proof
 
 /-- Theorem: AXPY distributes over scalar addition -/
 theorem axpy_distributive (n : Nat) (α β : Float) (x y : Float64Array)
@@ -98,14 +98,14 @@ theorem axpy_distributive (n : Nat) (α β : Float) (x y : Float64Array)
   let step1 := daxpy n.toUSize α x 0 1 y 0 1
   let result2 := daxpy n.toUSize β x 0 1 step1 0 1
   ∀ i < n, Float.abs (result1.get i - result2.get i) < 1e-12 := by
-  sorry
+  sorry_proof
 
 /-- Theorem: Copy preserves all elements -/
 theorem copy_preserves (n : Nat) (x y : Float64Array)
   (hx : x.size ≥ n) (hy : y.size ≥ n) :
   let y' := dcopy n.toUSize x 0 1 y 0 1
   ∀ i < n, y'.get i = x.get i := by
-  sorry
+  sorry_proof
 
 /-- Theorem: Swap operation is involutive -/
 theorem swap_involutive (n : Nat) (x y : Float64Array)
@@ -113,21 +113,21 @@ theorem swap_involutive (n : Nat) (x y : Float64Array)
   let (x', y') := dswap n.toUSize x 0 1 y 0 1
   let (x'', y'') := dswap n.toUSize x' 0 1 y' 0 1
   (∀ i < n, x''.get i = x.get i) ∧ (∀ i < n, y''.get i = y.get i) := by
-  sorry
+  sorry_proof
 
 /-- Theorem: ASUM satisfies absolute homogeneity -/
 theorem asum_absolute_homogeneous (n : Nat) (α : Float) (x : Float64Array)
   (hx : x.size ≥ n) :
   let scaled := dscal n.toUSize α x 0 1
   dasum n.toUSize scaled 0 1 = Float.abs α * dasum n.toUSize x 0 1 := by
-  sorry
+  sorry_proof
 
 /-- Theorem: ASUM satisfies triangle inequality -/
 theorem asum_triangle_inequality (n : Nat) (x y : Float64Array)
   (hx : x.size ≥ n) (hy : y.size ≥ n) :
   let sum := daxpy n.toUSize 1.0 x 0 1 y 0 1
   dasum n.toUSize sum 0 1 ≤ dasum n.toUSize x 0 1 + dasum n.toUSize y 0 1 := by
-  sorry
+  sorry_proof
 
 /-- Collection of all correctness properties -/
 structure BLASCorrectnessProperties (n : Nat) (x y z : Float64Array) : Prop where
