@@ -34,7 +34,8 @@ target libleanblasc pkg : FilePath := do
     let mut oFiles : Array (Job FilePath) := #[]
     for file in (← (pkg.dir / "c").readDir) do
       if file.path.extension == some "c" then
-        let oFile := pkg.buildDir / "c" / (file.fileName.stripSuffix ".c" ++ ".o")
+        let baseName := (file.fileName.dropSuffix ".c").toString
+        let oFile := pkg.buildDir / "c" / (baseName ++ ".o")
         let srcJob ← inputTextFile file.path
         let weakArgs := #["-I", (← getLeanIncludeDir).toString]
         oFiles := oFiles.push (← buildO oFile srcJob weakArgs (#["-DNDEBUG", "-O3", "-fPIC"] ++ inclArgs) "gcc" getLeanTrace)
